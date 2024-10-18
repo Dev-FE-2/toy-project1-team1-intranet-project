@@ -11,7 +11,7 @@
  html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
-  font-size: 62.5%; /* font-size 1rem = 10px ex 16px -> 1.6rem */
+  font-size: 62.5%; /* font-size 1rem = 10px */
 }
 
 /* Sections
@@ -23,6 +23,8 @@
 
 body {
   margin: 0;
+  font: inherit;
+  width: 100%;
 }
 
 /**
@@ -76,6 +78,18 @@ pre {
 
 a {
   background-color: transparent;
+  display: inline-block;
+  color: inherit;
+  line-height: inherit;
+  font-size: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+a:hover,
+a:focus,
+a:active {
+  text-decoration: none;
 }
 
 /**
@@ -148,6 +162,7 @@ sup {
 
 img {
   border-style: none;
+  max-width: 100%;
 }
 
 /* Forms
@@ -347,4 +362,100 @@ template {
 
 [hidden] {
   display: none;
+}
+
+/* =================== reset 추가 =================== */
+
+:root {
+  --main1: #3758f9; /* 메인 컬러 */
+  --main2: #4e6cff;
+
+  --white1: #fff; /* 메인 흰색 */
+
+  --black1: #000; /* 메인 검은색 */
+
+  --gray1: #eee; /* 메인 회색 */
+  --gray2: #ddd;
+  --gray3: #f1f1f1; /* 회색 배경 */
+
+  --ff_kor: 'Pretendard'; /* 한글 폰트 */
+  --ff_eng: 'Pretendard'; /* 영문 폰트 */
+
+  --lh_base: 1.25; /* 기본 line-height (글 본문 등에 사용) */
+
+  --ls_base: -0.02em; /* 기본 letter-spacing */
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+  box-sizing: border-box;
+  letter-spacing: var(--ls_base, -0.02em);
+  font-family: var(--ff_eng), var(--ff_kor), "Malgun Gothic", "맑은 고딕", sans-serif;
+}
+
+div, p, span, strong, b, em, iframe, pre,
+h1, h2, h3, h4, h5, h6, img, dl, dt, dd,
+fieldset, form, legend, label, table, caption,
+thead, tbody, tfoot, tr, th, td,
+ul, ol, li, a, input, select, textarea, button {
+  font-size: 1.6rem;
+}
+
+em, address, i, span, label {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+address {
+  font-style: normal;
+}
+
+b, strong {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+}
+
+input[type=number],
+input[type=password],
+input[type=tel],
+input[type=text],
+textarea {
+  font-family: var(--ff_eng), var(--ff_kor), "Malgun Gothic", "맑은 고딕", sans-serif;
+}
+
+ul, ol, li {
+  list-style: none;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  line-height: inherit;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  outline: 0 none;
+  cursor: pointer;
 }
