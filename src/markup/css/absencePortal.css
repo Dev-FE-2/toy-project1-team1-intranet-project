@@ -1,0 +1,19 @@
+.absence-portal .table-body .head li,
+.absence-portal .table-body .cell li {
+  width: 33.33%;
+}
+.absence-portal .table-body .reason,
+.absence-portal .table-body .etc {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .absence-portal .table-body .head li,
+  .absence-portal .table-body .cell li {
+    width: 33.33%;
+  }
+  .absence-portal .table-body .reason,
+  .absence-portal .table-body .etc {
+    display: none;
+  }
+}
