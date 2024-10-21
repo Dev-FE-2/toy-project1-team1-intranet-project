@@ -168,14 +168,6 @@
   right: 10px;
 }
 
-/* table-header layout */
-.table-header {
-  width: 80%;
-  margin: 10px auto;
-  display: flex;
-  justify-content: space-between;
-}
-
 /* table-body layout */
 .table-body {
   width: 80%;
@@ -271,7 +263,6 @@
   background-color: var(--main1);
   color: var(--white1);
 }
-
 .paging-item button {
   display: flex;
   align-items: center;
@@ -283,7 +274,6 @@
   padding: 0;
   cursor: pointer;
 }
-
 .paging-item button svg {
   display: block;
   width: 16px;
@@ -354,16 +344,5 @@ textarea.success ~ .helper-text {
   }
   .table-body .col {
     padding: 17px 22px;
-  }
-  .absence-portal .table-body .head li,
-  .absence-portal .table-body .cell li {
-    width: 33.33%;
-  }
-  .absence-portal .table-body .reason,
-  .absence-portal .table-body .etc {
-    display: none;
-  }
-  .input-double .btn {
-    padding: 6px;
   }
 }
