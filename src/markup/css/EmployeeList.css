@@ -2,8 +2,8 @@
 /* table 레이아웃 항목 정리 필요 -> 사번 이름 주소 (활성상태-근무중/..) 이름> 이메일 추가
 */
 .img-box {
-  width: 45px;
-  height: 45px;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 50%;
   overflow: hidden;
   background-color: var(--gray1);
@@ -23,6 +23,6 @@
 @media screen and (max-width: 768px) {
   /* 테이블 반응형 처리 필요 */
   .layer-popup .input-double .btn {
-    padding: 6px;
+    padding: 0.6rem;
   }
 }

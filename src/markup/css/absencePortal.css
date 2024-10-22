@@ -1,7 +1,7 @@
 /* table-header layout */
 .table-header {
   width: 80%;
-  margin: 10px auto;
+  margin: 1rem auto;
   display: flex;
   justify-content: space-between;
 }
