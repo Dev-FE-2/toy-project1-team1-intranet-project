@@ -483,4 +483,7 @@ textarea.success ~ .helper-text {
   .table-body .col {
     padding: 1.7rem 2.2rem;
   }
+  .layer-popup {
+    width: 80%;
+  }
 }
