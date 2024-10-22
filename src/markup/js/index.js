@@ -13,12 +13,17 @@ timeEl.forEach((e) => {
 
 // swiper
 const mainNoticeSwiper = new Swiper('.main-notice .swiper', {
-  slidesPerView: 2,
+  slidesPerView: 1.2,
   spaceBetween: 20,
   navigation: {
     nextEl: '.main-notice .swiper-button-next',
     prevEl: '.main-notice .swiper-button-prev',
   },
+  breakpoints: {
+    769: {
+      slidesPerView: 2,
+    }
+  }
 });
 
 // 근무 시작/종료 모달 열기

@@ -4,6 +4,7 @@
 }
 
 [data-page='main'] .my-info .profile {
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,6 +34,7 @@
 }
 
 [data-page='main'] .work-info {
+  flex: 0 0 auto;
   width: 30%;
   display: flex;
   flex-direction: column;
@@ -84,3 +86,27 @@
   color: var(--main1);
   border-color: var(--main1);
 } */
+
+@media screen and (max-width: 768px) {
+  [data-page='main'] .work-info {
+    width: auto;
+    margin-left: 2rem;
+  }
+
+  [data-page='main'] .work-info .work-state {
+    gap: 2rem;
+  }
+
+  [data-page='main'] .main-notice {
+    padding: 0;
+  }
+
+  [data-page='main'] .main-notice .swiper {
+    width: 100%;
+    padding: 0 2rem;
+  }
+
+  .main-notice [class^="swiper-button-"] {
+    display: none;
+  }
+}
