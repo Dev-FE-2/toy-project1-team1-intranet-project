@@ -1,6 +1,71 @@
 /* container 임시 클래스 적용 */
 /* table 레이아웃 항목 정리 필요 -> 사번 이름 주소 (활성상태-근무중/..) 이름> 이메일 추가
 */
+
+@media screen and (max-width: 1230px) {
+
+  .table-body .col {
+    padding: 1.7rem 1.5rem;
+  }
+
+  .table-body .cell .user-status .badge {
+    width: .1rem !important;
+    padding: 1.5rem !important;
+  }
+
+  .layer-popup {
+    min-width: 50rem;
+  }
+}
+@media screen and (max-width:900px) {
+  .table-body .head .profile-img, .table-body .cell .profile-img {
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
+  .table-body .head .profile-img, .table-body .cell .profile-img {
+    display: block;
+  }
+
+  .layer-popup {
+    width: 75%;
+  }
+}
+@media screen and (max-width: 600px) {
+  .table-body .head .profile-img, .table-body .cell .profile-img {
+    display: none;
+  }
+}
+@media screen and (max-width: 480px) {
+
+  .table-body .head .profile-img, .table-body .cell .profile-img {
+    display: none;
+  }
+
+  .layer-popup .input-double .btn {
+    padding: 0.6rem;
+  }
+}
+
+.col .head li , .col .cell li {
+  display: flex;
+  justify-content: center;
+
+}
+
+.container .container-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10%;
+  margin-bottom: 1%;
+}
+
+.container-header .search-box {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
 .img-box {
   width: 4.5rem;
   height: 4.5rem;
@@ -15,14 +80,39 @@
   object-fit: contain;
 }
 
-.table-body .head .status,
-.table-body .cell li .status {
-  /* width: 20%;  */
-  /* 셀별로 원하는 크기 조정하시면 됩니다! */
+.table-body {
+  border-radius: 1rem;
 }
-@media screen and (max-width: 768px) {
-  /* 테이블 반응형 처리 필요 */
-  .layer-popup .input-double .btn {
-    padding: 0.6rem;
-  }
+
+.table .col li {
+  font-size: 1.5rem;
+}
+
+.table-body .cell .user-status .badge {
+  width: 9rem;
+  font-size: 1.3rem;
+  padding: .8rem 1rem;
+}
+
+.table-body .cell .btn {
+  padding: .7rem 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  width: 8.1rem;
+  min-width: 8.1rem;
+}
+
+.pagination .paging-item .btn {
+  border: none;
+}
+
+
+/* 정보 수정 모달 스크롤 바 삭제 */
+/* 크롬, 사파리, 오페라, 엣지 */
+.layer-popup .cont::-webkit-scrollbar {
+  display: none;
+}
+.layer-popup .cont {
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none; /* 파이어폭스 */
 }

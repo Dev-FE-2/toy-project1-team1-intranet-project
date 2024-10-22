@@ -5,6 +5,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>직원 목록</title>
+	<link
+	rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search"
+/>
 	<link rel="stylesheet" href="/src/reset.css">
 	<link rel="stylesheet" href="/src/style.css">
 	<link rel="stylesheet" href="/src/common.css">
@@ -32,17 +36,12 @@
 			<ul>
 				<li>
 					<a href="#none">
-						메뉴1
+						직원 정보 관리
 					</a>
 				</li>
 				<li>
 					<a href="#none">
-						메뉴2
-					</a>
-				</li>
-				<li>
-					<a href="#none">
-						일이삼사오육칠팔
+						공지사항 관리
 					</a>
 				</li>
 			</ul>
@@ -50,9 +49,13 @@
 	</header>
 	<!-- [e] header 하드코딩 -->
 	<div class="container employee-List">
-		<h1 class="title">직원 목록</h1>
-		<!-- [D] 팝업 확인용 버튼 : 삭제 필요 -->
-		<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+		<div class="container-header">
+			<h1 class="title">직원 목록</h1>
+			<div class="search-box">
+				<input type="search" placeholder="어쩌구를 검색하세요.">
+				<span class="material-symbols-outlined"> search </span>
+			</div>
+		</div>
 		<div class="table-body">
 			<ul class="table" role="list" aria-label="직원 목록">
 				<li class="col">
@@ -62,11 +65,13 @@
 						<li class="name">이름</li>
 						<li class="team">소속팀</li>
 						<li class="role">직급</li>
+						<li class="status">근무 상태</li>
+						<li></li> <!-- 아래 .cell에 정보 수정 버튼 추가되어서 위치 맞추려고 일단 추가해둠-->
 					</ul>
 				</li>
 				<li class="col">
 					<ul class="cell" role="list">
-						<li class="number">00001</li>
+						<li class="number">000001</li>
 						<li class="profile-img">
 							<div class="img-box">
 								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
@@ -75,11 +80,17 @@
 						<li class="name">홍길동</li>
 						<li class="team">개발팀</li>
 						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+						<li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li>
 					</ul>
 				</li>
 				<li class="col">
 					<ul class="cell" role="list">
-						<li class="number">00001</li>
+						<li class="number">000001</li>
 						<li class="profile-img">
 							<div class="img-box">
 								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
@@ -88,11 +99,17 @@
 						<li class="name">홍길동</li>
 						<li class="team">개발팀</li>
 						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-error">OFFLINE</div>
+						</li>
+						<li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li>
 					</ul>
 				</li>
 				<li class="col">
 					<ul class="cell" role="list">
-						<li class="number">00001</li>
+						<li class="number">000001</li>
 						<li class="profile-img">
 							<div class="img-box">
 								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
@@ -101,11 +118,17 @@
 						<li class="name">홍길동</li>
 						<li class="team">개발팀</li>
 						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">근무 중</div>
+						</li>
+						<li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li>
 					</ul>
 				</li>
 				<li class="col">
 					<ul class="cell" role="list">
-						<li class="number">00001</li>
+						<li class="number">000001</li>
 						<li class="profile-img">
 							<div class="img-box">
 								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
@@ -114,11 +137,17 @@
 						<li class="name">홍길동</li>
 						<li class="team">개발팀</li>
 						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-error">근무 중 아님</div>
+						</li>
+						<li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li>
 					</ul>
 				</li>
 				<li class="col">
 					<ul class="cell" role="list">
-						<li class="number">00001</li>
+						<li class="number">000001</li>
 						<li class="profile-img">
 							<div class="img-box">
 								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
@@ -127,6 +156,71 @@
 						<li class="name">홍길동</li>
 						<li class="team">개발팀</li>
 						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+						<li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+						<li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+						<li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+						<li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li>
+					</ul>
+				</li>
 					</ul>
 				</li>
 			</ul>
@@ -134,7 +228,7 @@
 		<div class="pagination">
 			<ul class="paging-list" role="list">
 				<li class="paging-item prev">
-					<button type="button" aria-label="이전 페이지">
+					<button class="btn" type="button" aria-label="이전 페이지">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
 							<line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
 							<line x1="12" y1="17" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -151,7 +245,7 @@
 				<li class="paging-item"><a href="javascript:void(0);">4</a></li>
 				<li class="paging-item"><a href="javascript:void(0);">5</a></li>
 				<li class="paging-item next">
-					<button type="button" aria-label="다음 페이지">
+					<button class="btn" type="button" aria-label="다음 페이지">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
 							<line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
 							<line x1="22" y1="17" x2="14" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -205,6 +299,7 @@
 							<option value="">책임</option>
 							<option value="">수석</option>
 							<option value="">실장</option>
+							<!-- 📌 직급 추가 필요한가? -->
 						</select>
 					</li>
 					<li>
@@ -242,10 +337,7 @@
 							<input type="text" id="address" placeholder="주소">
 						</div>
 						<div class="input-default">
-							<input type="text" id="extra-address" placeholder="추가 정보">
-						</div>
-						<div class="input-default">
-							<input type="text" id="detail-address" placeholder="세부 주소">
+							<input type="text" id="detail-address" placeholder="상세 주소">
 						</div>
 					</li>
 				</ul>
@@ -263,6 +355,44 @@
 		</button>
 	</div>
 </body>
+<!-- 디바이스 너비에 따라 사용자 근무 상태 제어 -->
+<script>
+	const USER_STATUS = document.querySelectorAll('.user-status .badge')
+	const MEDIA_QUERY_1230 = window.matchMedia('(max-width: 1230px)')
+	const MEDIA_QUERY_768 = window.matchMedia('(max-width: 768px)')
+	const MEDIA_QUERY_480 = window.matchMedia('(max-width: 480px)')
+
+	const USER_STATUS_OG_VALUE = [...USER_STATUS].map(value => value.textContent)
+
+	const updateUserStatus = () => {
+
+		if(MEDIA_QUERY_1230.matches) {
+			USER_STATUS.forEach((el) => {
+				el.textContent = ''
+			})
+		} else if(MEDIA_QUERY_768.matches) {
+			USER_STATUS.forEach((el, index) => {
+				el.textContent = USER_STATUS_OG_VALUE[index]
+			})
+		} else if(MEDIA_QUERY_480.matches) {
+			USER_STATUS.forEach((el) => {
+				el.textContent = ''
+			})
+		} else {
+			USER_STATUS.forEach((el, index) => {
+				el.textContent = USER_STATUS_OG_VALUE[index]
+				// 📌 추후 DB 데이터 추가 시, 다른 페이지로 이동했을 때도 정상 동작하는 지 확인
+			})
+		}
+		
+	}
+
+	updateUserStatus()
+
+	MEDIA_QUERY_1230.addEventListener('change', updateUserStatus)
+	MEDIA_QUERY_768.addEventListener('change', updateUserStatus)
+	MEDIA_QUERY_480.addEventListener('change', updateUserStatus)
+</script>
 <!-- [D] 입력형 팝업 열기/닫기 -->
 <script>
 	const dimmed = document.getElementById('dimmed');
