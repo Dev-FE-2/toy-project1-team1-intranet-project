@@ -1,67 +1,63 @@
-[data-page="main"] .title {
-  margin-bottom: 1em;
-}
-
-[data-page="main"] .my-info .my-info-inner {
+[data-page='main'] .my-info .my-info-inner {
   display: flex;
   justify-content: space-evenly;
 }
 
-[data-page="main"] .my-info .profile {
+[data-page='main'] .my-info .profile {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-[data-page="main"] .my-info .profile .img-box {
+[data-page='main'] .my-info .profile .img-box {
   margin-bottom: 1rem;
   border-radius: 6px;
   overflow: hidden;
   font-size: 0;
 }
 
-[data-page="main"] .my-info .profile .img-box img {
+[data-page='main'] .my-info .profile .img-box img {
   width: 16rem;
   height: 16rem;
   object-fit: cover;
 }
 
-[data-page="main"] .my-info .profile .name {
+[data-page='main'] .my-info .profile .name {
   font-size: 2rem;
   font-weight: 500;
 }
 
-[data-page="main"] .my-info .profile p {
+[data-page='main'] .my-info .profile p {
   margin-top: 0.6rem;
   font-size: 1.8rem;
 }
 
-[data-page="main"] .work-info {
+[data-page='main'] .work-info {
   width: 30%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-[data-page="main"] .work-info .work-state {
+[data-page='main'] .work-info .work-state {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-[data-page="main"] .work-info .work-state div {
+[data-page='main'] .work-info .work-state div {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-[data-page="main"] .work-info .work-state .work-state-title {
+[data-page='main'] .work-info .work-state .work-state-title {
   margin-bottom: 0.6rem;
   font-weight: 500;
 }
 
-[data-page="main"] .work-info .btn-work-state {
+[data-page='main'] .work-info .btn-work-state {
   margin-top: 4rem;
 }
 
@@ -70,15 +66,15 @@
   color: var(--main1);
 }
 
-.confirm-work-popup .text{
+.confirm-work-popup .text {
   margin-top: 0.6rem;
 }
 
-[data-page="main"] .main-notice .inner {
+[data-page='main'] .main-notice .inner {
   position: relative;
 }
 
-[data-page="main"] .main-notice .swiper {
+[data-page='main'] .main-notice .swiper {
   width: 80%;
   padding: 1rem 0; /* overflow hidden으로 애니메이션 효과 가려져서 추가 */
 }

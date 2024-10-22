@@ -1,18 +1,11 @@
 /* announcement에서만 사용할 css */
 
-.announcement .container__title {
-  display: flex;
-  justify-content: space-between;
-  text-align: center;
-  align-items: center;
-  margin-left: 3rem;
-  margin-right: 3rem;
-}
-
 .announcement .announcement__search-box {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
+  margin-right: 3rem;
 }
 
 /* Postcard */

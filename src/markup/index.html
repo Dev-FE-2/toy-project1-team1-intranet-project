@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>메인</title>
 	<link rel="stylesheet" href="/src/reset.css">
 	<link rel="stylesheet" href="/src/style.css">
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-  />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 	<link rel="stylesheet" href="/src/components/layouts/header/header.css">
 	<link rel="stylesheet" href="/src/common.css">
-  <link rel="stylesheet" href="/src/markup/css/index.css">
+	<link rel="stylesheet" href="/src/markup/css/index.css">
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script defer src="/src/utils/function.js"></script>
-  <script defer src="/src/markup/js/index.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script defer src="/src/utils/function.js"></script>
+	<script defer src="/src/markup/js/index.js"></script>
 </head>
 
 <body>
@@ -55,134 +53,114 @@
 		</nav>
 	</header>
 
-  <main class="container" data-page="main">
-    <div class="my-info container-inner">
-      <h1 class="title">내 정보</h1>
-      <div class="my-info-inner">
-        <div class="profile">
-          <div class="img-box">
-            <img src="https://cdn.pixabay.com/photo/2021/12/16/09/26/pomeranian-6874257_1280.jpg" alt="프로필 이미지">
-          </div>
-          <span class="name">홍길동</span>
-          <p>
-            <span class="team">개발팀</span> / <span class="position">사원</span>
-          </p>
-        </div>
-        <div class="work-info">
-          <div class="work-state">
-            <div>
-              <span class="work-state-title">현재 시간</span>
-              <span class="work-state-content time-now">00:00</span>
-            </div>
-            <div>
-              <span class="work-state-title">근무 상태</span>
-              <span class="work-state-content">근무 전</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            id="btn-work-state"
-            class="btn btn-solid btn-work-state"
-            data-working="0"
-            data-popup="confirmWork"
-          >
-            근무 시작
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="main-notice container-inner">
-      <h2 class="title">공지사항</h2>
-      <div class="inner">
-        <div class="swiper">
-          <div class="swiper-wrapper postcard-container">
-            <div class="swiper-slide postcard">
-              <a href="#none">
-                <img
-                  class="postcard-img"
-                  src="./img/begin-again-5.webp"
-                  alt="Post Image"
-                />
-                <div class="contents">
-                  <h2 class="contents__title">타이틀</h2>
-                  <p class="contents__content">이것은 공지사항입니다.</p>
-                  <div class="contents__information">
-                    <span class="information-author">전영훈</span>
-                    <span class="information-date">2024-10-20</span>
-                  </div>
-                </div>
-              </a>
-            </div>
-            <div class="swiper-slide postcard">
-              <a href="#none">
-                <img
-                  class="postcard-img"
-                  src="./img/begin-again-5.webp"
-                  alt="Post Image"
-                />
-                <div class="contents">
-                  <h2 class="contents__title">타이틀</h2>
-                  <p class="contents__content">이것은 공지사항입니다.</p>
-                  <div class="contents__information">
-                    <span class="information-author">전영훈</span>
-                    <span class="information-date">2024-10-20</span>
-                  </div>
-                </div>
-              </a>
-            </div>
-            <div class="swiper-slide postcard">
-              <a href="#none">
-                <img
-                  class="postcard-img"
-                  src="./img/begin-again-5.webp"
-                  alt="Post Image"
-                />
-                <div class="contents">
-                  <h2 class="contents__title">타이틀</h2>
-                  <p class="contents__content">이것은 공지사항입니다.</p>
-                  <div class="contents__information">
-                    <span class="information-author">전영훈</span>
-                    <span class="information-date">2024-10-20</span>
-                  </div>
-                </div>
-              </a>
-            </div>
-            <div class="swiper-slide postcard">
-              <a href="#none">
-                <img
-                  class="postcard-img"
-                  src="./img/begin-again-5.webp"
-                  alt="Post Image"
-                />
-                <div class="contents">
-                  <h2 class="contents__title">타이틀</h2>
-                  <p class="contents__content">이것은 공지사항입니다.</p>
-                  <div class="contents__information">
-                    <span class="information-author">전영훈</span>
-                    <span class="information-date">2024-10-20</span>
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
-      </div>
-    </div>
-  </main>
+	<main class="container" data-page="main">
+		<h1 class="title">내 정보</h1>
+		<div class="my-info container-inner">
+			<div class="my-info-inner">
+				<div class="profile">
+					<div class="img-box">
+						<img src="https://cdn.pixabay.com/photo/2021/12/16/09/26/pomeranian-6874257_1280.jpg" alt="프로필 이미지">
+					</div>
+					<span class="name">홍길동</span>
+					<p>
+						<span class="team">개발팀</span> / <span class="position">사원</span>
+					</p>
+				</div>
+				<div class="work-info">
+					<div class="work-state">
+						<div>
+							<span class="work-state-title">현재 시간</span>
+							<span class="work-state-content time-now">00:00</span>
+						</div>
+						<div>
+							<span class="work-state-title">근무 상태</span>
+							<span class="work-state-content">근무 전</span>
+						</div>
+					</div>
+					<button type="button" id="btn-work-state" class="btn btn-solid btn-work-state" data-working="0"
+						data-popup="confirmWork">
+						근무 시작
+					</button>
+				</div>
+			</div>
+		</div>
+		<h2 class="title">공지사항</h2>
+		<div class="main-notice container-inner">
+			<div class="inner">
+				<div class="swiper">
+					<div class="swiper-wrapper postcard-container">
+						<div class="swiper-slide postcard">
+							<a href="#none">
+								<img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+								<div class="contents">
+									<h2 class="contents__title">타이틀</h2>
+									<p class="contents__content">이것은 공지사항입니다.</p>
+									<div class="contents__information">
+										<span class="information-author">전영훈</span>
+										<span class="information-date">2024-10-20</span>
+									</div>
+								</div>
+							</a>
+						</div>
+						<div class="swiper-slide postcard">
+							<a href="#none">
+								<img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+								<div class="contents">
+									<h2 class="contents__title">타이틀</h2>
+									<p class="contents__content">이것은 공지사항입니다.</p>
+									<div class="contents__information">
+										<span class="information-author">전영훈</span>
+										<span class="information-date">2024-10-20</span>
+									</div>
+								</div>
+							</a>
+						</div>
+						<div class="swiper-slide postcard">
+							<a href="#none">
+								<img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+								<div class="contents">
+									<h2 class="contents__title">타이틀</h2>
+									<p class="contents__content">이것은 공지사항입니다.</p>
+									<div class="contents__information">
+										<span class="information-author">전영훈</span>
+										<span class="information-date">2024-10-20</span>
+									</div>
+								</div>
+							</a>
+						</div>
+						<div class="swiper-slide postcard">
+							<a href="#none">
+								<img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+								<div class="contents">
+									<h2 class="contents__title">타이틀</h2>
+									<p class="contents__content">이것은 공지사항입니다.</p>
+									<div class="contents__information">
+										<span class="information-author">전영훈</span>
+										<span class="information-date">2024-10-20</span>
+									</div>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="swiper-button-prev"></div>
+				<div class="swiper-button-next"></div>
+			</div>
+		</div>
+	</main>
 
-  <div class="dimmed" id="dimmed"></div>
-  <div class="layer-popup confirm-work-popup" id="confirmWork">
-    <div>
-      <span>현재 시간</span>
-      <span class="time-now">00:00</span>
-    </div>
-    <p class="text">근무를 시작하시겠습니까?</p>
-    <div class="btn-box">
-      <button type="button" id="confirmWorkBtn" class="btn btn-solid confirm-popup-btn">확인</button>
-      <button type="button" class="btn btn-outline close-popup-btn">취소</button>
-    </div>
-  </div>
+	<div class="dimmed" id="dimmed"></div>
+	<div class="layer-popup confirm-work-popup" id="confirmWork">
+		<div>
+			<span>현재 시간</span>
+			<span class="time-now">00:00</span>
+		</div>
+		<p class="text">근무를 시작하시겠습니까?</p>
+		<div class="btn-box">
+			<button type="button" id="confirmWorkBtn" class="btn btn-solid confirm-popup-btn">확인</button>
+			<button type="button" class="btn btn-outline close-popup-btn">취소</button>
+		</div>
+	</div>
 </body>
+
 </html>
