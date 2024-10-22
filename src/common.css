@@ -74,7 +74,7 @@
 
 /* btn */
 .btn {
-  padding: 12px 28px;
+  padding: 1.2rem 2.8rem;
   border-radius: 6px;
   border: 1px solid transparent;
   font-weight: 700;
@@ -96,10 +96,10 @@
 .btn-box {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 2rem;
 }
 .btn-box .btn + .btn {
-  margin-left: 8px;
+  margin-left: 0.8rem;
 }
 
 /* layer popup */
@@ -119,28 +119,28 @@
 }
 .layer-popup {
   display: none;
-  max-width: 500px;
-  padding: 40px 20px;
+  max-width: 50rem;
+  padding: 4rem 2rem;
   border: 1px solid #8e8e8e;
   position: fixed;
   top: 50%;
   left: 50%;
   z-index: 3;
   width: 50%;
-  min-width: 280px;
+  min-width: 2.8rem;
   background: #fff;
   transform: translate(-50%, -50%);
   border-radius: 4px;
   text-align: center;
 }
 .layer-popup .cont {
-  max-height: 500px;
-  padding: 20px 4px;
+  max-height: 50rem;
+  padding: 2rem 0.4rem;
   overflow-y: auto;
 }
 .layer-popup label {
   display: block;
-  padding: 4px;
+  padding: 0.4rem;
   text-align: left;
   font-weight: 700;
   font-size: 1.2rem;
@@ -152,7 +152,7 @@
   box-sizing: border-box;
 }
 .layer-popup .input-list li {
-  margin-top: 10px;
+  margin-top: 1rem;
 }
 .layer-popup .info-box {
   text-align: right;
@@ -163,14 +163,14 @@
 }
 
 .layer-popup .img-box {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 10px;
+  width: 10rem;
+  height: 10rem;
+  margin: 0 auto 1rem;
 }
 .layer-popup .close {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 1rem;
+  right: 1rem;
 }
 
 /* table-body layout */
@@ -190,7 +190,7 @@
   font-weight: 700;
 }
 .table-body .col {
-  padding: 17px 45px;
+  padding: 1.7rem 4.5rem;
   border-bottom: 1px solid #eee;
 }
 .table-body .cell {
@@ -214,9 +214,9 @@
 
 /* badges */
 .badge {
-  width: 70px;
-  padding: 3px 10px;
-  border-radius: 30px;
+  width: 7rem;
+  padding: 0.3rem 1rem;
+  border-radius: 3rem;
   text-align: center;
   font-weight: 700;
   font-size: 1.2rem;
@@ -236,7 +236,7 @@
 
 /* pagination */
 .pagination {
-  padding: 40px 0;
+  padding: 4rem 0;
 }
 .paging-list {
   display: flex;
@@ -253,11 +253,11 @@
   color: #637381;
 }
 .paging-item {
-  width: 34px;
-  height: 34px;
-  margin-right: 8px;
+  width: 3.4rem;
+  height: 3.4rem;
+  margin-right: 0.8rem;
   border: 1px solid #dfe4ea;
-  line-height: 34px;
+  line-height: 3.4rem;
   border-radius: 6px;
   text-align: center;
 }
@@ -281,15 +281,15 @@
 }
 .paging-item button svg {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 1.6rem;
+  height: 1.6rem;
 }
 
 /* inputs */
 input,
 select,
 textarea {
-  padding: 10px 20px;
+  padding: 1rem 2rem;
   border: 1px solid #dfe4ea;
   border-radius: 6px;
   font-size: 1.4rem;
@@ -304,7 +304,7 @@ textarea:focus {
   outline: 1px solid var(--main1);
 }
 .input-default {
-  margin-top: 10px;
+  margin-top: 1rem;
 }
 .input-double {
   display: flex;
@@ -334,7 +334,7 @@ textarea.success ~ .helper-text {
   color: var(--color-success);
 }
 .helper-text {
-  padding: 8px 4px 0;
+  padding: 0.8rem 0.4rem 0;
   text-align: left;
   font-size: 1.2rem;
 }
@@ -406,6 +406,6 @@ textarea.success ~ .helper-text {
     text-align: center;
   }
   .table-body .col {
-    padding: 17px 22px;
+    padding: 1.7rem 2.2rem;
   }
 }
