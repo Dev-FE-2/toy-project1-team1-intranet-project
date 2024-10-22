@@ -69,3 +69,16 @@
 .postcard .contents__information .information-author {
   font-weight: 70rem;
 }
+
+/* 검색결과 없는 경우 */
+.announcement .helper-text {
+  margin: 2rem;
+}
+
+.postcard-container.no-result {
+  display: block;
+  padding: 20rem 0;
+  text-align: center;
+  background-color: var(--gray3);
+  border-radius: 0.5rem;
+}

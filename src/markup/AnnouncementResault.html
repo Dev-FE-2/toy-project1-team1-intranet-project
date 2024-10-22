@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>공지사항 : 검색결과</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search" />
+  <link rel="stylesheet" href="/src/reset.css" />
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="stylesheet" href="/src/common.css" />
+  <link rel="stylesheet" href="/src/components/layouts/header/header.css" />
+  <link rel="stylesheet" href="./css/announcement.css" />
+</head>
+
+<body>
+  <div>
+    <!-- [s] header 하드코딩 -->
+    <header class="header">
+      <div class="user-info-wrapper">
+        <div class="user-img-box">
+          <!-- 프로필 페이지 링크 넣기 -->
+          <a href="#none">
+            <img src="https://cdn.pixabay.com/photo/2021/12/16/09/26/pomeranian-6874257_1280.jpg" alt="프로필 이미지" />
+          </a>
+        </div>
+        <div class="user-info">
+          <!-- 프로필 페이지 링크 넣기 -->
+          <a href="#none" class="user-name">홍길동</a>
+          <button type="button" class="logout">로그아웃</button>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <a href="#none"> 메뉴1 </a>
+          </li>
+          <li>
+            <a href="#none"> 메뉴2 </a>
+          </li>
+          <li>
+            <a href="#none"> 일이삼사오육칠팔 </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <!-- [e] header 하드코딩 -->
+    <div class="container announcement">
+      <div class="container__title title">
+        <h1 class="title">공지사항</h1>
+        <div class="announcement__search-box">
+          <input type="search" placeholder="검색어를 입력하세요" />
+          <span class="material-symbols-outlined"> search </span>
+        </div>
+      </div>
+      <!-- [D] 검색결과 없는 경우 -->
+      <p class="helper-text">검색결과 <span class="text-error">n개</span>의 게시물</p>
+      <section class="postcard-container no-result">
+        <p>찾으시는 검색결과가 없습니다.</p>
+      </section>
+
+      <!-- [D] 검색결과 있는 경우 -->
+      <p class="helper-text">검색결과 <span class="text-success">2개</span>의 게시물</p>
+      <section class="postcard-container">
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- [D] 페이지네이션 중략 / 결과 갯수에 따라 렌더 -->
+    </div>
+  </div>
+</body>
+
+</html>
