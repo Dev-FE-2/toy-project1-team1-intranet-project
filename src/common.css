@@ -340,13 +340,6 @@ textarea.success ~ .helper-text {
 }
 
 /* Postcard */
-.postcard-container {
-  flex: 1;
-  margin: 2rem;
-  display: flex;
-  gap: 3rem;
-}
-
 .postcard {
   background-color: #fff;
   border: 0.1rem solid #ddd;
@@ -358,6 +351,10 @@ textarea.success ~ .helper-text {
 
 .postcard:hover {
   transform: translateY(-0.5rem);
+}
+
+.postcard > a {
+  display: block;
 }
 
 .postcard img {
@@ -372,13 +369,13 @@ textarea.success ~ .helper-text {
 }
 
 .postcard .contents__title {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   margin: 0;
   color: #333;
 }
 
 .postcard .contents__content {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #666;
   margin: 1rem 0;
 }
@@ -386,14 +383,19 @@ textarea.success ~ .helper-text {
 .postcard .contents__information {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   color: #999;
 }
 
 .postcard .contents__information .information-author {
-  font-weight: 70rem;
+  font-weight: 700;
 }
 
+/* swiper */
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--main1);
+}
 
 /* responsive  */
 @media screen and (max-width: 768px) {

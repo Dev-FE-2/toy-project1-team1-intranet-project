@@ -11,6 +11,16 @@ timeEl.forEach((e) => {
   e.textContent = nowTime;
 });
 
+// swiper
+const mainNoticeSwiper = new Swiper('.main-notice .swiper', {
+  slidesPerView: 2,
+  spaceBetween: 20,
+  navigation: {
+    nextEl: '.main-notice .swiper-button-next',
+    prevEl: '.main-notice .swiper-button-prev',
+  },
+});
+
 // 근무 시작/종료 모달 열기
 const workStateBtn = document.getElementById('btn-work-state');
 workStateBtn.addEventListener('click', async(e) => {
