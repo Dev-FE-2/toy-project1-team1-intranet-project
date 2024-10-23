@@ -5,7 +5,11 @@
   gap: 0.5rem;
   width: 80%;
   margin: 0 auto;
-  padding-right: 2rem;
+}
+
+.container__flex {
+  display: flex;
+  padding-bottom: 0rem;
 }
 
 /* Postcard */
@@ -14,7 +18,7 @@
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: auto;
   gap: 3rem;
-  width: 80%;
+  width: 83%;
   margin: 0 auto;
   padding: 2rem;
   list-style: none;

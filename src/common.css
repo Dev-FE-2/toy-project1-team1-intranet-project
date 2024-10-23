@@ -177,6 +177,16 @@
   margin-left: 0.8rem;
 }
 
+/* input search 공지사항 페이지에 아이콘(link참고)과 함께 적용  */
+.search-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  width: 80%;
+  margin: 0 auto;
+}
+
 /* layer popup */
 .dimmed.is-active,
 .layer-popup.is-active {
