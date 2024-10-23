@@ -440,6 +440,11 @@ textarea.success ~ .helper-text {
   cursor: pointer;
 }
 
+.postcard.empty {
+  height: 30rem;
+  background: gray;
+}
+
 .postcard:hover {
   transform: translateY(-0.5rem);
 }

@@ -32,13 +32,13 @@ export default class Modal{
     document.body.style.overflow = 'hidden';
   }
 
-  // close() {
-  //   const popup = document.getElementById(this.id);
-  //   popup.classList.remove('is-active');
-  //   dimmed.classList.remove('is-active');
-  //   popup.setAttribute('aria-hidden', 'true');
-  //   document.body.style.overflow = '';
-  // }
+  close() {
+    const popup = document.getElementById(this.id);
+    popup.classList.remove('is-active');
+    document.getElementById('dimmed').classList.remove('is-active');
+    popup.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
 
   render() {
     return `

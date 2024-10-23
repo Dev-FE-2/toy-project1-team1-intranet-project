@@ -1,13 +1,15 @@
 import './main.css';
 import Modal from '/src/components/Modal/Modal';
+import Swiper from 'swiper';
+import 'swiper/css';
 
-export default function Main(cont) {
+export default function Main(container) {
   // 실시간 시간 구하기
   const today = new Date();
   let nowTime;
   const getTime = () => {
     nowTime = `${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`;
-  }
+  };
   getTime();
   setInterval(getTime, 1000);
 
@@ -15,17 +17,16 @@ export default function Main(cont) {
   const workConfirmModal = new Modal({
     classList: 'test-class',
     id: 'confirmWork',
-    title: '모달 제목~',
     content: `
       <div>
         <span>현재 시간</span>
-        <span class="time-now">00:00</span>
+        <span class="time-now">${nowTime}</span>
       </div>
       <p class="text">근무를 시작하시겠습니까?</p>
     `,
     buttons: `
       <button type="button" id="confirmWorkBtn" class="btn btn-solid confirm-popup-btn">확인</button>
-      <button type="button" class="btn btn-outline close-popup-btn">취소</button>
+      <button type="button" id="cancelWorkBtn" class="btn btn-outline close-popup-btn">취소</button>
     `
   });
 
@@ -70,58 +71,8 @@ export default function Main(cont) {
         <div class="inner">
           <div class="swiper">
             <div class="swiper-wrapper postcard-container">
-              <div class="swiper-slide postcard">
-                <a href="#none">
-                  <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
-                  <div class="contents">
-                    <h2 class="contents__title">타이틀</h2>
-                    <p class="contents__content">이것은 공지사항입니다.</p>
-                    <div class="contents__information">
-                      <span class="information-author">전영훈</span>
-                      <span class="information-date">2024-10-20</span>
-                    </div>
-                  </div>
-                </a>
-              </div>
-              <div class="swiper-slide postcard">
-                <a href="#none">
-                  <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
-                  <div class="contents">
-                    <h2 class="contents__title">타이틀</h2>
-                    <p class="contents__content">이것은 공지사항입니다.</p>
-                    <div class="contents__information">
-                      <span class="information-author">전영훈</span>
-                      <span class="information-date">2024-10-20</span>
-                    </div>
-                  </div>
-                </a>
-              </div>
-              <div class="swiper-slide postcard">
-                <a href="#none">
-                  <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
-                  <div class="contents">
-                    <h2 class="contents__title">타이틀</h2>
-                    <p class="contents__content">이것은 공지사항입니다.</p>
-                    <div class="contents__information">
-                      <span class="information-author">전영훈</span>
-                      <span class="information-date">2024-10-20</span>
-                    </div>
-                  </div>
-                </a>
-              </div>
-              <div class="swiper-slide postcard">
-                <a href="#none">
-                  <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
-                  <div class="contents">
-                    <h2 class="contents__title">타이틀</h2>
-                    <p class="contents__content">이것은 공지사항입니다.</p>
-                    <div class="contents__information">
-                      <span class="information-author">전영훈</span>
-                      <span class="information-date">2024-10-20</span>
-                    </div>
-                  </div>
-                </a>
-              </div>
+              <div class="swiper-slide postcard empty"></div>
+              <div class="swiper-slide postcard empty"></div>
             </div>
           </div>
           <div class="swiper-button-prev"></div>
@@ -129,16 +80,66 @@ export default function Main(cont) {
         </div>
       </div>
     </main>
-  `;
-
-  cont.innerHTML = `
-    ${mainHtml}
     ${workConfirmModal.render()}
   `;
+  container.innerHTML = mainHtml;
 
-  // 근무 시작/종료 모달 열기
-  const workStateBtn = document.getElementById('btn-work-state');
-  workStateBtn.addEventListener('click', async() => {
+  // 공지사항 목록 추가하기
+  let noticeData = [];
+  const fetchNoticeData = async() => {
+    try {
+      const response = await fetch('/api/notice');
+      const json = await response.json();
+      noticeData = json.data;
+
+      if (noticeData.length > 0) {
+        const postCont = document.querySelector('.postcard-container');
+        postCont.innerHTML = '';
+        noticeData.map(data => {
+          const card = `
+            <div class="swiper-slide postcard">
+              <a href="#none">
+                <img class="postcard-img" src="${data.thumb}" alt="Post Image" />
+                <div class="contents">
+                  <h2 class="contents__title">${data.title}</h2>
+                  <p class="contents__content">${data.content}</p>
+                  <div class="contents__information">
+                    <span class="information-author">${data.writer}</span>
+                    <span class="information-date">${data.creatat}</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          `;
+          postCont.insertAdjacentHTML('beforeend', card);
+        });
+      }
+      
+
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  fetchNoticeData();
+  
+  // swiper
+  const mainNoticeSwiper = new Swiper('.main-notice .swiper', {
+    slidesPerView: 1.2,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: '.main-notice .swiper-button-next',
+      prevEl: '.main-notice .swiper-button-prev',
+    },
+    breakpoints: {
+      769: {
+        slidesPerView: 2,
+      }
+    }
+  });
+
+  // 모달 열기/닫기 버튼 클릭
+  document.getElementById('btn-work-state').addEventListener('click', () => {
     // 현재 근무 상태 받아오기
     // try {
     //   const res = await fetch('', { // 근무 상태 관련 api url
@@ -149,32 +150,25 @@ export default function Main(cont) {
     // } catch (err) {
     //   console.error(err)
     // }
-
-    // if(true) {
-    //   popupEl.querySelector('.text').textContent = '근무를 시작하시겠습니까?';
-    // } else {
-    //   popupEl.querySelector('.text').textContent = '근무를 종료하시겠습니까?';
-    // }
-
     workConfirmModal.open();
   });
+  document.getElementById('cancelWorkBtn').addEventListener('click', () => {
+    workConfirmModal.close();
+  });
+
+  // 모달 확인 버튼
+  document.getElementById('confirmWorkBtn').addEventListener('click', () => {
+    // 근무 상태 보내기
+    // try {
+    //   const res = await fetch('', { // 근무 상태 관련 api url
+    //     method: "POST"
+    //   });
+    //   const result = await res.json();
+    //   if(true){}else{}
+    // } catch (err) {
+    //   console.error(err)
+    // }
+
+    workConfirmModal.close();
+  });
 }
-
-
-
-
-
-
-
-{/* <div class="dimmed" id="dimmed"></div>
-<div class="layer-popup confirm-work-popup" id="confirmWork">
-  <div>
-    <span>현재 시간</span>
-    <span>${nowTime}</span>
-  </div>
-  <p class="text">근무를 시작하시겠습니까?</p>
-  <div class="btn-box">
-    <button type="button" id="confirmWorkBtn" class="btn btn-solid confirm-popup-btn">확인</button>
-    <button type="button" class="btn btn-outline close-popup-btn">취소</button>
-  </div>
-</div> */}
