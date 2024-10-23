@@ -116,3 +116,52 @@
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none; /* 파이어폭스 */
 }
+
+/* 반응형 고민
+  태블릿 이하 디바이스에서 user-profile height 값 줄이기 or 기본값 사용하기
+
+ */
+/* 직원 상세 페이지 */
+.container .user-profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1%;
+  width: 100%;
+  height: 60rem;
+}
+
+.user-profile .profile-sub-info {
+  width: 20rem;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-profile .profile-sub-info img {
+  width: 90%;
+  border-radius: 1rem;
+}
+
+.user-profile .profile-main-info {
+  width: 25rem;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 1rem;
+  padding-top: -100px;
+}
+
+.user-profile .profile-main-info div {
+  font-size: 1.7rem;
+}
+
+.profile-main-info .badge {
+  width: 9rem;
+  font-size: 1.3rem;
+  padding: .8rem 1rem;
+}

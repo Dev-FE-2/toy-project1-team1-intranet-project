@@ -66,7 +66,6 @@
 						<li class="team">소속팀</li>
 						<li class="role">직급</li>
 						<li class="status">근무 상태</li>
-						<li></li> <!-- 아래 .cell에 정보 수정 버튼 추가되어서 위치 맞추려고 일단 추가해둠-->
 					</ul>
 				</li>
 				<li class="col">
@@ -82,9 +81,6 @@
 						<li class="role">사원</li>
 						<li class="user-status">
 							<div class="badge badge-success">ONLINE</div>
-						</li>
-						<li>
-							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
 						</li>
 					</ul>
 				</li>
@@ -102,9 +98,6 @@
 						<li class="user-status">
 							<div class="badge badge-error">OFFLINE</div>
 						</li>
-						<li>
-							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
-						</li>
 					</ul>
 				</li>
 				<li class="col">
@@ -120,9 +113,6 @@
 						<li class="role">사원</li>
 						<li class="user-status">
 							<div class="badge badge-success">근무 중</div>
-						</li>
-						<li>
-							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
 						</li>
 					</ul>
 				</li>
@@ -140,8 +130,21 @@
 						<li class="user-status">
 							<div class="badge badge-error">근무 중 아님</div>
 						</li>
-						<li>
-							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
 						</li>
 					</ul>
 				</li>
@@ -159,8 +162,21 @@
 						<li class="user-status">
 							<div class="badge badge-success">ONLINE</div>
 						</li>
-						<li>
-							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
 						</li>
 					</ul>
 				</li>
@@ -178,47 +194,9 @@
 						<li class="user-status">
 							<div class="badge badge-success">ONLINE</div>
 						</li>
-						<li>
+						<!-- <li>
 							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
-						</li>
-					</ul>
-				</li>
-				<li class="col">
-					<ul class="cell" role="list">
-						<li class="number">000001</li>
-						<li class="profile-img">
-							<div class="img-box">
-								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
-							</div>
-						</li>
-						<li class="name">홍길동</li>
-						<li class="team">개발팀</li>
-						<li class="role">사원</li>
-						<li class="user-status">
-							<div class="badge badge-success">ONLINE</div>
-						</li>
-						<li>
-							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
-						</li>
-					</ul>
-				</li>
-				<li class="col">
-					<ul class="cell" role="list">
-						<li class="number">000001</li>
-						<li class="profile-img">
-							<div class="img-box">
-								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
-							</div>
-						</li>
-						<li class="name">홍길동</li>
-						<li class="team">개발팀</li>
-						<li class="role">사원</li>
-						<li class="user-status">
-							<div class="badge badge-success">ONLINE</div>
-						</li>
-						<li>
-							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
-						</li>
+						</li> -->
 					</ul>
 				</li>
 					</ul>
@@ -393,7 +371,40 @@
 	MEDIA_QUERY_768.addEventListener('change', updateUserStatus)
 	MEDIA_QUERY_480.addEventListener('change', updateUserStatus)
 </script>
-<!-- [D] 입력형 팝업 열기/닫기 -->
+<!-- 직원 상세 페이지로 이동 -->
+<script>
+	// 일반 유저 계정 접속 -> 정보 수정 버튼 노출x
+	// 어드민 유저 계정 접속 -> 정보 수정 버튼 노출o
+	// 실제 유저 데이터와 연결 필요
+	const CONTAINER_DIV = document.querySelector('.container')
+	const renderUserInfo = () => {
+		CONTAINER_DIV.innerHTML = `
+			<h2>직원 상세 페이지</h2>
+			<div class='user-profile'>
+				
+				<div class='profile-sub-info'>
+					<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="기본유저이미지">
+					<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+				</div>
+				<div class='profile-main-info'>
+					<div>사번: 123456</div>
+					<div>이름: 홍길동</div>
+					<div>소속: 개발팀</div>
+					<div>직급: 사원</div>
+					<div>연락처: 010-0000-0000</div>
+					<div>이메일: 어쩌구@어쩌구.저쩌구</div>
+					<div class='badge badge-success'>ONLINE</div>
+				</div>
+			</div>
+		`
+	}
+	const USER_CELL = document.querySelectorAll('.cell')
+	
+	USER_CELL.forEach(user => {
+		user.addEventListener('click', renderUserInfo)
+	})
+</script>
+// <!-- [D] 입력형 팝업 열기/닫기 -->
 <script>
 	const dimmed = document.getElementById('dimmed');
 	const popupButtons = document.querySelectorAll('[data-popup]');
