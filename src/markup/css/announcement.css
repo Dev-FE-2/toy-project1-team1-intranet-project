@@ -3,7 +3,7 @@
   justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
-  width: 80%;
+  /* width: 80%; */
   margin: 0 auto;
   padding-bottom: 3rem;
 }
@@ -76,7 +76,7 @@
 .announcement .helper-text {
   width: 80%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 0;
 }
 
 .postcard-container.no-result {
@@ -89,7 +89,12 @@
 
 /* 뷰포트 768px 미만에서 실행될 스타일 */
 @media screen and (max-width: 768px) {
+  .container__flex {
+    display: block;
+  }
+
   .postcard-container {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
   }
 }

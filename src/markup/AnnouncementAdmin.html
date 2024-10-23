@@ -1,271 +1,197 @@
 <!doctype html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>공지사항</title>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search"
-    />
-    <link rel="stylesheet" href="/src/reset.css" />
-    <link rel="stylesheet" href="/src/style.css" />
-    <link rel="stylesheet" href="/src/common.css" />
-    <link rel="stylesheet" href="/src/components/layouts/header/header.css" />
-    <link rel="stylesheet" href="./css/announcement.css" />
-    <link rel="stylesheet" href="./css/AnnouncementAdmin.css">
-  </head>
 
-  <body>
-    <div>
-      <!-- [s] header 하드코딩 -->
-      <header class="header">
-        <div class="user-info-wrapper">
-          <div class="user-img-box">
-            <!-- 프로필 페이지 링크 넣기 -->
-            <a href="#none">
-              <img
-                src="https://cdn.pixabay.com/photo/2021/12/16/09/26/pomeranian-6874257_1280.jpg"
-                alt="프로필 이미지"
-              />
-            </a>
-          </div>
-          <div class="user-info">
-            <!-- 프로필 페이지 링크 넣기  -->
-            <a href="#none" class="user-name">홍길동</a>
-            <button type="button" class="logout">로그아웃</button>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>공지사항 : 관리자</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search" />
+  <link rel="stylesheet" href="/src/reset.css" />
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="stylesheet" href="/src/common.css" />
+  <link rel="stylesheet" href="/src/components/layouts/header/header.css" />
+  <link rel="stylesheet" href="./css/announcement.css" />
+  <link rel="stylesheet" href="./css/AnnouncementAdmin.css">
+</head>
+
+<body>
+  <div>
+    <!-- [s] header 하드코딩 -->
+    <header class="header">
+      <div class="user-info-wrapper">
+        <div class="user-img-box">
+          <!-- 프로필 페이지 링크 넣기 -->
+          <a href="#none">
+            <img src="https://cdn.pixabay.com/photo/2021/12/16/09/26/pomeranian-6874257_1280.jpg" alt="프로필 이미지" />
+          </a>
         </div>
-        <nav>
-          <ul>
-            <li>
-              <a href="#none"> 직원 정보 관리 </a>
-            </li>
-            <li>
-              <a href="#none"> 공지사항 관리 </a>
-            </li>
-          </ul>
-        </nav>
-      </header>
-      <!-- [e] header 하드코딩 -->
-      <div class="container announcement">
-        <div class="container__title title">
-          <h1 class="title">관리자용 공지사항</h1>
-          <div class="announcement__search-box">
-            <input type="search" placeholder="검색어를 입력하세요" />
-            <span class="material-symbols-outlined"> search </span>
-          </div>
-        </div>
-        <section class="postcard-container">
-          <div class="postcard">
-            <img
-              class="postcard-img"
-              src="./img/begin-again-5.webp"
-              alt="Post Image"
-            />
-            <div class="contents">
-              <h2 class="contents__title">타이틀</h2>
-              <p class="contents__content">이것은 공지사항입니다.</p>
-              <div class="contents__information">
-                <span class="information-author">전영훈</span>
-                <span class="information-date">2024-10-20</span>
-              </div>
-            </div>
-          </div>
-          <div class="postcard">
-            <img
-              class="postcard-img"
-              src="./img/begin-again-5.webp"
-              alt="Post Image"
-            />
-            <div class="contents">
-              <h2 class="contents__title">타이틀</h2>
-              <p class="contents__content">이것은 공지사항입니다.</p>
-              <div class="contents__information">
-                <span class="information-author">전영훈</span>
-                <span class="information-date">2024-10-20</span>
-              </div>
-            </div>
-          </div>
-          <div class="postcard">
-            <img
-              class="postcard-img"
-              src="./img/begin-again-5.webp"
-              alt="Post Image"
-            />
-            <div class="contents">
-              <h2 class="contents__title">타이틀</h2>
-              <p class="contents__content">이것은 공지사항입니다.</p>
-              <div class="contents__information">
-                <span class="information-author">전영훈</span>
-                <span class="information-date">2024-10-20</span>
-              </div>
-            </div>
-          </div>
-          <div class="postcard">
-            <img
-              class="postcard-img"
-              src="./img/begin-again-5.webp"
-              alt="Post Image"
-            />
-            <div class="contents">
-              <h2 class="contents__title">타이틀</h2>
-              <p class="contents__content">이것은 공지사항입니다.</p>
-              <div class="contents__information">
-                <span class="information-author">전영훈</span>
-                <span class="information-date">2024-10-20</span>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section class="postcard-container">
-          <div class="postcard">
-            <img
-              class="postcard-img"
-              src="./img/begin-again-5.webp"
-              alt="Post Image"
-            />
-            <div class="contents">
-              <h2 class="contents__title">타이틀</h2>
-              <p class="contents__content">이것은 공지사항입니다.</p>
-              <div class="contents__information">
-                <span class="information-author">전영훈</span>
-                <span class="information-date">2024-10-20</span>
-              </div>
-            </div>
-          </div>
-          <div class="postcard">
-            <img
-              class="postcard-img"
-              src="./img/begin-again-5.webp"
-              alt="Post Image"
-            />
-            <div class="contents">
-              <h2 class="contents__title">타이틀</h2>
-              <p class="contents__content">이것은 공지사항입니다.</p>
-              <div class="contents__information">
-                <span class="information-author">전영훈</span>
-                <span class="information-date">2024-10-20</span>
-              </div>
-            </div>
-          </div>
-          <div class="postcard">
-            <img
-              class="postcard-img"
-              src="./img/begin-again-5.webp"
-              alt="Post Image"
-            />
-            <div class="contents">
-              <h2 class="contents__title">타이틀</h2>
-              <p class="contents__content">이것은 공지사항입니다.</p>
-              <div class="contents__information">
-                <span class="information-author">전영훈</span>
-                <span class="information-date">2024-10-20</span>
-              </div>
-            </div>
-          </div>
-          <div class="postcard">
-            <img
-              class="postcard-img"
-              src="./img/begin-again-5.webp"
-              alt="Post Image"
-            />
-            <div class="contents">
-              <h2 class="contents__title">타이틀</h2>
-              <p class="contents__content">이것은 공지사항입니다.</p>
-              <div class="contents__information">
-                <span class="information-author">전영훈</span>
-                <span class="information-date">2024-10-20</span>
-              </div>
-            </div>
-          </div>
-        </section>
-        <button class="btn btn-solid add-announcement-btn">공지사항 등록</button>
-        <div class="pagination">
-          <ul class="paging-list" role="list">
-            <li class="paging-item prev">
-              <button class="btn" type="button" aria-label="이전 페이지">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 34 34"
-                >
-                  <line
-                    x1="20"
-                    y1="6"
-                    x2="12"
-                    y2="17"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  ></line>
-                  <line
-                    x1="12"
-                    y1="17"
-                    x2="20"
-                    y2="28"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  ></line>
-                </svg>
-              </button>
-            </li>
-            <!-- [D] 활성화된 li.is-active 클래스 추가 -->
-            <li class="paging-item is-active" aria-current="page">
-              <a href="javascript:void(0);">1</a>
-            </li>
-            <li class="paging-item"><a href="javascript:void(0);">2</a></li>
-            <li class="paging-item"><a href="javascript:void(0);">3</a></li>
-            <li class="paging-item"><a href="javascript:void(0);">4</a></li>
-            <li class="paging-item"><a href="javascript:void(0);">5</a></li>
-            <li class="paging-item next">
-              <button class="btn" type="button" aria-label="다음 페이지">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 34 34"
-                >
-                  <line
-                    x1="14"
-                    y1="6"
-                    x2="22"
-                    y2="17"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  ></line>
-                  <line
-                    x1="22"
-                    y1="17"
-                    x2="14"
-                    y2="28"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  ></line>
-                </svg>
-              </button>
-            </li>
-          </ul>
+        <div class="user-info">
+          <!-- 프로필 페이지 링크 넣기  -->
+          <a href="#none" class="user-name">홍길동</a>
+          <button type="button" class="logout">로그아웃</button>
         </div>
       </div>
+      <nav>
+        <ul>
+          <li>
+            <a href="#none"> 직원 정보 관리 </a>
+          </li>
+          <li>
+            <a href="#none"> 공지사항 관리 </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <!-- [e] header 하드코딩 -->
+    <div class="container announcement">
+      <div class="container__flex title">
+        <h1 class="title">관리자용 공지사항</h1>
+        <div class="announcement__search-box">
+          <input type="search" placeholder="검색어를 입력하세요" />
+          <span class="material-symbols-outlined"> search </span>
+        </div>
+      </div>
+      <section class="postcard-container">
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="postcard-container">
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+        <div class="postcard">
+          <img class="postcard-img" src="./img/begin-again-5.webp" alt="Post Image" />
+          <div class="contents">
+            <h2 class="contents__title">타이틀</h2>
+            <p class="contents__content">이것은 공지사항입니다.</p>
+            <div class="contents__information">
+              <span class="information-author">전영훈</span>
+              <span class="information-date">2024-10-20</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <button class="btn btn-solid add-announcement-btn">공지사항 등록</button>
+      <div class="pagination">
+        <ul class="paging-list" role="list">
+          <li class="paging-item prev">
+            <button class="btn" type="button" aria-label="이전 페이지">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
+                <line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                </line>
+                <line x1="12" y1="17" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                </line>
+              </svg>
+            </button>
+          </li>
+          <!-- [D] 활성화된 li.is-active 클래스 추가 -->
+          <li class="paging-item is-active" aria-current="page">
+            <a href="javascript:void(0);">1</a>
+          </li>
+          <li class="paging-item"><a href="javascript:void(0);">2</a></li>
+          <li class="paging-item"><a href="javascript:void(0);">3</a></li>
+          <li class="paging-item"><a href="javascript:void(0);">4</a></li>
+          <li class="paging-item"><a href="javascript:void(0);">5</a></li>
+          <li class="paging-item next">
+            <button class="btn" type="button" aria-label="다음 페이지">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
+                <line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                </line>
+                <line x1="22" y1="17" x2="14" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                </line>
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
-    </div>
-    <script>
-      const APP_DIV = document.querySelector('#app')
-      const CONTAINER_DIV = document.querySelector('.container')
-      const ADD_BTN = document.querySelector('.add-announcement-btn')
-      const REGISTER_ANNOUNCEMENT_BTN = document.querySelector('.register-announcement-btn')
-      const CLOSE_BTN = document.querySelector('.close-btn')
-      const IMG_PREVIEW = document.querySelector('.img-preview')
-      const UPLOAD_IMG_BTN = document.querySelector('.upload-img-btn')
-      const DELETE_IMG_BTN = document.querySelector('.delete-img-btn')
-      const DEFAULT_IMG = 'https://img.freepik.com/free-photo/megaphone-with-empty-sign-or-copy-space-symbol-background-3d-illustration_56104-2047.jpg?w=1380&t=st=1729584513~exp=1729585113~hmac=155c02f87c529cf5fea7b341f62fd12f6219969498c325f816ec34e2d9d71c22'
-      const renderAddNotice = () => {
-        CONTAINER_DIV.innerHTML = `
+  </div>
+  </div>
+  <script>
+    const APP_DIV = document.querySelector('#app')
+    const CONTAINER_DIV = document.querySelector('.container')
+    const ADD_BTN = document.querySelector('.add-announcement-btn')
+    const REGISTER_ANNOUNCEMENT_BTN = document.querySelector('.register-announcement-btn')
+    const CLOSE_BTN = document.querySelector('.close-btn')
+    const IMG_PREVIEW = document.querySelector('.img-preview')
+    const UPLOAD_IMG_BTN = document.querySelector('.upload-img-btn')
+    const DELETE_IMG_BTN = document.querySelector('.delete-img-btn')
+    const DEFAULT_IMG = 'https://img.freepik.com/free-photo/megaphone-with-empty-sign-or-copy-space-symbol-background-3d-illustration_56104-2047.jpg?w=1380&t=st=1729584513~exp=1729585113~hmac=155c02f87c529cf5fea7b341f62fd12f6219969498c325f816ec34e2d9d71c22'
+    const renderAddNotice = () => {
+      CONTAINER_DIV.innerHTML = `
               <div class="add-notice-wrapper">
 
         <div class="add-notice-content">
@@ -290,23 +216,24 @@
 
       </div>
         `
-      }
+    }
 
-      ADD_BTN.addEventListener('click', renderAddNotice);
-      CLOSE_BTN.addEventListener('click', ) // 나가진다는 알림 + 컨펌 시 renderNoticePage(임시로 정함)
-      REGISTER_ANNOUNCEMENT_BTN.addEventListener('click', ) // 공지 이미지 및 내용 DB 저장
+    ADD_BTN.addEventListener('click', renderAddNotice);
+    CLOSE_BTN.addEventListener('click',) // 나가진다는 알림 + 컨펌 시 renderNoticePage(임시로 정함)
+    REGISTER_ANNOUNCEMENT_BTN.addEventListener('click',) // 공지 이미지 및 내용 DB 저장
 
-      // IMG_PREVIEW
-      // UPLOAD_IMG_BTN => <input type='file' /> 연결
-      // DELETE_IMG_BTN
-      // DEFAULT_IMG
-      // renderAddNotice 최초 렌더링 시 IMG_PREVIEW에 DEFAULT_IMG 삽입
-      // UPLOAD_IMG_BTN 클릭 후 이미지 파일 등록 시 해당 이미지 IMG_PREVIEW에 삽입
-      // DELETE_IMG_BTN 클릭 후 컨펌 시 IMG_PREVIEW에 DEFAULT_IMG 삽입
-      // REGISTER_ANNOUNCEMENT_BTN 클릭 시 공지 제목, 공지 내용 빈 값인 지 확인
-      // IMG_PREVIEW에 있는 이미지 파일, 제목, 내용 DB 저장
+    // IMG_PREVIEW
+    // UPLOAD_IMG_BTN => <input type='file' /> 연결
+    // DELETE_IMG_BTN
+    // DEFAULT_IMG
+    // renderAddNotice 최초 렌더링 시 IMG_PREVIEW에 DEFAULT_IMG 삽입
+    // UPLOAD_IMG_BTN 클릭 후 이미지 파일 등록 시 해당 이미지 IMG_PREVIEW에 삽입
+    // DELETE_IMG_BTN 클릭 후 컨펌 시 IMG_PREVIEW에 DEFAULT_IMG 삽입
+    // REGISTER_ANNOUNCEMENT_BTN 클릭 시 공지 제목, 공지 내용 빈 값인 지 확인
+    // IMG_PREVIEW에 있는 이미지 파일, 제목, 내용 DB 저장
 
-      // 공지 등록 페이지에서 popstate 이벤트 발생 시 공지 리스트 페이지로 이동 => 작성한 내용이 있다면 이동 전 알림, 컨펌 후 이동
-    </script>
-  </body>
+    // 공지 등록 페이지에서 popstate 이벤트 발생 시 공지 리스트 페이지로 이동 => 작성한 내용이 있다면 이동 전 알림, 컨펌 후 이동
+  </script>
+</body>
+
 </html>
