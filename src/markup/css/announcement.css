@@ -10,10 +10,13 @@
 
 /* Postcard */
 .postcard-container {
-  flex: 1;
-  margin: 2rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
   gap: 3rem;
+  margin: 2rem;
+  padding: 0;
+  list-style: none;
 }
 
 .postcard {
