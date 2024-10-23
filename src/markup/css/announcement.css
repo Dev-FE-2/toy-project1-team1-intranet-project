@@ -1,11 +1,11 @@
-/* announcement에서만 사용할 css */
-
 .announcement .announcement__search-box {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
-  margin-right: 3rem;
+  width: 80%;
+  margin: 0 auto;
+  padding-right: 2rem;
 }
 
 /* Postcard */
@@ -14,8 +14,9 @@
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: auto;
   gap: 3rem;
-  margin: 2rem;
-  padding: 0;
+  width: 80%;
+  margin: 0 auto;
+  padding: 2rem;
   list-style: none;
 }
 
@@ -68,7 +69,9 @@
 
 /* 검색결과 없는 경우 */
 .announcement .helper-text {
-  margin: 2rem;
+  width: 80%;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 .postcard-container.no-result {
@@ -77,4 +80,11 @@
   text-align: center;
   background-color: var(--gray3);
   border-radius: 0.5rem;
+}
+
+/* 뷰포트 768px 미만에서 실행될 스타일 */
+@media screen and (max-width: 768px) {
+  .postcard-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
