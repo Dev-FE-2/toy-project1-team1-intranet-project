@@ -9,13 +9,16 @@ import {
 } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import firebaseConfig from '../../../firebaseConfig';
+
+// export const join = () => {
+//   // 초기 렌더링 = 로그인 폼
+//   renderLoginForm();
+// }
+
 // Firebase 초기화
 const APP = initializeApp(firebaseConfig);
 const AUTH = getAuth(APP);
 const DB = getFirestore(APP);
-
-// div#app 요소 가져옴
-const APP_DIV = document.querySelector('#app');
 
 // ========================== 로그인 ==========================
 // 로그인 폼 렌더링 함수
@@ -54,9 +57,8 @@ const handleLogin = async () => {
   const ERROR_MESSAGE = document.querySelector('.error-message');
   const LOGIN_BUTTON = document.querySelector('.login-button');
 
-
   try {
-    LOGIN_BUTTON.disabled = true
+    LOGIN_BUTTON.disabled = true;
 
     // Firebase Authentication 로그인
     const USER_CREDENTIAL = await signInWithEmailAndPassword(
@@ -71,7 +73,7 @@ const handleLogin = async () => {
 
     if (USER_DOC.exists()) {
       const USER_DATA = USER_DOC.data();
-      if(USER_DATA.isAdmin) {
+      if (USER_DATA.isAdmin) {
         // 관리자 페이지로 이동
       } else {
         // 일반 메인 페이지로 이동
@@ -101,7 +103,7 @@ const handleLogin = async () => {
         ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
     }
   } finally {
-    LOGIN_BUTTON.disabled = false
+    LOGIN_BUTTON.disabled = false;
   }
 };
 
@@ -367,5 +369,15 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
   }
 };
 
-// 초기 렌더링 = 로그인 폼
-renderLoginForm();
+const initJoinPage = container => {
+  if (!container) {
+    console.error('container가 없어!');
+    return;
+  }
+
+  window.APP_DIV = container;
+
+  renderLoginForm();
+};
+
+export default initJoinPage

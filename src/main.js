@@ -3,6 +3,7 @@
 // import download from './pages/Download';
 // import pageNotFound from './pages/PageNotFound';
 import Main from './pages/front/Main';
+import initJoinPage from './pages/join/join';
 
 const loadStylesheet = href => {
   const existingLink = document.querySelector('link[data-role="page-style"]');
@@ -62,6 +63,10 @@ const route = () => {
     // case '/support':
     //   content.innerHTML = supportPage.render(); //클래스로 정의하는 방식
     //   break;
+    case '/join':
+      loadStylesheet('./src/pages/join/join.css')
+      initJoinPage(content)
+      break;
     default:
       content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식
       break;
