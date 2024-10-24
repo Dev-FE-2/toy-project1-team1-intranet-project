@@ -57,7 +57,8 @@ const route = () => {
     //   content.innerHTML = '<h1>About</h1>'; //루트 경로. 하드코딩2
     //   break;
     case '/Announcement':
-      content.innerHTML = Announcement();
+      // content.innerHTML = Announcement();
+      content.append(Announcement());
       loadStylesheet('/src/pages/front/announcement.css');
       break;
     // case '/support':
@@ -70,3 +71,12 @@ const route = () => {
 };
 
 document.addEventListener('DOMContentLoaded', app); // 돔이 모두 로드되면 app()실행
+
+export default function Button(payload = {}) {
+  const { className = '', slot = '', onClick = () => {} } = payload;
+  const el = document.createElement('button');
+  el.className = `btn ${className}`;
+  el.innerHTML = slot;
+  el.addEventListener('click', onClick);
+  return el;
+}

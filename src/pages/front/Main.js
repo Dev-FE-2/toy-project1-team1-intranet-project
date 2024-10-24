@@ -27,7 +27,7 @@ export default function Main(container) {
     buttons: `
       <button type="button" id="confirmWorkBtn" class="btn btn-solid confirm-popup-btn">확인</button>
       <button type="button" id="cancelWorkBtn" class="btn btn-outline close-popup-btn">취소</button>
-    `
+    `,
   });
 
   const mainHtml = `
@@ -86,7 +86,7 @@ export default function Main(container) {
 
   // 공지사항 목록 추가하기
   let noticeData = [];
-  const fetchNoticeData = async() => {
+  const fetchNoticeData = async () => {
     try {
       const response = await fetch('/api/notice');
       const json = await response.json();
@@ -114,15 +114,12 @@ export default function Main(container) {
           postCont.insertAdjacentHTML('beforeend', card);
         });
       }
-      
-
-
     } catch (err) {
       console.error(err);
     }
   };
   fetchNoticeData();
-  
+
   // swiper
   const mainNoticeSwiper = new Swiper('.main-notice .swiper', {
     slidesPerView: 1.2,
@@ -134,8 +131,8 @@ export default function Main(container) {
     breakpoints: {
       769: {
         slidesPerView: 2,
-      }
-    }
+      },
+    },
   });
 
   // 모달 열기/닫기 버튼 클릭
