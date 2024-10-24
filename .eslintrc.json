@@ -1,5 +1,5 @@
 {
-  "extends": ["airbnb","prettier"],
+  "extends": ["airbnb", "prettier"],
   "env": {
     "browser": true,
     "node": true,
@@ -17,6 +17,6 @@
     }
   },
   "rules": {
-    // "no-unused-vars": "warn"
+    "no-unused-vars": "false"
   }
 }
