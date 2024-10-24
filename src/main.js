@@ -72,7 +72,6 @@ const route = async () => {
     //   content.innerHTML = employeeList()
     //   break
     case '/admin':
-      // const adminContent = await employeeList();
       content.innerHTML = '';
       content.appendChild(await employeeList());
       break;
