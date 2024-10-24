@@ -211,7 +211,7 @@ const renderSignupForm = () => {
   const validatePassword = () =>
     validateInput(
       SIGNUP_PASSWORD,
-      input => /^[a-z0-9]{6,15}$/.test(input.value),
+      input => /^(?=.*[a-z])(?=.*\d)[a-z0-9]{6,15}$/.test(input.value),
       '.password-error',
       '6~15자의 영문 소문자, 숫자만을 사용해 주세요.',
     );
