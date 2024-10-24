@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>부재 내역 및 신청</title>
+	<link rel="stylesheet" href="/src/reset.css">
+	<link rel="stylesheet" href="/src/style.css">
+	<link rel="stylesheet" href="/src/common.css">
+	<link rel="stylesheet" href="/src/components/layouts/header/header.css">
+	<link rel="stylesheet" href="./css/absencePortal.css">
+</head>
+
+<body>
+	<!-- [s] header 하드코딩 -->
+	<header class="header">
+		<div class="user-info-wrapper">
+			<div class="user-img-box">
+				<!-- 프로필 페이지 링크 넣기 -->
+				<a href="#none">
+					<img src="https://cdn.pixabay.com/photo/2021/12/16/09/26/pomeranian-6874257_1280.jpg" alt="프로필 이미지">
+				</a>
+			</div>
+			<div class="user-info">
+				<!-- 프로필 페이지 링크 넣기 -->
+				<a href="#none" class="user-name">홍길동</a>
+				<button type="button" class="logout">로그아웃</button>
+			</div>
+		</div>
+		<nav>
+			<ul>
+				<li>
+					<a href="#none">
+						메뉴1
+					</a>
+				</li>
+				<li>
+					<a href="#none">
+						메뉴2
+					</a>
+				</li>
+				<li>
+					<a href="#none">
+						일이삼사오육칠팔
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</header>
+	<!-- [e] header 하드코딩 -->
+	<div class="container absence-portal">
+		<h1 class="title">부재 내역 및 신청</h1>
+		<div class="table-header">
+			<label for="view-filter" class="visually-hidden">조회 필터</label>
+			<select id="view-filter" name="view-filter" required>
+				<option value="all" selected>전체보기</option>
+				<option value="am-half">오전반차</option>
+				<option value="pm-half">오후반차</option>
+				<option value="annual">연차</option>
+				<option value="official">공가</option>
+				<option value="sick">병가</option>
+				<option value="alternative">대체휴가</option>
+			</select>
+			<button class="btn btn-solid" data-popup="lp1">부재 신청</button>
+		</div>
+		<div class="table-body">
+			<ul class="table" role="list" aria-label="부재 목록">
+				<li class="col">
+					<ul class="head" role="list-head">
+						<li class="type">구분</li>
+						<li class="date">일자</li>
+						<li class="status">처리상태</li>
+						<li class="reason">신청사유</li>
+						<li class="etc">비고</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="type">반차</li>
+						<li class="date">0000.00.00</li>
+						<li class="status">
+							<div class="badge badge-warn">처리중</div>
+						</li>
+						<li class="reason text-clamp">개인사유</li>
+						<li class="etc text-clamp"></li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="type">연차</li>
+						<li class="date">0000.00.00</li>
+						<li class="status">
+							<div class="badge badge-success">처리완료</div>
+						</li>
+						<li class="reason text-clamp">사유가 매우 길어질 경우...</li>
+						<li class="etc text-clamp"></li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="type">공가</li>
+						<li class="date">0000.00.00</li>
+						<li class="status">
+							<div class="badge badge-error">반려</div>
+						</li>
+						<li class="reason text-clamp">-</li>
+						<li class="etc text-clamp">사유 불충분으로 반려</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div class="pagination">
+			<ul class="paging-list" role="list">
+				<li class="paging-item prev">
+					<button type="button" aria-label="이전 페이지">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
+							<line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+							<line x1="12" y1="17" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+							</line>
+						</svg>
+					</button>
+				</li>
+				<!-- [D] 활성화된 li.is-active 클래스 추가 -->
+				<li class="paging-item is-active" aria-current="page">
+					<a href="javascript:void(0);">1</a>
+				</li>
+				<li class="paging-item"><a href="javascript:void(0);">2</a></li>
+				<li class="paging-item"><a href="javascript:void(0);">3</a></li>
+				<li class="paging-item"><a href="javascript:void(0);">4</a></li>
+				<li class="paging-item"><a href="javascript:void(0);">5</a></li>
+				<li class="paging-item next">
+					<button type="button" aria-label="다음 페이지">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
+							<line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+							<line x1="22" y1="17" x2="14" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+							</line>
+						</svg>
+					</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="dimmed" id="dimmed"></div>
+	<div class="layer-popup" id="lp1" role="dialog" aria-labelledby="popupTitle" aria-modal="true">
+		<h2 id="popupTitle" class="title">휴가 신청</h2>
+		<div class="cont">
+			<div class="info-box text-success">잔여 연차 <span>5.5</span>일</div>
+			<form action="" method="post">
+				<ul class="input-list">
+					<li>
+						<label for="absence-type">구분</label>
+						<select class="" id="absence-type" name="absence-type" required>
+							<option value="" selected disabled>휴가 종류</option>
+							<option value="am-half">오전반차</option>
+							<option value="pm-half">오후반차</option>
+							<option value="annual">연차</option>
+							<option value="official">공가</option>
+							<option value="sick">병가</option>
+							<option value="alternative">대체휴가</option>
+						</select>
+						<p class="helper-text"></p>
+					</li>
+					<li>
+						<label for="absence-date">기간</label>
+						<input class="error" type="text" name="absence-date" placeholder="YYYY-MM-DD" id="datepicker" readonly>
+						<p class="helper-text">잔여 휴가일수가 부족합니다.</p>
+					</li>
+					<li>
+						<label for="reason">사유 입력&#40;&#42;50자 이내&#41;</label>
+						<textarea class="success" id="reason" name="reason" placeholder="사유를 입력하세요" required
+							maxlength="50"></textarea>
+						<p class="helper-text">폼 벨리데이션 헬퍼텍스트</p>
+					</li>
+					<li>
+						<label for="file">증빙파일 첨부 &#40;&#42;.jpeg, png, 5MB 이하&#41;</label>
+						<input class="error" type="file" id="file" name="file" accept=".jpg, .png">
+						<p class="helper-text">용량 초과</p>
+					</li>
+				</ul>
+				<div class="btn-box">
+					<button type="submit" class="btn btn-solid">신청</button>
+					<button type="button" class="btn btn-outline" id="cancelBtn">취소</button>
+				</div>
+			</form>
+		</div>
+		<button type="button" class="close" aria-label="팝업 닫기" title="팝업 닫기" id="closePopupBtn">
+			<svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+				<line x1="8" y1="8" x2="26" y2="26" stroke="black" stroke-width="1" stroke-linecap="round" />
+				<line x1="8" y1="26" x2="26" y2="8" stroke="black" stroke-width="1" stroke-linecap="round" />
+			</svg>
+		</button>
+	</div>
+</body>
+<!-- [D] 날짜 선택 (모듈 방식으로 적용 필요/정책 확립 필요) -->
+<script src="https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js"></script>
+<script>
+	const pickerElement = document.getElementById('datepicker');
+	const absenceType = document.getElementById('absence-type');
+	let picker = null;
+
+	absenceType.addEventListener('change', (e) => {
+		const selectedType = e.target.value;
+
+		if (picker) picker.destroy();
+
+		if (['am-half', 'pm-half'].includes(selectedType)) {
+			// 반차: 단일 날짜 + 시간선택
+			picker = new easepick.create({
+				element: pickerElement,
+				css: [
+					'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',
+				],
+				lang: 'ko-KR',
+				autoApply: false,
+				locale: {
+					cancel: '닫기',
+					apply: '저장',
+				},
+				plugins: ['TimePlugin', 'LockPlugin'],
+				TimePlugin: {
+					startTime: '09:00',  // 오전반차인 경우 9:00 시 고정, 오후 반차인 경우 14:00 시 고정 
+					endTime: '18:00',    // 종료 시간 기본값
+					// minutesInterval: 60,
+				},
+				calendars: 1,
+				LockPlugin: {
+					filter(date, picked) {
+						return [0, 6].includes(date.getDay());
+					}
+				},
+				format: 'YYYY-MM-DD HH:mm' + '시 부터 4시간',
+				setup(picker) {
+					picker.on('select', (event) => {
+						console.log(picker)
+						const { date } = event.detail;
+						if (date instanceof Date) {
+							console.log(date)
+						}
+					});
+				}
+			});
+		} else {
+			// 연차, 공가, 병가: 날짜 범위 선택 + 주말 제외
+			picker = new easepick.create({
+				element: pickerElement,
+				css: [
+					'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',
+				],
+				lang: 'ko-KR',
+				autoApply: false,
+				locale: {
+					cancel: '닫기',
+					apply: '저장',
+				},
+				plugins: ['RangePlugin', 'LockPlugin'],
+				RangePlugin: {
+					locale: {
+						one: '일',
+						other: '일간',
+					},
+					maxDays: 5 // 내 연차일에 맞는 최대 선택 가능일수 뿌려주기 
+				},
+				LockPlugin: {
+					filter(date, picked) {
+						return [0, 6].includes(date.getDay());
+					}
+				},
+				format: 'YYYY-MM-DD',
+				setup(picker) {
+					picker.on('select', (event) => {
+						console.log(picker)
+						console.log(event.detail)
+					});
+				}
+			});
+		}
+	});
+
+</script>
+<!-- [D] 입력형 팝업 열기/닫기 -->
+<script>
+	const dimmed = document.getElementById('dimmed');
+	const popupButtons = document.querySelectorAll('[data-popup]');
+
+	popupButtons.forEach(button => {
+		button.addEventListener('click', (e) => {
+			const popupId = e.currentTarget.getAttribute('data-popup');
+			openPopup(popupId);
+		});
+	});
+
+	const openPopup = (popupId) => {
+		const popup = document.getElementById(popupId);
+		const popupCont = popup.querySelector('.cont');
+		popup.classList.add('is-active');
+		popupCont.scrollTo(0, 0);
+		dimmed.classList.add('is-active');
+		popup.setAttribute('aria-hidden', 'false');
+
+		document.body.style.overflow = 'hidden';
+	};
+
+	document.querySelectorAll('.close, #cancelBtn').forEach(btn => {
+		btn.addEventListener('click', (e) => {
+			if (confirm("작성중인 내용이 저장되지 않습니다. 팝업을 닫으시겠습니까?")) {
+				const popup = e.target.closest('.layer-popup');
+				if (popup) closePopup(popup.id);
+			} else {
+				return false;
+			}
+		});
+	});
+
+	const closePopup = (popupId) => {
+		const popup = document.getElementById(popupId);
+		const inputs = popup.querySelectorAll('input, textarea, select');
+
+		popup.classList.remove('is-active');
+		dimmed.classList.remove('is-active');
+		popup.setAttribute('aria-hidden', 'true');
+		document.body.style.overflow = '';
+
+		inputs.forEach(input => {
+			if (input.tagName.toLowerCase() === 'input' || input.tagName.toLowerCase() === 'textarea') {
+				input.value = '';
+			} else if (input.tagName.toLowerCase() === 'select') {
+				input.selectedIndex = 0;
+			}
+		});
+	};
+</script>
+
+
+</html>

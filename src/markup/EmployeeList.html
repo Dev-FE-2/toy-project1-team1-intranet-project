@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>직원 목록</title>
+	<link
+	rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search"
+/>
+	<link rel="stylesheet" href="/src/reset.css">
+	<link rel="stylesheet" href="/src/style.css">
+	<link rel="stylesheet" href="/src/common.css">
+	<link rel="stylesheet" href="/src/components/layouts/header/header.css">
+	<link rel="stylesheet" href="./css/employeeList.css">
+</head>
+
+<body>
+	<!-- [s] header 하드코딩 -->
+	<header class="header">
+		<div class="user-info-wrapper">
+			<div class="user-img-box">
+				<!-- 프로필 페이지 링크 넣기 -->
+				<a href="#none">
+					<img src="https://cdn.pixabay.com/photo/2021/12/16/09/26/pomeranian-6874257_1280.jpg" alt="프로필 이미지">
+				</a>
+			</div>
+			<div class="user-info">
+				<!-- 프로필 페이지 링크 넣기 -->
+				<a href="#none" class="user-name">홍길동</a>
+				<button type="button" class="logout">로그아웃</button>
+			</div>
+		</div>
+		<nav>
+			<ul>
+				<li>
+					<a href="#none">
+						직원 정보 관리
+					</a>
+				</li>
+				<li>
+					<a href="#none">
+						공지사항 관리
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</header>
+	<!-- [e] header 하드코딩 -->
+	<div class="container employee-List">
+		<div class="container-header">
+			<h1 class="title">직원 목록</h1>
+			<div class="search-box">
+				<input type="search" placeholder="어쩌구를 검색하세요.">
+				<span class="material-symbols-outlined"> search </span>
+			</div>
+		</div>
+		<div class="table-body">
+			<ul class="table" role="list" aria-label="직원 목록">
+				<li class="col">
+					<ul class="head" role="list-head">
+						<li class="number">사번</li>
+						<li class="profile-img">사진</li>
+						<li class="name">이름</li>
+						<li class="team">소속팀</li>
+						<li class="role">직급</li>
+						<li class="status">근무 상태</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-error">OFFLINE</div>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">근무 중</div>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-error">근무 중 아님</div>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+					</ul>
+				</li>
+				<li class="col">
+					<ul class="cell" role="list">
+						<li class="number">000001</li>
+						<li class="profile-img">
+							<div class="img-box">
+								<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="프로필 이미지 미리보기">
+							</div>
+						</li>
+						<li class="name">홍길동</li>
+						<li class="team">개발팀</li>
+						<li class="role">사원</li>
+						<li class="user-status">
+							<div class="badge badge-success">ONLINE</div>
+						</li>
+						<!-- <li>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+						</li> -->
+					</ul>
+				</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div class="pagination">
+			<ul class="paging-list" role="list">
+				<li class="paging-item prev">
+					<button class="btn" type="button" aria-label="이전 페이지">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
+							<line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+							<line x1="12" y1="17" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+							</line>
+						</svg>
+					</button>
+				</li>
+				<!-- [D] 활성화된 li.is-active 클래스 추가 -->
+				<li class="paging-item is-active" aria-current="page">
+					<a href="javascript:void(0);">1</a>
+				</li>
+				<li class="paging-item"><a href="javascript:void(0);">2</a></li>
+				<li class="paging-item"><a href="javascript:void(0);">3</a></li>
+				<li class="paging-item"><a href="javascript:void(0);">4</a></li>
+				<li class="paging-item"><a href="javascript:void(0);">5</a></li>
+				<li class="paging-item next">
+					<button class="btn" type="button" aria-label="다음 페이지">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
+							<line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+							<line x1="22" y1="17" x2="14" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+							</line>
+						</svg>
+					</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="dimmed" id="dimmed"></div>
+	<div class="layer-popup" id="lp2" role="dialog" aria-labelledby="popupTitle" aria-modal="true">
+		<h2 id="popupTitle" class="title">직원 정보 수정</h2>
+		<div class="cont">
+			<form action="" method="post">
+				<ul class="input-list">
+					<li>
+						<div class="img-box">
+							<img id="profileImagePreview" src="https://www.studiopeople.kr/common/img/default_profile.png"
+								alt="프로필 이미지 미리보기">
+						</div>
+						<button class="btn btn-outline" type="button" id="changeImageBtn">변경</button>
+						<input type="file" id="profileImageInput" accept=".jpg, .png" style="display: none;">
+					</li>
+					<li>
+						<label for="">이름</label>
+						<input type="text" id="" name="" placeholder="홍길동">
+					</li>
+					<li>
+						<label for="">소속</label>
+						<select id="" name="">
+							<option value="">선택</option>
+							<option value="">기획팀</option>
+							<option value="">디자인팀</option>
+							<option value="" selected>개발팀</option>
+							<option value="">QA팀</option>
+							<option value="">인사팀</option>
+							<option value="">재무팀</option>
+							<option value="">고객지원팀</option>
+							<option value="">영업팀</option>
+						</select>
+					</li>
+					<li>
+						<label for="">직급</label>
+						<select id="" name="">
+							<option value="">선택</option>
+							<option value="" selected>사원</option>
+							<option value="">주임</option>
+							<option value="">선임</option>
+							<option value="">책임</option>
+							<option value="">수석</option>
+							<option value="">실장</option>
+							<!-- 📌 직급 추가 필요한가? -->
+						</select>
+					</li>
+					<li>
+						<label for="">연락처</label>
+						<input type="tel" id="" name="" placeholder="010-0000-0000">
+						<p class="helper-text"></p>
+
+						<!-- [D] 유효하지 않은 양식인 경우:  punt 태그와 helper-text 각각 .error 클래스 추가 -->
+						<input class="error" type="tel" id="" name="" placeholder="'-'를 제외하고 입력하세요">
+						<p class="helper-text">올바른 양식이 아닙니다.</p>
+
+						<!-- [D] 유효한 양식인 경우: ipunt 태그와 helper-text 각각 text-success 클래스 추가 -->
+						<!-- <input class="success" type="tel" id="" name="" placeholder="'-'를 제외하고 입력하세요"> -->
+						<!-- <p class="helper-text">유효한 양식</p> -->
+					</li>
+					<li>
+						<label for="">E-mail</label>
+						<input type="email" id="" name="" placeholder="abcd@company.com">
+					</li>
+
+					<!-- [D] textarea 이용하는 경우 -->
+					<!-- <li>
+                        <label for="">자택 주소</label>
+                        <textarea id="" name="" placeholder=""></textarea>
+                    </li> -->
+
+					<!-- [D] 주소찾기 api 이용하는 경우 예시 -->
+					<li class="zipcode-field">
+						<label for="">자택 주소</label>
+						<div class="input-double">
+							<input type="text" id="postcode" placeholder="우편번호">
+							<button class="btn btn-outline" type="button" id="findAddressBtn" value="" button>검색</button>
+						</div>
+						<div class="input-default">
+							<input type="text" id="address" placeholder="주소">
+						</div>
+						<div class="input-default">
+							<input type="text" id="detail-address" placeholder="상세 주소">
+						</div>
+					</li>
+				</ul>
+				<div class="btn-box">
+					<button type="submit" class="btn btn-solid">수정</button>
+					<button type="button" class="btn btn-outline" id="cancelBtn">취소</button>
+				</div>
+			</form>
+		</div>
+		<button type="button" class="close" aria-label="팝업 닫기" title="팝업 닫기" id="closePopupBtn">
+			<svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+				<line x1="8" y1="8" x2="26" y2="26" stroke="black" stroke-width="1" stroke-linecap="round" />
+				<line x1="8" y1="26" x2="26" y2="8" stroke="black" stroke-width="1" stroke-linecap="round" />
+			</svg>
+		</button>
+	</div>
+</body>
+<!-- 디바이스 너비에 따라 사용자 근무 상태 제어 -->
+<script>
+	const USER_STATUS = document.querySelectorAll('.user-status .badge')
+	const MEDIA_QUERY_1230 = window.matchMedia('(max-width: 1230px)')
+	const MEDIA_QUERY_768 = window.matchMedia('(max-width: 768px)')
+	const MEDIA_QUERY_480 = window.matchMedia('(max-width: 480px)')
+
+	const USER_STATUS_OG_VALUE = [...USER_STATUS].map(value => value.textContent)
+
+	const updateUserStatus = () => {
+
+		if(MEDIA_QUERY_1230.matches) {
+			USER_STATUS.forEach((el) => {
+				el.textContent = ''
+			})
+		} else if(MEDIA_QUERY_768.matches) {
+			USER_STATUS.forEach((el, index) => {
+				el.textContent = USER_STATUS_OG_VALUE[index]
+			})
+		} else if(MEDIA_QUERY_480.matches) {
+			USER_STATUS.forEach((el) => {
+				el.textContent = ''
+			})
+		} else {
+			USER_STATUS.forEach((el, index) => {
+				el.textContent = USER_STATUS_OG_VALUE[index]
+				// 📌 추후 DB 데이터 추가 시, 다른 페이지로 이동했을 때도 정상 동작하는 지 확인
+			})
+		}
+		
+	}
+
+	updateUserStatus()
+
+	MEDIA_QUERY_1230.addEventListener('change', updateUserStatus)
+	MEDIA_QUERY_768.addEventListener('change', updateUserStatus)
+	MEDIA_QUERY_480.addEventListener('change', updateUserStatus)
+</script>
+<!-- 직원 상세 페이지로 이동 -->
+<script>
+	// 일반 유저 계정 접속 -> 정보 수정 버튼 노출x
+	// 어드민 유저 계정 접속 -> 정보 수정 버튼 노출o
+	// 실제 유저 데이터와 연결 필요
+	const CONTAINER_DIV = document.querySelector('.container')
+	const renderUserInfo = () => {
+		CONTAINER_DIV.innerHTML = `
+			<h2>직원 상세 페이지</h2>
+			<div class='user-profile'>
+				
+				<div class='profile-sub-info'>
+					<img src="https://www.studiopeople.kr/common/img/default_profile.png" alt="기본유저이미지">
+					<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+				</div>
+				<div class='profile-main-info'>
+					<div>사번: 123456</div>
+					<div>이름: 홍길동</div>
+					<div>소속: 개발팀</div>
+					<div>직급: 사원</div>
+					<div>연락처: 010-0000-0000</div>
+					<div>이메일: 어쩌구@어쩌구.저쩌구</div>
+					<div class='badge badge-success'>ONLINE</div>
+				</div>
+			</div>
+		`
+	}
+	const USER_CELL = document.querySelectorAll('.cell')
+	
+	USER_CELL.forEach(user => {
+		user.addEventListener('click', renderUserInfo)
+	})
+</script>
+// <!-- [D] 입력형 팝업 열기/닫기 -->
+<script>
+	const dimmed = document.getElementById('dimmed');
+	const popupButtons = document.querySelectorAll('[data-popup]');
+
+	popupButtons.forEach(button => {
+		button.addEventListener('click', (e) => {
+			const popupId = e.currentTarget.getAttribute('data-popup');
+			openPopup(popupId);
+		});
+	});
+
+	const openPopup = (popupId) => {
+		const popup = document.getElementById(popupId);
+		const popupCont = popup.querySelector('.cont');
+		popup.classList.add('is-active');
+		popupCont.scrollTo(0, 0);
+		dimmed.classList.add('is-active');
+		popup.setAttribute('aria-hidden', 'false');
+
+		document.body.style.overflow = 'hidden';
+	};
+
+	document.querySelectorAll('.close, #cancelBtn').forEach(btn => {
+		btn.addEventListener('click', (e) => {
+			if (confirm("작성중인 내용이 저장되지 않습니다. 팝업을 닫으시겠습니까?")) {
+				const popup = e.target.closest('.layer-popup');
+				if (popup) closePopup(popup.id);
+			} else {
+				return false;
+			}
+		});
+	});
+
+	const closePopup = (popupId) => {
+		const popup = document.getElementById(popupId);
+		const inputs = popup.querySelectorAll('input, textarea, select');
+
+		popup.classList.remove('is-active');
+		dimmed.classList.remove('is-active');
+		popup.setAttribute('aria-hidden', 'true');
+		document.body.style.overflow = '';
+
+		inputs.forEach(input => {
+			if (input.tagName.toLowerCase() === 'input' || input.tagName.toLowerCase() === 'textarea') {
+				input.value = '';
+			} else if (input.tagName.toLowerCase() === 'select') {
+				input.selectedIndex = 0;
+			}
+		});
+	};
+</script>
+<!-- [D] admin - 주소찾기 api 스크립트 -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+	const findAddressBtn = document.getElementById('findAddressBtn');
+	function execDaumPostcode() {
+		new daum.Postcode({
+			oncomplete: function (data) {
+				let addr = '';
+				let extraAddr = '';
+
+				if (data.userSelectedType === 'R') {
+					addr = data.roadAddress;
+				} else {
+					addr = data.jibunAddress;
+				}
+
+				if (data.userSelectedType === 'R') {
+					if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+						extraAddr += data.bname;
+					}
+					if (data.buildingName !== '' && data.apartment === 'Y') {
+						extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+					}
+					if (extraAddr !== '') {
+						extraAddr = ' (' + extraAddr + ')';
+					}
+					document.getElementById("extra-address").value = extraAddr;
+				} else {
+					document.getElementById("extra-address").value = '';
+				}
+
+				document.getElementById('postcode').value = data.zonecode;
+				document.getElementById("address").value = addr;
+
+				document.getElementById("detail-address").focus();
+			}
+		}).open();
+	}
+	findAddressBtn.addEventListener('click', execDaumPostcode); 
+</script>
+<!-- [D] 이미지 첨부 w.미리보기 -->
+<script>
+	const changeImageBtn = document.getElementById('changeImageBtn');
+	const profileImageInput = document.getElementById('profileImageInput');
+	const profileImagePreview = document.getElementById('profileImagePreview');
+
+	changeImageBtn.addEventListener('click', () => {
+		profileImageInput.click();
+	});
+
+	profileImageInput.addEventListener('change', (event) => {
+		const file = event.target.files[0];
+
+		if (file && file.type.startsWith('image/')) {
+			const reader = new FileReader();
+
+			reader.onload = (e) => {
+				profileImagePreview.src = e.target.result;
+			};
+
+			reader.readAsDataURL(file);
+		}
+	});
+</script>
+
+</html>

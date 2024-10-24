@@ -1,0 +1,100 @@
+.announcement .announcement__search-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  /* width: 80%; */
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+.container__flex {
+  display: flex;
+  padding-bottom: 0rem;
+}
+
+/* Postcard */
+.postcard-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
+  gap: 3rem;
+  width: 83%;
+  margin: 0 auto;
+  padding: 2rem;
+  list-style: none;
+}
+
+.postcard {
+  background-color: #fff;
+  border: 0.1rem solid #ddd;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.postcard:hover {
+  transform: translateY(-0.5rem);
+}
+
+.postcard img {
+  width: 100%; /* 일단 프레임대로 100%로함 */
+  height: 20rem;
+  object-fit: cover;
+}
+
+.postcard .contents {
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.postcard .contents__title {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #333;
+}
+
+.postcard .contents__content {
+  font-size: 1rem;
+  color: #666;
+  margin: 1rem 0;
+}
+
+.postcard .contents__information {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.postcard .contents__information .information-author {
+  font-weight: 70rem;
+}
+
+/* 검색결과 없는 경우 */
+.announcement .helper-text {
+  width: 80%;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.postcard-container.no-result {
+  display: block;
+  padding: 20rem 0;
+  text-align: center;
+  background-color: var(--gray3);
+  border-radius: 0.5rem;
+}
+
+/* 뷰포트 768px 미만에서 실행될 스타일 */
+@media screen and (max-width: 768px) {
+  .container__flex {
+    display: block;
+  }
+
+  .postcard-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}

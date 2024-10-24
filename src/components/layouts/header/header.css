@@ -6,6 +6,7 @@
   padding: 2rem;
   background: var(--main1);
   color: var(--white1);
+  z-index: 2;
 }
 
 .header .user-info-wrapper {
@@ -143,4 +144,3 @@
     background: transparent;
   }
 }
-
