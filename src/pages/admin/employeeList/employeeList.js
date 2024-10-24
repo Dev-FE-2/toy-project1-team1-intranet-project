@@ -104,6 +104,42 @@ const employeeList = async () => {
     }
   }
 
+  // 디바이스 너비에 따라 사용자 근무 상태 UI 변경
+  const USER_STATUS = CONTAINER.querySelectorAll('.user-status .badge');
+  console.log(USER_STATUS);
+  const MEDIA_QUERY_1230 = window.matchMedia('(max-width: 1230px)');
+  const MEDIA_QUERY_768 = window.matchMedia('(max-width: 768px)');
+  const MEDIA_QUERY_480 = window.matchMedia('(max-width: 480px)');
+
+  const USER_STATUS_OG_VALUE = [...USER_STATUS].map(value => value.textContent);
+
+  const updateUserStatus = () => {
+    if (MEDIA_QUERY_1230.matches) {
+      USER_STATUS.forEach(el => {
+        el.textContent = '';
+      });
+    } else if (MEDIA_QUERY_768.matches) {
+      USER_STATUS.forEach((el, index) => {
+        el.textContent = USER_STATUS_OG_VALUE[index];
+      });
+    } else if (MEDIA_QUERY_480.matches) {
+      USER_STATUS.forEach(el => {
+        el.textContent = '';
+      });
+    } else {
+      USER_STATUS.forEach((el, index) => {
+        el.textContent = USER_STATUS_OG_VALUE[index];
+        // 📌 추후 DB 데이터 추가 시, 다른 페이지로 이동했을 때도 정상 동작하는 지 확인
+      });
+    }
+  };
+
+  updateUserStatus();
+
+  MEDIA_QUERY_1230.addEventListener('change', updateUserStatus);
+  MEDIA_QUERY_768.addEventListener('change', updateUserStatus);
+  MEDIA_QUERY_480.addEventListener('change', updateUserStatus);
+
   return CONTAINER;
 };
 
