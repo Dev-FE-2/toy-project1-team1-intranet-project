@@ -1,24 +1,12 @@
 import './join.css';
 import '../../style.css';
 import '../../common.css';
-import { initializeApp } from 'firebase/app';
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-import firebaseConfig from '../../../firebaseConfig';
-
-// export const join = () => {
-//   // 초기 렌더링 = 로그인 폼
-//   renderLoginForm();
-// }
-
-// Firebase 초기화
-const APP = initializeApp(firebaseConfig);
-const AUTH = getAuth(APP);
-const DB = getFirestore(APP);
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { DB, AUTH } from '../../../firebaseConfig';
 
 // ========================== 로그인 ==========================
 // 로그인 폼 렌더링 함수
@@ -73,19 +61,22 @@ const handleLogin = async () => {
 
     if (USER_DOC.exists()) {
       const USER_DATA = USER_DOC.data();
-      if (USER_DATA.isAdmin) {
-        // 관리자 페이지로 이동
-      } else {
-        // 일반 메인 페이지로 이동
-      }
+
       if (!USER_DATA.isApproved) {
         // 관리자 승인 되었는지 확인
         ERROR_MESSAGE.textContent = '로그인 실패: 관리자 승인 대기 중입니다.';
         await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
         return;
       }
+
       ERROR_MESSAGE.textContent = '로그인 성공!';
-      // 📌 추후 메인 페이지로 리다이렉트 로직 추가
+
+      // isAdmin 값에 따라 리다이렉션
+      if (USER_DATA.isAdmin) {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = '/';
+      }
     }
   } catch (error) {
     switch (error.code) {
@@ -327,6 +318,7 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
 
   if (!Object.values(IS_VALID).every(Boolean)) {
     ERROR_MESSAGE.textContent = '모든 입력값을 올바르게 입력해 주세요.';
+    return;
   }
 
   try {
@@ -380,4 +372,4 @@ const initJoinPage = container => {
   renderLoginForm();
 };
 
-export default initJoinPage
+export default initJoinPage;

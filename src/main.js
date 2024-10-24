@@ -4,6 +4,7 @@
 // import pageNotFound from './pages/PageNotFound';
 import Main from './pages/front/Main';
 import initJoinPage from './pages/join/join';
+import employeeList from './pages/admin/employeeList/employeeList';
 
 const loadStylesheet = href => {
   const existingLink = document.querySelector('link[data-role="page-style"]');
@@ -42,7 +43,7 @@ const navigatePage = event => {
   }
 };
 
-const route = () => {
+const route = async () => {
   // 경로에 맞는 페이지 노출
   const path = window.location.pathname;
   const content = document.querySelector('#app');
@@ -64,8 +65,16 @@ const route = () => {
     //   content.innerHTML = supportPage.render(); //클래스로 정의하는 방식
     //   break;
     case '/join':
-      loadStylesheet('./src/pages/join/join.css')
-      initJoinPage(content)
+      loadStylesheet('./src/pages/join/join.css');
+      initJoinPage(content);
+      break;
+    // case '/admin':
+    //   content.innerHTML = employeeList()
+    //   break
+    case '/admin':
+      // const adminContent = await employeeList();
+      content.innerHTML = '';
+      content.appendChild(await employeeList());
       break;
     default:
       content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식
