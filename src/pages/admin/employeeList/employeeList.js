@@ -76,24 +76,27 @@ const employeeList = async () => {
 			  	</ul>
 		  	</li>
         ${ALL_USERS.map(
-          users => `
-          <li class="col">
-            <ul class="cell" role="list">
-					  	<li class="number">${users.employeeNumber}</li>
-						  <li class="profile-img">
-							  <div class="img-box">
-								  <img src=${users.profileImg} alt="프로필 이미지 미리보기">
-							  </div>
-						  </li>
-						  <li class="name">${users.name}</li>
-						  <li class="team">${users.team}</li>
-					  	<li class="role">${users.role}</li>
-					  	<li class="user-status">
-						  	<div class="badge badge-success">${users.isWorking}</div>
-						  </li>
-					  </ul>
-          </li>      
-        `,
+          users => 
+            `
+              <li class="col">
+                <ul class="cell" role="list">
+					  	    <li class="number">${users.employeeNumber}</li>
+						      <li class="profile-img">
+							      <div class="img-box">
+								    <img src=${users.profileImg} alt="프로필 이미지 미리보기">
+							      </div>
+						      </li>
+						      <li class="name">${users.name}</li>
+						      <li class="team">${users.team}</li>
+					  	    <li class="role">${users.role}</li>
+					  	    <li class="user-status">
+						  	    <div class="badge ${users.isWorking ? 'badge-success' : 'badge-error' }">
+                      ${users.isWorking ? '근무 중' : '근무 중 아님'}
+                    </div>
+						      </li>
+					      </ul>
+              </li>      
+            `,
         ).join('')}`;
     }
   } catch (error) {

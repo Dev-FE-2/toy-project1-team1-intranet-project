@@ -3,7 +3,7 @@
 // import download from './pages/Download';
 // import pageNotFound from './pages/PageNotFound';
 import Main from './pages/front/Main';
-import initJoinPage from './pages/join/join';
+// import initJoinPage from './pages/join/join';
 import employeeList from './pages/admin/employeeList/employeeList';
 
 const loadStylesheet = href => {
