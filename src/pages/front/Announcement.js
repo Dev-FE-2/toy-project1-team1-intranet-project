@@ -32,19 +32,32 @@ export default function Announcement() {
     let currentPage = 1;
     // 전체 페이지 수 계산 (공지사항을 몇 페이지로 나눌 수 있는지)
     const totalPage = Math.ceil(totalCount / limit);
+    // 보여줄 페이지 개수
+    const pageCount = 5;
+    // 현재 페이지의 그룹
+    let pageGroup = Math.ceil(currentPage / pageCount);
+    // 마지막 페이지 (한 화면에 나타낼 페이지 그룹 x 현재 페이지 그룹)
+    let lastPage = pageGroup * pageCount;
+    // 첫 페이지
+    let firstPage = lastPage - (pageCount - 1);
+    // 현재 페이지가 속한 그룹의 첫 번째 페이지 번호 (앞뒤 버튼용)
+    const groupStart =
+      Math.floor((currentPage - 1) / pageCount) * pageCount + 1;
+    // 현재 페이지 그룹의 마지막 페이지 번호 (앞뒤 버튼용)
+    const groupEnd = Math.min(groupStart + pageCount - 1, totalPage);
 
     // 페이지네이션 버튼을 그릴 위치를 찾음
     const page = document.querySelector('.paging-list');
 
     // 페이지네이션 UI를 그리는 함수 (페이지 번호와 이전/다음 버튼)
-    const pageRendering = function () {
+    function pageRendering() {
       // 이전에 있던 페이지 번호 및 버튼을 초기화
       page.innerHTML = '';
 
-      // 이전 버튼 추가 (이전 버튼은 항상 표시됨)
-      page.insertAdjacentHTML(
-        'beforeend',
-        `<li class="paging-item prev">
+      if (pageGroup > 1) {
+        page.insertAdjacentHTML(
+          'beforeend',
+          `<li class="paging-item prev">
            <button type="button" aria-label="이전 페이지">
              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
                <line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
@@ -52,10 +65,10 @@ export default function Announcement() {
              </svg>
            </button>
          </li>`,
-      );
-
+        );
+      }
       // 전체 페이지 수만큼 페이지 번호를 그려줌
-      for (let i = 1; i <= totalPage; i++) {
+      for (let i = firstPage; i <= lastPage; i += 1) {
         // 현재 페이지는 활성화 상태로 표시
         const activeClass = i === currentPage ? 'is-active' : '';
         // 각 페이지 번호 버튼을 추가
@@ -66,9 +79,10 @@ export default function Announcement() {
       }
 
       // 다음 버튼 추가 (다음 버튼도 항상 표시됨)
-      page.insertAdjacentHTML(
-        'beforeend',
-        `<li class="paging-item next">
+      if (groupEnd < totalPage && lastPage < totalPage) {
+        page.insertAdjacentHTML(
+          'beforeend',
+          `<li class="paging-item next">
            <button type="button" aria-label="다음 페이지">
              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
                <line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
@@ -76,28 +90,29 @@ export default function Announcement() {
              </svg>
            </button>
          </li>`,
-      );
+        );
+      }
 
       // 페이지 버튼에 이벤트를 연결하는 함수 실행
       attachEvent();
-    };
+    }
 
     // 페이지 버튼과 이전/다음 버튼 클릭 이벤트를 처리하는 함수
-    const attachEvent = function () {
+    function attachEvent() {
       // 이전 버튼을 클릭했을 때, 현재 페이지를 1 감소시키고 페이지를 업데이트
       const prevBtn = document.querySelector('.paging-item.prev button');
-      prevBtn?.addEventListener('click', function () {
+      prevBtn?.addEventListener('click', () => {
         if (currentPage > 1) {
-          currentPage--; // 페이지 감소
+          currentPage -= 1; // 페이지 감소
           updatePagination(); // 페이지 업데이트
         }
       });
 
       // 다음 버튼을 클릭했을 때, 현재 페이지를 1 증가시키고 페이지를 업데이트
       const nextBtn = document.querySelector('.paging-item.next button');
-      nextBtn?.addEventListener('click', function () {
+      nextBtn?.addEventListener('click', () => {
         if (currentPage < totalPage) {
-          currentPage++; // 페이지 증가
+          currentPage += 1; // 페이지 증가
           updatePagination(); // 페이지 업데이트
         }
       });
@@ -105,16 +120,23 @@ export default function Announcement() {
       // 각 페이지 번호를 클릭했을 때 해당 페이지로 이동
       const pageItems = document.querySelectorAll('.paging-item a');
       pageItems.forEach(cur => {
-        cur.addEventListener('click', function (event) {
+        cur.addEventListener('click', event => {
           const selectedPage = Number(event.target.textContent); // 클릭한 페이지 번호 가져옴
           currentPage = selectedPage; // 클릭한 페이지로 현재 페이지 설정
           updatePagination(); // 페이지 업데이트
         });
       });
-    };
+    }
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
     function updatePagination() {
+      pageGroup = Math.ceil(currentPage / pageCount);
+      lastPage = pageGroup * pageCount;
+      firstPage = lastPage - (pageCount - 1);
+
+      if (lastPage > totalPage) {
+        lastPage = totalPage;
+      }
       pageRendering(); // 페이지네이션 UI 다시 그리기
       renderPosts(); // 공지사항 목록 다시 그리기
     }
