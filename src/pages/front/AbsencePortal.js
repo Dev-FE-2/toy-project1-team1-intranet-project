@@ -1,11 +1,26 @@
-import axios from 'axios';
 import { easepick, LockPlugin, RangePlugin } from '@easepick/bundle';
+import { initializeApp } from 'firebase/app';
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  orderBy,
+  serverTimestamp,
+} from 'firebase/firestore';
+import firebaseConfig from '../../../firebaseConfig';
 import {
   createPagination,
   addPaginationListeners,
-} from '/src/components/pagination/_pagination';
-import createModal from '/src/components/Modal/Modal';
+} from '@components/pagination/_pagination';
+import createModal from '@components/Modal/Modal';
 // 페이지네이션 임시
+
+// Firestore 인스턴스 생성
+const app = initializeApp(firebaseConfig);
+const DB = getFirestore(app);
 
 // 테이블 헤더
 const tableHeader = `
@@ -23,8 +38,17 @@ const tableHeader = `
 // 부재 리스트 호출
 const fetchAbsenceData = async () => {
   try {
-    const response = await axios.get(`/api/absence`);
-    return response.data?.data || [];
+    const absencesCollection = collection(DB, 'absences');
+    const absencesQuery = query(
+      absencesCollection,
+      orderBy('createdAt', 'desc'),
+    ); // 최신순 정렬
+    const absencesSnapshot = await getDocs(absencesQuery);
+    const absencesData = absencesSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return absencesData;
   } catch (error) {
     console.error('Error fetching absence data:', error);
     return [];
@@ -34,9 +58,9 @@ const fetchAbsenceData = async () => {
 // 처리 상태 기준 badge className
 const getStatusBadgeClass = status => {
   switch (status) {
-    case '처리완료':
+    case '승인':
       return 'badge-success';
-    case '처리중':
+    case '승인대기':
       return 'badge-warn';
     case '반려':
       return 'badge-error';
@@ -45,16 +69,27 @@ const getStatusBadgeClass = status => {
   }
 };
 
+const absenceTypeMapping = {
+  'am-half': '오전반차',
+  'pm-half': '오후반차',
+  annual: '연차',
+  official: '공가',
+  sick: '병가',
+  alternative: '대체휴가',
+};
+
 // 개별 행 데이터 렌더링
 const renderRow = item => {
-  const badgeClass = getStatusBadgeClass(item.status); // 상태에 따른 badge 클래스 설정
+  const badgeClass = getStatusBadgeClass(item.status || '처리중');
+  const typeText = absenceTypeMapping[item.absenceType] || item.absenceType; // absenceType 기준으로 매핑된 텍스트 변환
+
   return `
     <li class="col">
       <ul class="cell" role="list">
-        <li class="type">${item.type}</li>
-        <li class="date">${item.date}</li>
+        <li class="type">${typeText}</li>
+        <li class="date">${item.absenceDate}</li>
         <li class="status">
-          <div class="badge ${badgeClass}">${item.status || '-'}</div>
+          <div class="badge ${badgeClass}">${item.status || '처리중'}</div> 
         </li>
         <li class="reason text-clamp">${item.reason || '-'}</li>
         <li class="etc text-clamp">${item.status === '반려' ? item.etc || '' : ''}</li>
@@ -65,19 +100,12 @@ const renderRow = item => {
 
 // 클라이언트 필터링
 const filterData = (data, filter) => {
-  if (filter === 'all') return data; // 전체
+  if (filter === 'all') return data;
 
-  const filterMapping = {
-    'am-half': '오전반차',
-    'pm-half': '오후반차',
-    annual: '연차',
-    official: '공가',
-    sick: '병가',
-    alternative: '대체휴가',
-  };
-
-  const mappedFilter = filterMapping[filter]; // 선택된 필터와 매칭
-  return data.filter(item => item.type === mappedFilter); // 필터링된 데이터 반환
+  return data.filter(item => {
+    const mappedType = absenceTypeMapping[item.absenceType] || item.absenceType;
+    return mappedType === absenceTypeMapping[filter];
+  });
 };
 
 // 테이블 렌더링
@@ -147,30 +175,43 @@ const absenceApplyModal = createModal({
   `,
 });
 
-// 신청 버튼 클릭 핸들러
-const handleSubmit = () => {
-  const absenceType = document.getElementById('absence-type').value;
+// 부재 신청 > 신청 버튼 클릭 핸들러
+const handleSubmit = async () => {
+  const absenceTypeKey = document.getElementById('absence-type').value;
+  const absenceType = absenceTypeMapping[absenceTypeKey] || absenceTypeKey;
   const absenceDate = document.getElementById('datepicker').value;
   const reason = document.getElementById('reason').value;
   const fileInput = document.getElementById('file');
-  const file =
-    fileInput.files.length > 0 ? fileInput.files[0].name : '첨부된 파일 없음';
+  const file = fileInput.files.length > 0 ? fileInput.files[0].name : '';
 
-  // 필수 입력 항목 검증
   if (!absenceType || !absenceDate || !reason) {
     const missingFields = [];
     if (!absenceType) missingFields.push('휴가 구분');
     if (!absenceDate) missingFields.push('기간');
     if (!reason) missingFields.push('사유');
-
     alert(`다음 항목을 입력해주세요: ${missingFields.join(', ')}`);
     return;
   }
 
-  // 삭제 필요
-  console.log('휴가 종류:', absenceType);
-  console.log('기간:', absenceDate);
-  console.log('사유:', reason);
+  try {
+    await setDoc(
+      doc(collection(DB, 'absences')), // Firestore 자동 ID 생성
+      {
+        absenceType, // 매핑된 텍스트로 저장
+        absenceDate,
+        reason,
+        file,
+        status: '승인대기',
+        createdAt: serverTimestamp(),
+      },
+    );
+    alert('신청이 완료되었습니다.');
+    resetForm();
+    absenceApplyModal.close();
+  } catch (error) {
+    console.error('부재 신청 저장 실패:', error);
+    alert('신청 중 오류가 발생했습니다. 다시 시도해 주세요.');
+  }
 };
 
 // 폼 초기화
@@ -268,9 +309,18 @@ const applyFilter = (data, itemsPerPage, currentPage, filter) => {
 
   if (filteredData.length === 0) currentPage = 1;
 
-  setupAbsencePortal(filteredData, itemsPerPage, currentPage);
-};
+  renderTable(filteredData, currentPage, itemsPerPage);
 
+  document.querySelector('.pagination').innerHTML = createPagination(
+    filteredData.length,
+    currentPage,
+    itemsPerPage,
+  );
+
+  addPaginationListeners(newPage =>
+    handlePageChange(newPage, filteredData, itemsPerPage, currentPage),
+  );
+};
 // 초기 화면
 const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
   renderTable(data, currentPage, itemsPerPage);
@@ -322,11 +372,13 @@ export default async function AbsencePortal() {
     setupAbsencePortal(data, itemsPerPage, currentPage);
     document.body.insertAdjacentHTML('beforeend', absenceApplyModal.render());
 
+    // 셀렉트 변경
     document.getElementById('view-filter').addEventListener('change', event => {
       const filter = event.target.value;
       applyFilter(data, itemsPerPage, currentPage, filter);
     });
 
+    // 팝업 열기
     document
       .querySelector('[data-popup="lp1"]')
       .addEventListener('click', () => {
@@ -334,13 +386,14 @@ export default async function AbsencePortal() {
         setupDatePicker();
       });
 
+    // 팝업 닫기
     document
       .querySelectorAll('#closePopupBtn, #cancelApplyBtn')
       .forEach(button => {
         button.addEventListener('click', handlePopupClose);
       });
 
-    // 신청 버튼 클릭 시 handleSubmit 실행
+    // 부재 등록
     document
       .getElementById('confirmApplyBtn')
       .addEventListener('click', handleSubmit);
