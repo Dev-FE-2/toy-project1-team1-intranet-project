@@ -1,3 +1,5 @@
+import 'material-symbols';
+
 export default function Announcement() {
   // 공지사항 데이터를 저장할 배열
   let noticeData = [];
