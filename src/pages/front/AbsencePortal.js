@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { easepick, LockPlugin, RangePlugin } from '@easepick/bundle';
 import {
   createPagination,
   addPaginationListeners,
 } from '/src/components/pagination/_pagination';
+import createModal from '/src/components/Modal/Modal';
 // 페이지네이션 임시
 
 // 테이블 헤더
@@ -92,6 +94,155 @@ const renderTable = (data, page, itemsPerPage) => {
     `${tableHeader} ${renderRows}`;
 };
 
+// 잔여 연차일 가져오기 임시
+const num = 5.5;
+
+// 팝업
+const absenceApplyModal = createModal({
+  id: 'absenceApplyModal',
+  title: '부재 신청',
+  content: `
+    <div class="cont">
+      <div class="info-box text-success">잔여 연차 <span>${num}</span>일</div>
+      <form action="" method="post">
+        <ul class="input-list">
+          <li>
+            <label for="absence-type">구분</label>
+            <select class="" id="absence-type" name="absence-type" required>
+              <option value="" selected disabled>휴가 종류</option>
+              <option value="am-half">오전반차</option>
+              <option value="pm-half">오후반차</option>
+              <option value="annual">연차</option>
+              <option value="official">공가</option>
+              <option value="sick">병가</option>
+              <option value="alternative">대체휴가</option>
+            </select>
+            <p class="helper-text"></p>
+          </li>
+          <li>
+            <label for="absence-date">기간</label>
+            <input class="" type="text" name="absence-date" placeholder="YYYY-MM-DD" id="datepicker" readonly>
+          </li>
+          <li>
+            <label for="reason">사유 입력&#40;&#42;50자 이내&#41;</label>
+            <textarea class="" id="reason" name="reason" placeholder="사유를 입력하세요" required maxlength="50"></textarea>
+          </li>
+          <li>
+						<label for="file">증빙파일 첨부 &#40;&#42;.jpeg, png, 5MB 이하&#41;</label>
+						<input class="" type="file" id="file" name="file" accept=".jpg, .png">
+					</li>
+        </ul>
+      </form>
+    </div>
+    <button type="button" class="close" aria-label="팝업 닫기" title="팝업 닫기" id="closePopupBtn">
+      <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+        <line x1="8" y1="8" x2="26" y2="26" stroke="black" stroke-width="1" stroke-linecap="round" />
+        <line x1="8" y1="26" x2="26" y2="8" stroke="black" stroke-width="1" stroke-linecap="round" />
+      </svg>
+    </button>
+  `,
+  buttons: `
+    <button id="confirmApplyBtn" class="btn btn-solid">신청</button>
+    <button id="cancelApplyBtn" class="btn btn-outline">취소</button>
+  `,
+});
+
+// 신청 버튼 클릭 핸들러
+const handleSubmit = () => {
+  const absenceType = document.getElementById('absence-type').value;
+  const absenceDate = document.getElementById('datepicker').value;
+  const reason = document.getElementById('reason').value;
+  const fileInput = document.getElementById('file');
+  const file =
+    fileInput.files.length > 0 ? fileInput.files[0].name : '첨부된 파일 없음';
+
+  // 필수 입력 항목 검증
+  if (!absenceType || !absenceDate || !reason) {
+    const missingFields = [];
+    if (!absenceType) missingFields.push('휴가 구분');
+    if (!absenceDate) missingFields.push('기간');
+    if (!reason) missingFields.push('사유');
+
+    alert(`다음 항목을 입력해주세요: ${missingFields.join(', ')}`);
+    return;
+  }
+
+  // 삭제 필요
+  console.log('휴가 종류:', absenceType);
+  console.log('기간:', absenceDate);
+  console.log('사유:', reason);
+};
+
+// 폼 초기화
+const resetForm = () => {
+  document.getElementById('absence-type').value = '';
+  document.getElementById('datepicker').value = '';
+  document.getElementById('reason').value = '';
+  document.getElementById('file').value = '';
+};
+
+// 모달이 열리면 easepick
+const setupDatePicker = () => {
+  const datepickerElement = document.getElementById('datepicker');
+  const today = new Date().toISOString().split('T')[0];
+  let picker;
+
+  const createPicker = (options = {}) => {
+    if (picker) picker.destroy();
+
+    picker = new easepick.create({
+      element: datepickerElement,
+      css: [
+        'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',
+      ],
+      lang: 'ko-KR',
+      format: 'YYYY-MM-DD',
+      calendars: 1,
+      plugins: [LockPlugin],
+      LockPlugin: {
+        minDate: today,
+      },
+      ...options,
+    });
+  };
+
+  document.getElementById('absence-type').addEventListener('change', e => {
+    const selectedType = e.target.value;
+    datepickerElement.value = '';
+
+    if (selectedType === 'am-half' || selectedType === 'pm-half') {
+      createPicker();
+    } else {
+      createPicker({
+        autoApply: false,
+        locale: {
+          cancel: '취소',
+          apply: '선택',
+        },
+        plugins: [RangePlugin, LockPlugin],
+        RangePlugin: {
+          tooltip: false,
+        },
+      });
+    }
+  });
+
+  createPicker();
+};
+
+//팝업 닫기 confirm
+const handlePopupClose = () => {
+  const confirmation = confirm(
+    '작성중인 내용이 저장되지 않습니다. 그래도 닫으시겠습니까?',
+  );
+  if (confirmation) {
+    resetForm();
+    absenceApplyModal.close();
+  } else {
+    return false;
+  }
+};
+
 // 페이지 변경 핸들러
 const handlePageChange = (page, data, itemsPerPage, currentPage) => {
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -137,7 +288,7 @@ const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
 
 export default async function AbsencePortal() {
   const itemsPerPage = 15; // 최대 행 갯수
-  let currentPage = 1; // 진입 시 페이지네이션
+  const currentPage = 1; // 진입 시 페이지네이션
 
   try {
     const data = await fetchAbsenceData();
@@ -168,14 +319,31 @@ export default async function AbsencePortal() {
     document.body.innerHTML = '';
     document.body.appendChild(container);
 
-    // 필터 이벤트 리스너
+    setupAbsencePortal(data, itemsPerPage, currentPage);
+    document.body.insertAdjacentHTML('beforeend', absenceApplyModal.render());
+
     document.getElementById('view-filter').addEventListener('change', event => {
       const filter = event.target.value;
       applyFilter(data, itemsPerPage, currentPage, filter);
     });
 
-    // 초기 화면 호출
-    setupAbsencePortal(data, itemsPerPage, currentPage);
+    document
+      .querySelector('[data-popup="lp1"]')
+      .addEventListener('click', () => {
+        absenceApplyModal.open();
+        setupDatePicker();
+      });
+
+    document
+      .querySelectorAll('#closePopupBtn, #cancelApplyBtn')
+      .forEach(button => {
+        button.addEventListener('click', handlePopupClose);
+      });
+
+    // 신청 버튼 클릭 시 handleSubmit 실행
+    document
+      .getElementById('confirmApplyBtn')
+      .addEventListener('click', handleSubmit);
   } catch (error) {
     console.error(error);
     document.body.innerHTML = `<div class="container absence-portal">데이터를 불러올 수 없습니다.</div>`;
