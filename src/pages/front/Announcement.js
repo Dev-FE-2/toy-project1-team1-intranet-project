@@ -41,6 +41,10 @@ export default function Announcement() {
     // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
     // 현재 페이지가 속한 그룹의 첫 번째 페이지 번호 (앞뒤 버튼용)
+    const groupStart =
+      Math.floor((currentPage - 1) / pageCount) * pageCount + 1;
+    // 현재 페이지 그룹의 마지막 페이지 번호 (앞뒤 버튼용)
+    const groupEnd = Math.min(groupStart + pageCount - 1, totalPage);
 
     // 페이지네이션 버튼을 그릴 위치를 찾음
     const page = document.querySelector('.paging-list');
@@ -53,14 +57,14 @@ export default function Announcement() {
       if (pageGroup > 1) {
         page.insertAdjacentHTML(
           'beforeend',
-          `<div class="paging-item prev">
+          `<li class="paging-item prev">
            <button type="button" aria-label="이전 페이지">
              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
                <line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
                <line x1="12" y1="17" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
              </svg>
            </button>
-         </div>`,
+         </li>`,
         );
       }
       // 전체 페이지 수만큼 페이지 번호를 그려줌
@@ -70,22 +74,22 @@ export default function Announcement() {
         // 각 페이지 번호 버튼을 추가
         page.insertAdjacentHTML(
           'beforeend',
-          `<div class="paging-item ${activeClass}"><a href="javascript:void(0);">${i}</a></div>`,
+          `<li class="paging-item ${activeClass}"><a href="javascript:void(0);">${i}</a></li>`,
         );
       }
 
       // 다음 버튼 추가 (다음 버튼도 항상 표시됨)
-      if (currentPage < totalPage) {
+      if (groupEnd < totalPage && lastPage < totalPage) {
         page.insertAdjacentHTML(
           'beforeend',
-          `<div class="paging-item next">
+          `<li class="paging-item next">
            <button type="button" aria-label="다음 페이지">
              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
                <line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
                <line x1="22" y1="17" x2="14" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
              </svg>
            </button>
-         </div>`,
+         </li>`,
         );
       }
 
