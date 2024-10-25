@@ -76,10 +76,10 @@ const employeeList = async () => {
 			  	</ul>
 		  	</li>
         ${ALL_USERS.map(
-          users => 
+          users =>
             `
               <li class="col">
-                <ul class="cell" role="list">
+                <ul class="cell" role="list" data-id='${users.id}'>
 					  	    <li class="number">${users.employeeNumber}</li>
 						      <li class="profile-img">
 							      <div class="img-box">
@@ -90,7 +90,7 @@ const employeeList = async () => {
 						      <li class="team">${users.team}</li>
 					  	    <li class="role">${users.role}</li>
 					  	    <li class="user-status">
-						  	    <div class="badge ${users.isWorking ? 'badge-success' : 'badge-error' }">
+						  	    <div class="badge ${users.isWorking ? 'badge-success' : 'badge-error'}">
                       ${users.isWorking ? '근무 중' : '근무 중 아님'}
                     </div>
 						      </li>
@@ -99,6 +99,16 @@ const employeeList = async () => {
             `,
         ).join('')}`;
     }
+
+    const USER_CELLS = EMPLOYEE_DATA.querySelectorAll('.cell');
+    console.log(USER_CELLS);
+
+    USER_CELLS.forEach(userCell => {
+      userCell.addEventListener('click', e => {
+        const USER_ID = e.currentTarget.getAttribute('data-id');
+        renderUserInfo(USER_ID, ALL_USERS);
+      });
+    });
   } catch (error) {
     console.log('데이터 로드 실패:', error);
     const employeeData = CONTAINER.querySelector('#employee-data');
@@ -142,6 +152,35 @@ const employeeList = async () => {
   MEDIA_QUERY_1230.addEventListener('change', updateUserStatus);
   MEDIA_QUERY_768.addEventListener('change', updateUserStatus);
   MEDIA_QUERY_480.addEventListener('change', updateUserStatus);
+
+  const renderUserInfo = (userId, users) => {
+    console.log(users);
+    console.log(userId);
+    const SPECIFIC_USER_INFO = users.find(user => user.id === userId);
+    console.log(SPECIFIC_USER_INFO)
+
+    if (SPECIFIC_USER_INFO) {
+      CONTAINER.innerHTML = `
+			<h2>${SPECIFIC_USER_INFO.name}님의 상세 페이지</h2>
+			<div class='user-profile'>
+				<div class='profile-sub-info'>
+					<img src="${SPECIFIC_USER_INFO.profileImg}" alt="기본유저이미지">
+					<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
+				</div>
+				<div class='profile-main-info'>
+					<div>사번: ${SPECIFIC_USER_INFO.employeeNumber}</div>
+					<div>이름: ${SPECIFIC_USER_INFO.name}</div>
+					<div>소속: ${SPECIFIC_USER_INFO.team}</div>
+					<div>직급: ${SPECIFIC_USER_INFO.role}</div>
+					<div>연락처: ${SPECIFIC_USER_INFO.phone}</div>
+					<div>이메일: ${SPECIFIC_USER_INFO.email}</div>
+					<div class='badge ${SPECIFIC_USER_INFO.isWorking ? 'badge-success' : 'badge-error'}'>${SPECIFIC_USER_INFO.isWorking ? '근무 중' : '근무 중 아님'}
+          </div>
+				</div>
+			</div>
+		`;
+    }
+  };
 
   return CONTAINER;
 };
