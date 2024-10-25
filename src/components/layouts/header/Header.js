@@ -1,19 +1,6 @@
-<!doctype html>
-<html lang="ko">
+import './header.css';
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vite App</title>
-
-  <link rel="stylesheet" href="../../../reset.css">
-  <link rel="stylesheet" href="../../../style.css">
-  <link rel="stylesheet" href="./header.css">
-
-</head>
-
-<body>
+const Header = () => `
   <header class="header">
     <div class="user-info-wrapper">
       <div class="user-img-box">
@@ -48,6 +35,6 @@
       </ul>
     </nav>
   </header>
-</body>
+`;
 
-</html>
+export default Header;

@@ -2,6 +2,7 @@
 // import Support from './pages/Support';
 // import download from './pages/Download';
 // import pageNotFound from './pages/PageNotFound';
+import Header from './components/layouts/header/Header';
 import Main from './pages/front/Main';
 
 const loadStylesheet = href => {
@@ -48,6 +49,8 @@ const route = () => {
   // const downloadPage = new Page('#content', download());
   // const supportPage = new Support({ title: 'Support' });
 
+  content.insertAdjacentHTML('beforebegin', Header());
+
   switch (path) {
     case '/':
       Main(content);
@@ -63,7 +66,7 @@ const route = () => {
     //   content.innerHTML = supportPage.render(); //클래스로 정의하는 방식
     //   break;
     default:
-      content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식
+      // content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식
       break;
   }
 };
