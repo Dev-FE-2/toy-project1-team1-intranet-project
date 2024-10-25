@@ -40,11 +40,6 @@ export default function Announcement() {
     let lastPage = pageGroup * pageCount;
     // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
-    // 현재 페이지가 속한 그룹의 첫 번째 페이지 번호 (앞뒤 버튼용)
-    const groupStart =
-      Math.floor((currentPage - 1) / pageCount) * pageCount + 1;
-    // 현재 페이지 그룹의 마지막 페이지 번호 (앞뒤 버튼용)
-    const groupEnd = Math.min(groupStart + pageCount - 1, totalPage);
 
     // 페이지네이션 버튼을 그릴 위치를 찾음
     const page = document.querySelector('.paging-list');
@@ -79,7 +74,7 @@ export default function Announcement() {
       }
 
       // 다음 버튼 추가 (다음 버튼도 항상 표시됨)
-      if (groupEnd < totalPage && lastPage < totalPage) {
+      if (currentPage < totalPage) {
         page.insertAdjacentHTML(
           'beforeend',
           `<li class="paging-item next">
