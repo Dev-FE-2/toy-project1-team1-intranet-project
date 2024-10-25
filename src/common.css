@@ -147,36 +147,6 @@
   margin: 0 auto 6rem;
 }
 
-/* btn */
-.btn {
-  padding: 1.2rem 2.8rem;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  font-weight: 700;
-}
-.btn-solid {
-  background: var(--main1);
-  color: var(--white1);
-}
-.btn:hover {
-  background: #e1e8ff;
-  border: 1px solid var(--main1);
-  color: var(--main1);
-}
-.btn-outline {
-  background: var(--white1);
-  border: 1px solid var(--main1);
-  color: var(--main1);
-}
-.btn-box {
-  display: flex;
-  justify-content: center;
-  margin-top: 2rem;
-}
-.btn-box .btn + .btn {
-  margin-left: 0.8rem;
-}
-
 /* input search 공지사항 페이지에 아이콘(link참고)과 함께 적용  */
 .search-box {
   display: flex;
