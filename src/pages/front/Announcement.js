@@ -1,404 +1,183 @@
 export default function Announcement() {
-  const rootEl = document.createElement('div');
-  rootEl.innerHTML = `
-        <div class="container announcement">
-        <div class="container__flex title">
-          <h1 class="title">공지사항</h1>
-          <div class="announcement__search-box">
-            <input type="search"s placeholder="검색어를 입력하세요" />
-            <span class="material-symbols-outlined"> search </span>
+  // 공지사항 데이터를 저장할 배열
+  let noticeData = [];
+
+  // 공지사항 데이터를 API에서 가져오는 함수
+  const fetchNoticeData = async () => {
+    try {
+      // API 요청을 보내서 공지사항 데이터를 받아옴
+      const response = await fetch('/api/notice');
+      const json = await response.json(); // 받은 데이터를 JSON 형식으로 변환
+      noticeData = json.data; // 받은 데이터를 noticeData 배열에 저장
+
+      // 데이터가 성공적으로 로드되면 페이지네이션을 실행
+      if (noticeData.length > 0) {
+        pagenation();
+      }
+    } catch (err) {
+      // 데이터 가져오기에 실패하면 오류를 콘솔에 출력
+      console.error(err);
+    }
+  };
+
+  // 페이지네이션을 처리하는 함수
+  function pagenation() {
+    // 전체 공지사항 수 (몇 개의 공지사항이 있는지)
+    const totalCount = noticeData.length;
+    // 한 페이지에 보여줄 공지사항 수 (여기서는 8개씩 보여줌)
+    const limit = 8;
+    // 현재 페이지 (처음에는 1페이지부터 시작)
+    let currentPage = 1;
+    // 전체 페이지 수 계산 (공지사항을 몇 페이지로 나눌 수 있는지)
+    const totalPage = Math.ceil(totalCount / limit);
+
+    // 페이지네이션 버튼을 그릴 위치를 찾음
+    const page = document.querySelector('.paging-list');
+
+    // 페이지네이션 UI를 그리는 함수 (페이지 번호와 이전/다음 버튼)
+    const pageRendering = function () {
+      // 이전에 있던 페이지 번호 및 버튼을 초기화
+      page.innerHTML = '';
+
+      // 이전 버튼 추가 (이전 버튼은 항상 표시됨)
+      page.insertAdjacentHTML(
+        'beforeend',
+        `<li class="paging-item prev">
+           <button type="button" aria-label="이전 페이지">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
+               <line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+               <line x1="12" y1="17" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+             </svg>
+           </button>
+         </li>`,
+      );
+
+      // 전체 페이지 수만큼 페이지 번호를 그려줌
+      for (let i = 1; i <= totalPage; i++) {
+        // 현재 페이지는 활성화 상태로 표시
+        const activeClass = i === currentPage ? 'is-active' : '';
+        // 각 페이지 번호 버튼을 추가
+        page.insertAdjacentHTML(
+          'beforeend',
+          `<li class="paging-item ${activeClass}"><a href="javascript:void(0);">${i}</a></li>`,
+        );
+      }
+
+      // 다음 버튼 추가 (다음 버튼도 항상 표시됨)
+      page.insertAdjacentHTML(
+        'beforeend',
+        `<li class="paging-item next">
+           <button type="button" aria-label="다음 페이지">
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
+               <line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+               <line x1="22" y1="17" x2="14" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+             </svg>
+           </button>
+         </li>`,
+      );
+
+      // 페이지 버튼에 이벤트를 연결하는 함수 실행
+      attachEvent();
+    };
+
+    // 페이지 버튼과 이전/다음 버튼 클릭 이벤트를 처리하는 함수
+    const attachEvent = function () {
+      // 이전 버튼을 클릭했을 때, 현재 페이지를 1 감소시키고 페이지를 업데이트
+      const prevBtn = document.querySelector('.paging-item.prev button');
+      prevBtn?.addEventListener('click', function () {
+        if (currentPage > 1) {
+          currentPage--; // 페이지 감소
+          updatePagination(); // 페이지 업데이트
+        }
+      });
+
+      // 다음 버튼을 클릭했을 때, 현재 페이지를 1 증가시키고 페이지를 업데이트
+      const nextBtn = document.querySelector('.paging-item.next button');
+      nextBtn?.addEventListener('click', function () {
+        if (currentPage < totalPage) {
+          currentPage++; // 페이지 증가
+          updatePagination(); // 페이지 업데이트
+        }
+      });
+
+      // 각 페이지 번호를 클릭했을 때 해당 페이지로 이동
+      const pageItems = document.querySelectorAll('.paging-item a');
+      pageItems.forEach(cur => {
+        cur.addEventListener('click', function (event) {
+          const selectedPage = Number(event.target.textContent); // 클릭한 페이지 번호 가져옴
+          currentPage = selectedPage; // 클릭한 페이지로 현재 페이지 설정
+          updatePagination(); // 페이지 업데이트
+        });
+      });
+    };
+
+    // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
+    function updatePagination() {
+      pageRendering(); // 페이지네이션 UI 다시 그리기
+      renderPosts(); // 공지사항 목록 다시 그리기
+    }
+
+    // 공지사항 카드를 화면에 렌더링하는 함수
+    function renderPosts() {
+      // 공지사항 카드를 렌더링할 위치를 찾음
+      const postContainer = document.querySelector('.postcard-container');
+      postContainer.innerHTML = ''; // 기존 공지사항을 초기화
+
+      // 현재 페이지에 맞는 공지사항을 계산
+      const start = (currentPage - 1) * limit;
+      const end = start + limit;
+      const currentPosts = noticeData.slice(start, end); // 현재 페이지에 해당하는 공지사항만 잘라서 가져옴
+
+      // 각 공지사항을 카드 형식으로 렌더링
+      currentPosts.forEach(post => {
+        const postHTML = `
+        <div class="postcard">
+          <img class="postcard-img" src="${post.thumb}" alt="Post Image"/>
+          <div class="contents">
+            <h2 class="contents__title">${post.title}</h2>
+            <p class="contents__content">${post.content}</p>
+            <div class="contents__information">
+              <span class="information-author">${post.writer}</span>
+              <span class="information-date">${post.creatat}</span>
+            </div>
           </div>
         </div>
+      `;
+        postContainer.insertAdjacentHTML('beforeend', postHTML); // 새로운 공지사항을 추가
+      });
+    }
 
-        <!-- 포스트카드 -->
-        <ul class="postcard-container">
-          
-        </ul>
-        <!-- 페이지네이션 -->
-        <div class="pagination">
-          <ul class="paging-list" role="list">
-            <li class="paging-item prev">
-              <button type="button" aria-label="이전 페이지">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 34 34"
-                >
-                  <line
-                    x1="20"
-                    y1="6"
-                    x2="12"
-                    y2="17"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  ></line>
-                  <line
-                    x1="12"
-                    y1="17"
-                    x2="20"
-                    y2="28"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  ></line>
-                </svg>
-              </button>
-            </li>
-            <!-- [D] 활성화된 li.is-active 클래스 추가 -->
-            <li class="paging-item is-active" aria-current="page">
-              <a href="javascript:void(0);">1</a>
-            </li>
-            <li class="paging-item"><a href="javascript:void(0);">2</a></li>
-            <li class="paging-item"><a href="javascript:void(0);">3</a></li>
-            <li class="paging-item"><a href="javascript:void(0);">4</a></li>
-            <li class="paging-item"><a href="javascript:void(0);">5</a></li>
-            <li class="paging-item next">
-              <button type="button" aria-label="다음 페이지">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 34 34"
-                >
-                  <line
-                    x1="14"
-                    y1="6"
-                    x2="22"
-                    y2="17"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  ></line>
-                  <line
-                    x1="22"
-                    y1="17"
-                    x2="14"
-                    y2="28"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  ></line>
-                </svg>
-              </button>
-            </li>
-          </ul>
+    // 페이지네이션 실행 및 공지사항 렌더링
+    pageRendering(); // 처음에 페이지 버튼들을 그림
+    renderPosts(); // 첫 번째 페이지의 공지사항을 그림
+  }
+
+  // 공지사항 UI를 동적으로 생성하는 함수
+  function createAnnouncementSection() {
+    // 공지사항을 감싸는 전체 컨테이너를 생성
+    const container = document.createElement('div');
+    container.classList.add('container', 'announcement');
+
+    // 공지사항 UI 구조를 HTML로 작성하여 추가
+    container.innerHTML = `
+      <div class="container__title title">
+        <h1 class="title">공지사항</h1>
+        <div class="announcement__search-box">
+          <input type="search" placeholder="검색어를 입력하세요" />
+          <span class="material-symbols-outlined">search</span>
         </div>
       </div>
-  `;
-
-  // 바인딩할 데이터들.
-  const posts = [
-    {
-      img: './img/begin-again-5.webp',
-      title: '첫 번째 공지',
-      content: '첫 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '두 번째 공지',
-      content: '두 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '세 번째 공지',
-      content: '세 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '네 번째 공지',
-      content: '네 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '다섯 번째 공지',
-      content: '다섯 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '여섯 번째 공지',
-      content: '여섯 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '일곱 번째 공지',
-      content: '일곱 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '여덟 번째 공지',
-      content: '여덟 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '아홉 번째 공지',
-      content: '아홉 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '열 번째 공지',
-      content: '아홉 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '첫 번째 공지',
-      content: '아홉 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '두 번째 공지',
-      content: '아홉 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '세 번째 공지',
-      content: '아홉 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '네 번째 공지',
-      content: '아홉 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '다섯 번째 공지',
-      content: '아홉 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-    {
-      img: './img/begin-again-5.webp',
-      title: '여섯 번째 공지',
-      content: '아홉 번째 공지사항 내용입니다.',
-      author: '영훈',
-      date: '2024-10-18',
-    },
-  ];
-
-  // 페이지네이션 변수목록 (총데이터수, 한페이지당 보여줄 데이터, 한화면에 나타낼 페이지 그룹 필요 )
-
-  const totalCount = posts.length; // 데이터 개수 => 이건 배열.length로 하면 됨.
-  const limit = 5; // 한 페이지당 보여줄 데이터 => 이건 8개씩 보여줄꺼니까 ㄱㅊ
-  let currentPage = 1; // 현재 페이지
-  const pageCount = 3; // 한 화면에 나타낼 페이지 그룹 (고정값) => 123=>그룹1 456=>그룹2로 이해
-
-  const totalPage = Math.ceil(totalCount / limit); // 총 페이지 수
-  let pageGroup = Math.ceil(currentPage / pageCount); // 현재 페이지의 그룹
-
-  let lastPage = pageGroup * pageCount; // 마지막 페이지 (한 화면에 나타낼 페이지 그룹 x 현재 페이지 그룹)
-  let firstPage = lastPage - (pageCount - 1); // 첫번째 페이지
-  // const next = lastPage + 1;
-  // const prev = firstPage - 1;
-
-  const page = rootEl.querySelector('.paging-list');
-
-  // 페이지네이션 그리기
-  // 데이터 갱신
-  function updatePagination() {
-    pageGroup = Math.ceil(currentPage / pageCount);
-    lastPage = pageGroup * pageCount;
-    firstPage = lastPage - (pageCount - 1);
-    // 3을누르면 여전히 페이지 그룹은 123임. 그걸 올려주는게 아래 코드임.
-    // 아래 코드로 인하여 3을 눌렀을때 첫번째 페이지는 2, 마지막 페이지는4가됨.
-    // 근데 문제는 마지막 페이지 4를 눌렀을때, 345가 되어버리고, 맨 마지막 코드에 의해 5페이지는 사라져 3,4 페이지 두 개만 남게 됨.
-    // 그럼 어떻게 234가 되게 할 수 있을까?
-    // 만약 현재 페이지가 totalPage와 같아졌을때, lastPage=totalPage로 만들고, firstPage= lastPage-(pagecount-1)을 다시?=> 성공!!
-    const nextGroup = currentPage === lastPage;
-    const prevGroup = currentPage === firstPage;
-
-    if (nextGroup) {
-      lastPage += 1;
-      firstPage += 1;
-    }
-
-    if (prevGroup && currentPage > 1) {
-      lastPage -= 1;
-      firstPage -= 1;
-    }
-
-    if (currentPage === totalPage) {
-      lastPage = totalPage;
-      firstPage = lastPage - (pageCount - 1);
-    }
-
-    if (lastPage > totalPage) {
-      lastPage = totalPage;
-    } // 마지막페이지가 전체 페이지를 초과하지 않게 함. 가령 이 코드없으면 데이터가 2페이지에서 끝나는데, 3페이지가 생겨버림
-
-    // 페이지네이션 다시 그리기
-    pageRendering();
-
-    // 현재 페이지에 맞는 카드 렌더링
-    renderPosts();
-  }
-
-  // 페이지 버튼을 통한 currentPage 조작 및 페이지 그룹 업데이트하기
-  function attachEvent() {
-    const prevBtn = rootEl.querySelector('.paging-item.prev button');
-
-    prevBtn.addEventListener('click', () => {
-      if (currentPage > 1) {
-        currentPage -= 1;
-      }
-      updatePagination();
-    });
-
-    const nextBtn = rootEl.querySelector('.paging-item.next button');
-
-    nextBtn.addEventListener('click', () => {
-      if (currentPage < totalPage) {
-        currentPage += 1;
-      }
-      updatePagination();
-    });
-
-    const pageItems = rootEl.querySelectorAll('.paging-item a');
-    pageItems.forEach(cur => {
-      cur.addEventListener('click', event => {
-        const selectedPage = Number(event.target.textContent);
-        currentPage = selectedPage;
-        updatePagination();
-      });
-    });
-  }
-
-  function pageRendering() {
-    page.innerHTML = '';
-
-    page.insertAdjacentHTML(
-      'beforeend',
-      ` <li class="paging-item prev">
-                <button type="button" aria-label="이전 페이지">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 34 34"
-                  >
-                    <line
-                      x1="20"
-                      y1="6"
-                      x2="12"
-                      y2="17"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    ></line>
-                    <line
-                      x1="12"
-                      y1="17"
-                      x2="20"
-                      y2="28"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    ></line>
-                  </svg>
-                </button>
-              </li>`,
-    );
-
-    for (let i = firstPage; i <= lastPage; i += 1) {
-      const activeClass = i === currentPage ? 'is-active' : '';
-      const html = `<li class="paging-item ${activeClass}"><a href="javascript:void(0);">${i}</a></li>`;
-      page.insertAdjacentHTML('beforeend', html);
-    }
-
-    page.insertAdjacentHTML(
-      'beforeend',
-      ` <li class="paging-item next">
-                <button type="button" aria-label="다음 페이지">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 34 34"
-                  >
-                    <line
-                      x1="14"
-                      y1="6"
-                      x2="22"
-                      y2="17"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    ></line>
-                    <line
-                      x1="22"
-                      y1="17"
-                      x2="14"
-                      y2="28"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    ></line>
-                  </svg>
-                </button>
-              </li>`,
-    );
-    attachEvent();
-  }
-
-  // 데이터 바인딩
-  function renderPosts() {
-    const postContainer = rootEl.querySelector('.postcard-container');
-    postContainer.innerHTML = '';
-
-    const start = (currentPage - 1) * limit;
-    const end = start + limit;
-    const currentPosts = posts.slice(start, end);
-
-    // 현재 페이지 데이터로 카드 렌더링
-    currentPosts.forEach(post => {
-      const postHTML = `
-      <div class="postcard">
-        <img class="postcard-img" src="${post.img}" alt="Post Image"/>
-        <div class="contents">
-          <h2 class="contents__title">${post.title}</h2>
-          <p class="contents__content">${post.content}</p>
-          <div class="contents__information">
-            <span class="information-author">${post.author}</span>
-            <span class="information-date">${post.date}</span>
-          </div>
-        </div>
+      <ul class="postcard-container"></ul>
+      <div class="pagination">
+        <ul class="paging-list" role="list"></ul>
       </div>
     `;
-      postContainer.insertAdjacentHTML('beforeend', postHTML);
-    });
+
+    // 생성한 공지사항 UI를 body에 추가
+    document.body.appendChild(container);
   }
 
-  // 페이지네이션실행
-  pageRendering();
-  renderPosts();
-
-  return rootEl;
+  // 초기화 작업을 수행
+  createAnnouncementSection(); // 공지사항 UI를 생성
+  fetchNoticeData(); // 공지사항 데이터를 가져오고 페이지네이션을 실행
 }
