@@ -19,7 +19,7 @@ export default function createButton({
 }){
 
   // 버튼 onclick 이벤트
-  const buttonEvent = () => {
+  const buttonClickEvent = () => {
     if(onClick){
       document.getElementById(id).addEventListener('click', onClick);
     }
@@ -37,7 +37,7 @@ export default function createButton({
   `;
 
   return {
-    buttonEvent,
+    buttonClickEvent,
     render
   }
 }
