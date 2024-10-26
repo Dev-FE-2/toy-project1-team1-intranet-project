@@ -14,7 +14,7 @@ export default function Announcement() {
 
       // 데이터가 성공적으로 로드되면 페이지네이션을 실행
       if (noticeData.length > 0) {
-        pagenation();
+        pagination();
       }
     } catch (err) {
       // 데이터 가져오기에 실패하면 오류를 콘솔에 출력
@@ -23,7 +23,7 @@ export default function Announcement() {
   };
 
   // 페이지네이션을 처리하는 함수
-  function pagenation() {
+  function pagination() {
     // 전체 공지사항 수 (몇 개의 공지사항이 있는지)
     const totalCount = noticeData.length;
     // 한 페이지에 보여줄 공지사항 수 (여기서는 8개씩 보여줌)
@@ -40,6 +40,27 @@ export default function Announcement() {
     let lastPage = pageGroup * pageCount;
     // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
+    // 검색기능을 위한 변수
+
+    const searchInput = document.querySelector('input[type="search"]');
+    const searchButton = document.querySelector('.material-symbols-outlined');
+
+    // 검색기능
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        handleSearch();
+      }
+    });
+
+    searchButton.addEventListener('click', handleSearch);
+
+    function handleSearch() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const filteredData = noticeData.filter(post =>
+        post.title.toLowerCase().includes(searchTerm),
+      );
+      renderPosts(filteredData);
+    }
 
     // 페이지네이션 버튼을 그릴 위치를 찾음
     const page = document.querySelector('.paging-list');
@@ -137,7 +158,7 @@ export default function Announcement() {
     }
 
     // 공지사항 카드를 화면에 렌더링하는 함수
-    function renderPosts() {
+    function renderPosts(posts = noticeData) {
       // 공지사항 카드를 렌더링할 위치를 찾음
       const postContainer = document.querySelector('.postcard-container');
       postContainer.innerHTML = ''; // 기존 공지사항을 초기화
@@ -145,7 +166,7 @@ export default function Announcement() {
       // 현재 페이지에 맞는 공지사항을 계산
       const start = (currentPage - 1) * limit;
       const end = start + limit;
-      const currentPosts = noticeData.slice(start, end); // 현재 페이지에 해당하는 공지사항만 잘라서 가져옴
+      const currentPosts = posts.slice(start, end); // 현재 페이지에 해당하는 공지사항만 잘라서 가져옴
 
       // 각 공지사항을 카드 형식으로 렌더링
       currentPosts.forEach(post => {
@@ -182,7 +203,7 @@ export default function Announcement() {
       <div class="container__title title">
         <h1 class="title">공지사항</h1>
         <div class="announcement__search-box">
-          <input type="search" placeholder="검색어를 입력하세요" />
+          <input type="search" id="search" placeholder="검색어를 입력하세요" />
           <span class="material-symbols-outlined">search</span>
         </div>
       </div>

@@ -3,7 +3,7 @@
 // import download from './pages/Download';
 // import pageNotFound from './pages/PageNotFound';
 import Main from './pages/front/Main';
-import Announcement from './pages/front/Announcement';
+import Announcement from './pages/front/Announcement/Announcement';
 
 const loadStylesheet = href => {
   const existingLink = document.querySelector('link[data-role="page-style"]');
@@ -55,7 +55,7 @@ const route = () => {
       break;
     case '/Announcement':
       Announcement();
-      loadStylesheet('./src/pages/front/announcement.css');
+      loadStylesheet('./src/pages/front/Announcement/announcement.css');
       break;
     // case '/download':
     //   downloadPage.render(); //렌더
