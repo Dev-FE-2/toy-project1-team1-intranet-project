@@ -10,7 +10,7 @@ import {
   orderBy,
   serverTimestamp,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Storage 관련 메서드 추가
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import firebaseConfig from '../../../firebaseConfig';
 import {
   createPagination,
@@ -18,9 +18,10 @@ import {
 } from '@components/pagination/_pagination';
 import createModal from '@components/Modal/Modal';
 
-// Firestore 인스턴스 생성
+// Firebase 초기화
 const app = initializeApp(firebaseConfig);
 const DB = getFirestore(app);
+const STORAGE = getStorage(app);
 
 // 테이블 헤더
 const tableHeader = `
@@ -35,27 +36,35 @@ const tableHeader = `
   </li>
 `;
 
-// 부재 리스트 호출
+// 부재 유형 매핑
+const absenceTypeMapping = {
+  'am-half': '오전반차',
+  'pm-half': '오후반차',
+  annual: '연차',
+  official: '공가',
+  sick: '병가',
+  alternative: '대체휴가',
+};
+
+let selectedFile = null; // 파일 참조 변수
+
+// Firestore 데이터 가져오기
 const fetchAbsenceData = async () => {
   try {
     const absencesCollection = collection(DB, 'absences');
     const absencesQuery = query(
       absencesCollection,
       orderBy('createdAt', 'desc'),
-    ); // 최신순 정렬
+    );
     const absencesSnapshot = await getDocs(absencesQuery);
-    const absencesData = absencesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    return absencesData;
+    return absencesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error fetching absence data:', error);
     return [];
   }
 };
 
-// 처리 상태 기준 badge className
+// 부재 상태에 따른 CSS 클래스 반환
 const getStatusBadgeClass = status => {
   switch (status) {
     case '승인':
@@ -69,69 +78,41 @@ const getStatusBadgeClass = status => {
   }
 };
 
-const absenceTypeMapping = {
-  'am-half': '오전반차',
-  'pm-half': '오후반차',
-  annual: '연차',
-  official: '공가',
-  sick: '병가',
-  alternative: '대체휴가',
-};
-
-// 개별 행 데이터 렌더링
-const renderRow = item => {
-  const badgeClass = getStatusBadgeClass(item.status || '처리중');
-  const typeText = absenceTypeMapping[item.absenceType] || item.absenceType; // absenceType 기준으로 매핑된 텍스트 변환
-
-  return `
-    <li class="col">
-      <ul class="cell" role="list">
-        <li class="type">${typeText}</li>
-        <li class="date">${item.absenceDate}</li>
-        <li class="status">
-          <div class="badge ${badgeClass}">${item.status || '처리중'}</div> 
-        </li>
-        <li class="reason text-clamp">${item.reason || '-'}</li>
-        <li class="etc text-clamp">${item.status === '반려' ? item.etc || '' : ''}</li>
-      </ul>
-    </li>
-  `;
-};
-
-// 클라이언트 필터링
-const filterData = (data, filter) => {
-  if (filter === 'all') return data;
-
-  return data.filter(item => {
-    const mappedType = absenceTypeMapping[item.absenceType] || item.absenceType;
-    return mappedType === absenceTypeMapping[filter];
-  });
-};
-
-// 테이블 렌더링
+// 테이블을 현재 페이지에 맞춰 렌더링
 const renderTable = (data, page, itemsPerPage) => {
   const startIndex = (page - 1) * itemsPerPage;
   const limitedData = data.slice(startIndex, startIndex + itemsPerPage);
-
-  const renderRows =
+  const rows =
     limitedData.length > 0
       ? limitedData.map(renderRow).join('')
       : `<li class="col"><p>부재 이력이 없습니다.</p></li>`;
 
   document.querySelector('.table-body ul.table').innerHTML =
-    `${tableHeader} ${renderRows}`;
+    `${tableHeader} ${rows}`;
 };
 
-// 잔여 연차일 가져오기 임시
-const num = 5.5;
+// 개별 행 렌더링
+const renderRow = item => `
+  <li class="col">
+    <ul class="cell" role="list">
+      <li class="type">${absenceTypeMapping[item.absenceType] || item.absenceType}</li>
+      <li class="date">${item.absenceDate}</li>
+      <li class="status">
+        <div class="badge ${getStatusBadgeClass(item.status)}">${item.status || '처리중'}</div> 
+      </li>
+      <li class="reason text-clamp">${item.reason || '-'}</li>
+      <li class="etc text-clamp">${item.status === '반려' ? item.etc || '' : ''}</li>
+    </ul>
+  </li>
+`;
 
-// 팝업
+// 모달 컴포넌트 생성
 const absenceApplyModal = createModal({
   id: 'absenceApplyModal',
   title: '부재 신청',
   content: `
     <div class="cont">
-      <div class="info-box text-success">잔여 연차 <span>${num}</span>일</div>
+      <div class="info-box text-success">잔여 연차 <span>5.5</span>일</div>
       <form action="" method="post">
         <ul class="input-list">
           <li>
@@ -145,20 +126,19 @@ const absenceApplyModal = createModal({
               <option value="sick">병가</option>
               <option value="alternative">대체휴가</option>
             </select>
-            <p class="helper-text"></p>
           </li>
           <li>
             <label for="absence-date">&#42;기간</label>
             <input class="" type="text" name="absence-date" placeholder="YYYY-MM-DD" id="datepicker" readonly>
           </li>
           <li>
-            <label for="reason">&#42;사유 입력&#40;&#42;50자 이내&#41;</label>
+            <label for="reason">&#42;사유 입력 (50자 이내)</label>
             <textarea class="" id="reason" name="reason" placeholder="사유를 입력하세요" required maxlength="50"></textarea>
           </li>
           <li>
-						<label for="fileupload">증빙 자료&#40;&#42;.jpeg, png, 5MB 이하&#41;</label>
-						<button class="btn btn-outline w100" id="fileupload">파일첨부</button>
-					</li>
+            <label for="fileupload">증빙 자료 (.jpeg, .png, 5MB 이하)</label>
+            <button class="btn btn-outline w100" id="fileupload">파일첨부</button>
+          </li>
         </ul>
       </form>
     </div>
@@ -175,62 +155,109 @@ const absenceApplyModal = createModal({
   `,
 });
 
-// 부재 신청 > 신청 버튼 클릭 핸들러
-let selectedFile = null; // 전역 변수로 파일 참조
+// 필터
+const applyFilter = (data, itemsPerPage, currentPage, filter) => {
+  const filteredData =
+    filter === 'all'
+      ? data
+      : data.filter(item => {
+          const mappedType =
+            absenceTypeMapping[item.absenceType] || item.absenceType;
+          return mappedType === absenceTypeMapping[filter];
+        });
+
+  renderTable(filteredData, currentPage, itemsPerPage);
+  document.querySelector('.pagination').innerHTML = createPagination(
+    filteredData.length,
+    currentPage,
+    itemsPerPage,
+  );
+  addPaginationListeners(newPage =>
+    handlePageChange(newPage, filteredData, itemsPerPage, currentPage),
+  );
+};
+
+// 페이지 변경 핸들러
+const handlePageChange = (page, data, itemsPerPage, currentPage) => {
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  if (page < 1 || page > totalPages) return;
+
+  currentPage = page;
+  renderTable(data, page, itemsPerPage);
+  document.querySelector('.pagination').innerHTML = createPagination(
+    data.length,
+    currentPage,
+    itemsPerPage,
+  );
+  addPaginationListeners(newPage =>
+    handlePageChange(newPage, data, itemsPerPage, currentPage),
+  );
+};
+
+// 파일 업로드
+const handleFileUpload = event => {
+  event.preventDefault(); // 기본 클릭 이벤트 방지
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/png, image/jpeg';
+
+  fileInput.addEventListener('change', event => {
+    selectedFile = event.target.files[0];
+    if (selectedFile) {
+      const allowedTypes = ['image/png', 'image/jpeg'];
+      const maxSizeInMB = 5 * 1024 * 1024;
+
+      if (
+        !allowedTypes.includes(selectedFile.type) ||
+        selectedFile.size > maxSizeInMB
+      ) {
+        alert('PNG 또는 JPG, 5MB 이하 파일만 첨부 가능합니다.');
+        selectedFile = null;
+      } else {
+        console.log('유효한 파일 선택:', selectedFile.name);
+      }
+    }
+  });
+
+  fileInput.click();
+};
+
+// Firebase Storage에 파일 업로드
+const uploadFileToStorage = async file => {
+  const storageRef = ref(STORAGE, `absence-files/${Date.now()}_${file.name}`);
+  const uploadSnapshot = await uploadBytes(storageRef, file);
+  return getDownloadURL(uploadSnapshot.ref);
+};
+
+// 부재 신청 처리
 const handleSubmit = async () => {
-  const absenceTypeKey = document.getElementById('absence-type').value;
-  const absenceType = absenceTypeMapping[absenceTypeKey] || absenceTypeKey;
+  const absenceType = document.getElementById('absence-type').value;
   const absenceDate = document.getElementById('datepicker').value;
   const reason = document.getElementById('reason').value;
-  let fileUrl = null;
 
   if (!absenceType || !absenceDate || !reason) {
-    const missingFields = [];
-    if (!absenceType) missingFields.push('휴가 구분');
-    if (!absenceDate) missingFields.push('기간');
-    if (!reason) missingFields.push('사유');
-    alert(`다음 항목을 입력해주세요: ${missingFields.join(', ')}`);
+    alert('모든 필수 항목을 입력해주세요.');
     return;
   }
 
-  try {
-    if (selectedFile) {
-      fileUrl = await uploadFileToStorage(selectedFile);
-    }
+  let fileUrl = null;
+  if (selectedFile) fileUrl = await uploadFileToStorage(selectedFile);
 
-    await setDoc(doc(collection(DB, 'absences')), {
-      absenceType,
-      absenceDate,
-      reason,
-      fileUrl,
-      status: '승인대기',
-      createdAt: serverTimestamp(),
-    });
+  await setDoc(doc(collection(DB, 'absences')), {
+    absenceType,
+    absenceDate,
+    reason,
+    fileUrl,
+    status: '승인대기',
+    createdAt: serverTimestamp(),
+  });
 
-    alert('신청이 완료되었습니다.');
-    resetForm();
-    absenceApplyModal.close();
-    selectedFile = null;
-  } catch (error) {
-    console.error('부재 신청 저장 실패:', error);
-    alert('신청 중 오류가 발생했습니다. 다시 시도해 주세요.');
-  }
+  alert('신청이 완료되었습니다.');
+  resetForm();
+  absenceApplyModal.close();
+  selectedFile = null;
 };
 
-// Firebase Storage에 파일 업로드 함수
-const uploadFileToStorage = async file => {
-  const STORAGE = getStorage();
-  const STORAGE_REF = ref(STORAGE, `absence-files/${Date.now()}_${file.name}`);
-
-  try {
-    const UPLOAD_SNAPSHOT = await uploadBytes(STORAGE_REF, file);
-    const DOWNLOAD_URL = await getDownloadURL(UPLOAD_SNAPSHOT.ref);
-    return DOWNLOAD_URL;
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    throw new Error('파일 업로드에 실패했습니다.');
-  }
-};
 // 폼 초기화
 const resetForm = () => {
   document.getElementById('absence-type').value = '';
@@ -239,7 +266,7 @@ const resetForm = () => {
   selectedFile = null;
 };
 
-// 모달이 열리면 easepick
+// Datepicker 설정
 const setupDatePicker = () => {
   const datepickerElement = document.getElementById('datepicker');
   const today = new Date().toISOString().split('T')[0];
@@ -247,7 +274,6 @@ const setupDatePicker = () => {
 
   const createPicker = (options = {}) => {
     if (picker) picker.destroy();
-
     picker = new easepick.create({
       element: datepickerElement,
       css: [
@@ -258,7 +284,7 @@ const setupDatePicker = () => {
       calendars: 1,
       plugins: [LockPlugin],
       LockPlugin: {
-        minDate: today, // 오늘 이전 선택 불가
+        minDate: today, // 오늘 이전 날짜 lock
         filter: date => {
           const day = date.getDay();
           return day === 0 || day === 6; // 주말 lock
@@ -271,89 +297,24 @@ const setupDatePicker = () => {
   document.getElementById('absence-type').addEventListener('change', e => {
     const selectedType = e.target.value;
     datepickerElement.value = '';
-
-    if (selectedType === 'am-half' || selectedType === 'pm-half') {
-      createPicker();
-    } else {
-      createPicker({
-        autoApply: false,
-        locale: {
-          cancel: '취소',
-          apply: '선택',
-        },
-        plugins: [RangePlugin, LockPlugin],
-        LockPlugin: {
-          minDate: today,
-          filter: date => {
-            const day = date.getDay();
-            return day === 0 || day === 6;
+    createPicker(
+      selectedType === 'am-half' || selectedType === 'pm-half'
+        ? {}
+        : {
+            autoApply: false,
+            locale: { cancel: '취소', apply: '선택' },
+            plugins: [RangePlugin, LockPlugin],
+            RangePlugin: { tooltip: false },
           },
-        },
-        RangePlugin: {
-          tooltip: false,
-        },
-      });
-    }
+    );
   });
 
   createPicker();
 };
 
-//팝업 닫기 confirm
-const handlePopupClose = () => {
-  const confirmation = confirm(
-    '작성중인 내용이 저장되지 않습니다. 그래도 닫으시겠습니까?',
-  );
-  if (confirmation) {
-    resetForm();
-    absenceApplyModal.close();
-  } else {
-    return false;
-  }
-};
-
-// 페이지 변경 핸들러
-const handlePageChange = (page, data, itemsPerPage, currentPage) => {
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-
-  if (page < 1 || page > totalPages) return;
-
-  currentPage = page;
-  renderTable(data, page, itemsPerPage);
-
-  document.querySelector('.pagination').innerHTML = createPagination(
-    data.length,
-    currentPage,
-    itemsPerPage,
-  );
-  addPaginationListeners(newPage =>
-    handlePageChange(newPage, data, itemsPerPage, currentPage),
-  );
-};
-
-// 테이블 재렌더링(필터 적용, 페이지네이션)
-const applyFilter = (data, itemsPerPage, currentPage, filter) => {
-  const filteredData = filterData(data, filter);
-
-  if (filteredData.length === 0) currentPage = 1;
-
-  renderTable(filteredData, currentPage, itemsPerPage);
-
-  document.querySelector('.pagination').innerHTML = createPagination(
-    filteredData.length,
-    currentPage,
-    itemsPerPage,
-  );
-
-  addPaginationListeners(newPage =>
-    handlePageChange(newPage, filteredData, itemsPerPage, currentPage),
-  );
-};
-
-// 초기 화면
+// 초기 화면 설정
 const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
   renderTable(data, currentPage, itemsPerPage);
-
   document.querySelector('.pagination').innerHTML = createPagination(
     data.length,
     currentPage,
@@ -364,13 +325,16 @@ const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
   );
 };
 
+// 메인 함수
 export default async function AbsencePortal() {
   const itemsPerPage = 15; // 최대 행 갯수
   const currentPage = 1; // 진입 시 페이지네이션
 
   try {
+    // 데이터 가져오기
     const data = await fetchAbsenceData();
 
+    // 컨테이너 html
     const container = document.createElement('div');
     container.className = 'container absence-portal';
     container.innerHTML = `
@@ -394,66 +358,45 @@ export default async function AbsencePortal() {
       <div class="pagination"></div>
     `;
 
+    // 기존 내용 제거 후 컨테이너 추가, 초기화 렌더
     document.body.innerHTML = '';
     document.body.appendChild(container);
-
     setupAbsencePortal(data, itemsPerPage, currentPage);
     document.body.insertAdjacentHTML('beforeend', absenceApplyModal.render());
 
-    // 셀렉트 변경
+    // 필터 변경 리스너
     document.getElementById('view-filter').addEventListener('change', event => {
-      const filter = event.target.value;
-      applyFilter(data, itemsPerPage, currentPage, filter);
+      applyFilter(data, itemsPerPage, currentPage, event.target.value);
     });
 
-    // 팝업 열기
+    // 부재 신청 팝업 리스너
     document
       .querySelector('[data-popup="lp1"]')
       .addEventListener('click', () => {
         absenceApplyModal.open();
         setupDatePicker();
+        document
+          .getElementById('fileupload')
+          .addEventListener('click', handleFileUpload);
       });
 
-    // 팝업 닫기
+    // 팝업 닫기, 취소 리스너
     document
       .querySelectorAll('#closePopupBtn, #cancelApplyBtn')
       .forEach(button => {
-        button.addEventListener('click', handlePopupClose);
+        button.addEventListener('click', () => {
+          // 닫기 전에 확인 메시지 표시
+          const confirmation = confirm(
+            '작성한 내용이 모두 사라집니다. 그래도 닫으시겠습니까?',
+          );
+          if (confirmation) {
+            resetForm(); // 작성된 내용 초기화
+            absenceApplyModal.close(); // 모달 닫기
+          }
+        });
       });
 
-    // 파일 업로드
-    document.getElementById('fileupload').addEventListener('click', () => {
-      const fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.accept = 'image/png, image/jpeg';
-
-      fileInput.addEventListener('change', event => {
-        selectedFile = event.target.files[0];
-
-        if (selectedFile) {
-          const allowedExtensions = ['image/png', 'image/jpeg'];
-          const maxSizeInMB = 5 * 1024 * 1024; // 5MB 제한
-
-          if (!allowedExtensions.includes(selectedFile.type)) {
-            alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.');
-            selectedFile = null;
-            return;
-          }
-
-          if (selectedFile.size > maxSizeInMB) {
-            alert('파일 크기는 5MB 이하로 제한됩니다.');
-            selectedFile = null;
-            return;
-          }
-
-          console.log('유효한 파일 선택:', selectedFile.name);
-        }
-      });
-
-      fileInput.click(); // 파일 선택 강제 트리거
-    });
-
-    // 부재 등록
+    // 부재 등록 리스너
     document
       .getElementById('confirmApplyBtn')
       .addEventListener('click', handleSubmit);
