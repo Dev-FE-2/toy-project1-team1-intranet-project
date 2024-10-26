@@ -499,6 +499,11 @@ textarea.success ~ .helper-text {
   color: var(--main1);
 }
 
+/* etc */
+.w100 {
+  width: 100%;
+}
+
 /* responsive  */
 @media screen and (max-width: 768px) {
   .container {
@@ -513,5 +518,8 @@ textarea.success ~ .helper-text {
   }
   .table-body .col {
     padding: 1.7rem 2.2rem;
+  }
+  .layer-popup {
+    width: 80%;
   }
 }

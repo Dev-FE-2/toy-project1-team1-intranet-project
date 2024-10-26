@@ -135,7 +135,7 @@ const absenceApplyModal = createModal({
       <form action="" method="post">
         <ul class="input-list">
           <li>
-            <label for="absence-type">구분</label>
+            <label for="absence-type">&#42;구분</label>
             <select class="" id="absence-type" name="absence-type" required>
               <option value="" selected disabled>휴가 종류</option>
               <option value="am-half">오전반차</option>
@@ -148,16 +148,16 @@ const absenceApplyModal = createModal({
             <p class="helper-text"></p>
           </li>
           <li>
-            <label for="absence-date">기간</label>
+            <label for="absence-date">&#42;기간</label>
             <input class="" type="text" name="absence-date" placeholder="YYYY-MM-DD" id="datepicker" readonly>
           </li>
           <li>
-            <label for="reason">사유 입력&#40;&#42;50자 이내&#41;</label>
+            <label for="reason">&#42;사유 입력&#40;&#42;50자 이내&#41;</label>
             <textarea class="" id="reason" name="reason" placeholder="사유를 입력하세요" required maxlength="50"></textarea>
           </li>
           <li>
-						<label for="file">증빙파일 첨부 &#40;&#42;.jpeg, png, 5MB 이하&#41;</label>
-						<button id="fileupload">임시</button>
+						<label for="fileupload">증빙 자료&#40;&#42;.jpeg, png, 5MB 이하&#41;</label>
+						<button class="btn btn-outline w100" id="fileupload">파일첨부</button>
 					</li>
         </ul>
       </form>
@@ -238,6 +238,7 @@ const resetForm = () => {
   document.getElementById('reason').value = '';
   selectedFile = null;
 };
+
 // 모달이 열리면 easepick
 const setupDatePicker = () => {
   const datepickerElement = document.getElementById('datepicker');
