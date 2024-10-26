@@ -5,8 +5,9 @@ import '../../../common.css';
 
 import { fetchAllUsers } from '../../../utils/fetchAllUserData';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, updateDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
-import { DB } from '../../../../firebaseConfig'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
+import { deleteUser, sendPasswordResetEmail } from 'firebase/auth';
+import { DB, AUTH } from '../../../../firebaseConfig'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
 
 const employeeList = async () => {
   const CONTAINER = document.createElement('div');
@@ -308,7 +309,6 @@ const employeeList = async () => {
     });
 
     const ASSIGN_USER_BTN = editModal.querySelector('.assign-user-btn');
-    const DELETE_USER_BTN = editModal.querySelector('.delete-user-btn');
 
     ASSIGN_USER_BTN.addEventListener('click', async () => {
       if (userInfo.isApproved) {
@@ -334,6 +334,22 @@ const employeeList = async () => {
       } catch (error) {
         console.error('Error updating user info:', error);
         alert('승인 중 오류가 발생했습니다.');
+      }
+    });
+
+    const DELETE_USER_BTN = editModal.querySelector('.delete-user-btn');
+
+    DELETE_USER_BTN.addEventListener('click', async () => {
+      try {
+        if(confirm('정말로 이 계정을 삭제하시겠습니까?')) {
+          await deleteDoc(doc(DB, 'users', userInfo.id))
+          // 📌 auth 계정 삭제는 서버 사이드에서 작성된 코드로 진행해야한다. 따라서 우선 보류해두고 추후에 추가할 지 논의해보자!!!
+          alert('정상적으로 삭제되었습니다');
+          window.location.reload();
+        } 
+      } catch(error) {
+        console.error('Error updating user info:', error);
+        alert('삭제 중 오류가 발생했습니다.');
       }
     });
 
@@ -428,39 +444,35 @@ const employeeList = async () => {
     };
 
     // 에러 메시지 표시 함수
-    const showError = (modalElement, fieldName, message) => {
-      const ERROR_SPAN = modalElement.querySelector(
-        `.modal-${fieldName}-error`,
-      );
+    const showError = (editModal, fieldName, message) => {
+      const ERROR_SPAN = editModal.querySelector(`.modal-${fieldName}-error`);
       if (ERROR_SPAN) {
         ERROR_SPAN.textContent = message;
       }
     };
 
     // 모든 에러 메시지 초기화
-    const clearErrors = modalElement => {
-      const ERROR_SPANS = modalElement.querySelectorAll('[class*="-error"]');
+    const clearErrors = editModal => {
+      const ERROR_SPANS = editModal.querySelectorAll('[class*="-error"]');
       ERROR_SPANS.forEach(span => (span.textContent = ''));
     };
 
     // input 필드에 실시간 유효성 검사 추가
-    const addInputValidation = modalElement => {
+    const addInputValidation = editModal => {
       const FORM_INPUTS = {
-        employeeNumber: modalElement.querySelector(
-          '.modal-user-employeeNumber',
-        ),
-        name: modalElement.querySelector('.modal-user-name'),
-        phone: modalElement.querySelector('.modal-user-phone'),
-        email: modalElement.querySelector('.modal-user-email'),
-        address: modalElement.querySelector('.modal-user-address'),
-        addressDetail: modalElement.querySelector('.modal-user-addressDetail'),
+        employeeNumber: editModal.querySelector('.modal-user-employeeNumber'),
+        name: editModal.querySelector('.modal-user-name'),
+        phone: editModal.querySelector('.modal-user-phone'),
+        email: editModal.querySelector('.modal-user-email'),
+        address: editModal.querySelector('.modal-user-address'),
+        addressDetail: editModal.querySelector('.modal-user-addressDetail'),
       };
 
       Object.entries(FORM_INPUTS).forEach(([fieldName, input]) => {
         if (input) {
           input.addEventListener('input', () => {
             const errorMessage = validateInput(input.value, fieldName);
-            showError(modalElement, fieldName, errorMessage);
+            showError(editModal, fieldName, errorMessage);
           });
         }
       });
@@ -550,6 +562,8 @@ const employeeList = async () => {
         alert('정보 수정 중 오류가 발생했습니다.');
       }
     };
+
+    addInputValidation(editModal);
 
     // 이벤트 리스너 설정
     uploadImageTemporarily();
