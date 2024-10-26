@@ -1,5 +1,5 @@
 export const createPagination = (totalItems, currentPage, itemsPerPage) => {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage)); // 최소 1페이지 유지
   let paginationHTML = '';
   const maxVisiblePages = 5; // 표시될 최대 페이지네이션 갯수
 
