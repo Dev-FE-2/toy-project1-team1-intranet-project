@@ -51,9 +51,9 @@
   }
 
 }
-@media (max-height: 772px) {
+@media (max-height: 900px) {
   .container .edit-profile-modal-wrapper .edit-profile-modal {
-    padding-top: 50rem;
+    padding-top: 55rem;
   }
 }
 
@@ -124,7 +124,7 @@
   align-items: center;
   gap: 1%;
   width: 100%;
-  height: 60rem;
+  height: 55rem;
 }
 
 .user-profile .profile-sub-info {
@@ -193,7 +193,7 @@
 
   max-height: 70%;
   overflow-y: auto;
-  padding-top: 40rem;
+  padding-top: 50rem;
 }
 
 .edit-profile-modal .modal-img-box {
@@ -245,11 +245,11 @@
   margin-bottom: .3rem;
 }
 
-.edit-profile-modal .modal-button-box {
+.edit-profile-modal .modal-button-box1 {
   padding: 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .edit-profile-modal .modal-user-email {
@@ -265,6 +265,47 @@
 .edit-profile-modal .error-message-div span {
   color: red;
   font-size: 1.2rem;
+}
+
+.edit-profile-modal .modal-button-box2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 0;
+  margin-top: 3.5rem;
+}
+
+.edit-profile-modal .assign-user-btn {
+  box-sizing: border-box;
+  border: 2px solid var(--main1);
+  color: var(--main1);
+  width: 100%;
+  height: 4.325rem;
+}
+
+.edit-profile-modal .assign-user-btn:hover {
+  box-sizing: border-box;
+  border: none;
+  background-color: var(--main1);
+  height: 4.325rem;
+  color: #fff;
+}
+
+.edit-profile-modal .delete-user-btn {
+  box-sizing: border-box;
+  border: 2px solid var(--color-error);
+  color: var(--color-error);
+  width: 100%;
+  height: 4.325rem;
+}
+
+.edit-profile-modal .delete-user-btn:hover {
+  box-sizing: border-box;
+  border: none;
+  background-color: var(--color-error);
+  height: 4.325rem;
+  color: #fff;
 }
 
 /* 직원 정보 수정 모달 스크롤 바 삭제 */

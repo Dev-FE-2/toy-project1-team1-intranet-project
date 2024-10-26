@@ -263,9 +263,13 @@ const employeeList = async () => {
           <div class="error-message-div">
             <span class="modal-addressDetail-error"></span>
           </div>
-          <div class="modal-button-box">
+          <div class="modal-button-box1">
             <button class="btn btn-solid confirm-edit-btn">수정</button>
             <button class="btn btn-outline cancel-edit-btn">취소</button>
+          </div>
+          <div class="modal-button-box2">
+            <button class="btn assign-user-btn" ${userInfo.isApproved ? 'style="display: none"' : ''}>가입 승인하기</button>
+            <button class="btn  delete-user-btn">계정 삭제하기</button>
           </div>
         </div>
     `;
@@ -300,6 +304,36 @@ const employeeList = async () => {
     editModal.addEventListener('click', e => {
       if (e.target === editModal) {
         editModal.style.display = 'none';
+      }
+    });
+
+    const ASSIGN_USER_BTN = editModal.querySelector('.assign-user-btn');
+    const DELETE_USER_BTN = editModal.querySelector('.delete-user-btn');
+
+    ASSIGN_USER_BTN.addEventListener('click', async () => {
+      if (userInfo.isApproved) {
+        return;
+      }
+
+      if (TEAM_SELECT.value === '' || ROLE_SELECT.value === '') {
+        alert('가입 승인 전 소속과 직급을 입력해주세요.');
+        return;
+      }
+
+      try {
+        if (confirm('가입을 승인하시겠습니까?')) {
+          const USER_REF = doc(DB, 'users', userInfo.id);
+          await updateDoc(USER_REF, {
+            team: TEAM_SELECT.value,
+            role: ROLE_SELECT.value,
+            isApproved: true,
+          });
+        }
+        alert('정상적으로 승인되었습니다');
+        window.location.reload();
+      } catch (error) {
+        console.error('Error updating user info:', error);
+        alert('승인 중 오류가 발생했습니다.');
       }
     });
 
@@ -435,27 +469,37 @@ const employeeList = async () => {
     // 정보 수정 처리
     const handleEditSubmit = async () => {
       try {
-        const EMPLOYEE_NUMBER_INPUT = editModal.querySelector('.modal-user-employeeNumber');
+        const EMPLOYEE_NUMBER_INPUT = editModal.querySelector(
+          '.modal-user-employeeNumber',
+        );
         const NAME_INPUT = editModal.querySelector('.modal-user-name');
         const TEAM_SELECT = editModal.querySelector('select[name="team"]');
         const ROLE_SELECT = editModal.querySelector('select[name="role"]');
         const PHONE_INPUT = editModal.querySelector('.modal-user-phone');
         const EMAIL_INPUT = editModal.querySelector('.modal-user-email');
         const ADDRESS_INPUT = editModal.querySelector('.modal-user-address');
-        const ADDRESS_DETAIL_INPUT = editModal.querySelector('.modal-user-addressDetail');
-    
+        const ADDRESS_DETAIL_INPUT = editModal.querySelector(
+          '.modal-user-addressDetail',
+        );
+
         // 모든 에러 메시지 초기화
         clearErrors(editModal);
 
         const validations = {
-          employeeNumber: validateInput(EMPLOYEE_NUMBER_INPUT.value, 'employeeNumber'),
+          employeeNumber: validateInput(
+            EMPLOYEE_NUMBER_INPUT.value,
+            'employeeNumber',
+          ),
           name: validateInput(NAME_INPUT.value, 'name'),
           phone: validateInput(PHONE_INPUT.value, 'phone'),
           email: validateInput(EMAIL_INPUT.value, 'email'),
           address: validateInput(ADDRESS_INPUT.value, 'address'),
-          addressDetail: validateInput(ADDRESS_DETAIL_INPUT.value, 'addressDetail')
+          addressDetail: validateInput(
+            ADDRESS_DETAIL_INPUT.value,
+            'addressDetail',
+          ),
         };
-    
+
         // 에러 메시지 표시
         let hasErrors = false;
         Object.entries(validations).forEach(([fieldName, errorMessage]) => {
@@ -464,12 +508,12 @@ const employeeList = async () => {
             hasErrors = true;
           }
         });
-    
+
         // 유효성 검사 실패 시 함수 종료
         if (hasErrors) {
           return;
         }
-        
+
         // 폼 데이터 수집
         const INPUT_DATA = {
           employeeNumber: EMPLOYEE_NUMBER_INPUT.value,
@@ -481,7 +525,6 @@ const employeeList = async () => {
           address: ADDRESS_INPUT.value,
           addressDetail: ADDRESS_DETAIL_INPUT.value,
         };
-
 
         // 이미지가 선택된 경우에만 Storage에 업로드
         let imageURL = userInfo.profileImg; // 기본값은 현재 이미지 URL
