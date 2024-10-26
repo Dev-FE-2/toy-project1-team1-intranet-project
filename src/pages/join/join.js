@@ -8,6 +8,25 @@ import {
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { DB, AUTH } from '../../../firebaseConfig';
 
+// 페이지 전환 기록을 위한 함수
+const navigateTo = page => {
+  // 현재 페이지 기록
+  history.pushState({ page }, '', `/join/${page}`);
+
+  // 페이지에 따라 렌더링할 함수를 호출
+  if (page === 'login') {
+    renderLoginForm();
+  } else if (page === 'signup') {
+    renderSignupForm();
+  }
+};
+
+// popstate 이벤트 핸들러 추가
+window.addEventListener('popstate', event => {
+  const { page } = event.state || { page: 'login' }; // 기본값: 로그인 페이지
+  navigateTo(page);
+});
+
 // ========================== 로그인 ==========================
 // 로그인 폼 렌더링 함수
 const renderLoginForm = () => {
@@ -33,9 +52,13 @@ const renderLoginForm = () => {
   document
     .querySelector('.login-button')
     .addEventListener('click', handleLogin);
+  // document
+  //   .querySelector('.go-to-signup')
+  //   .addEventListener('click', renderSignupForm);
+
   document
     .querySelector('.go-to-signup')
-    .addEventListener('click', renderSignupForm);
+    .addEventListener('click', () => navigateTo('signup'));
 };
 
 // 로그인 핸들러
@@ -163,9 +186,13 @@ const renderSignupForm = () => {
   </div>
   `; // 📌 input, button 공통 component로 변경 예정
 
+  // document
+  //   .querySelector('.go-to-login')
+  //   .addEventListener('click', renderLoginForm);
+
   document
     .querySelector('.go-to-login')
-    .addEventListener('click', renderLoginForm);
+    .addEventListener('click', () => navigateTo('login'));
 
   const handleAddressSearch = () => {
     const ADDRESS = document.querySelector('.signup-address');
@@ -338,9 +365,14 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
       name: SIGNUP_INPUT.name.value,
       employeeNumber: SIGNUP_INPUT.employeeNumber.value,
       phone: SIGNUP_INPUT.phone.value,
-      address: `${SIGNUP_INPUT.address.value}, ${SIGNUP_INPUT.addressDetail.value}`,
+      address: SIGNUP_INPUT.address.value,
+      addressDetail: SIGNUP_INPUT.addressDetail.value,
+      role: '',
+      team: '',
+      profileImg: 'https://www.studiopeople.kr/common/img/default_profile.png',
       isApproved: false,
       isAdmin: false,
+      isWorking: false,
       createdAt: new Date(),
     });
 
@@ -361,7 +393,7 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
   }
 };
 
-const initJoinPage = container => {
+const initJoinPage = (container, pageType) => {
   if (!container) {
     console.error('container가 없어!');
     return;
@@ -369,7 +401,22 @@ const initJoinPage = container => {
 
   window.APP_DIV = container;
 
-  renderLoginForm();
+  // 현재 URL에 따라 초기 페이지 결정
+  // if (window.location.pathname.endsWith('/signup')) {
+  //   navigateTo('signup');
+  // } else {
+  //   navigateTo('login');
+  // }
+
+  if (pageType === 'signup') {
+    navigateTo('signup')
+    renderSignupForm()
+  } else {
+    navigateTo('login')
+    renderLoginForm()
+  }
+
+  // renderLoginForm();
 };
 
 export default initJoinPage;

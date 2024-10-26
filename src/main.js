@@ -4,7 +4,7 @@
 // import pageNotFound from './pages/PageNotFound';
 import Main from './pages/front/Main';
 import initJoinPage from './pages/join/join';
-import employeeList from './pages/admin/employeeList/employeeList';
+// import employeeList from './pages/admin/employeeList/employeeList';
 
 const loadStylesheet = href => {
   const existingLink = document.querySelector('link[data-role="page-style"]');
@@ -65,16 +65,21 @@ const route = async () => {
     //   content.innerHTML = supportPage.render(); //클래스로 정의하는 방식
     //   break;
     case '/join':
-      loadStylesheet('./src/pages/join/join.css');
-      initJoinPage(content);
-      break;
+      case '/join/login':
+        loadStylesheet('./src/pages/join/join.css');
+        initJoinPage(content, 'login'); // login 페이지 초기화
+        break;
+      case '/join/signup':
+        loadStylesheet('./src/pages/join/join.css');
+        initJoinPage(content, 'signup'); // signup 페이지 초기화
+        break;
     // case '/admin':
     //   content.innerHTML = employeeList()
     //   break
-    case '/admin':
-      content.innerHTML = '';
-      content.appendChild(await employeeList());
-      break;
+    // case '/admin':
+    //   content.innerHTML = '';
+    //   content.appendChild(await employeeList());
+    //   break;
     default:
       content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식
       break;
