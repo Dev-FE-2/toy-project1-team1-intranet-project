@@ -252,6 +252,8 @@ const employeeList = async () => {
           <div class="error-message-div">
             <span class="modal-email-error"></span>
           </div>
+          <div>비밀번호</div>
+          <button class="btn btn-outline reset-password-btn">비밀번호 재설정 메일 발송</button>
           <div>주소</div>
           <div class="address-button-box">
             <button class="btn btn-solid search-address">주소찾기</button>
@@ -348,10 +350,22 @@ const employeeList = async () => {
           window.location.reload();
         } 
       } catch(error) {
-        console.error('Error updating user info:', error);
+        console.error('Error deleting user:', error);
         alert('삭제 중 오류가 발생했습니다.');
       }
     });
+
+    const RESET_PASSWORD_BTN = editModal.querySelector('.reset-password-btn')
+
+    RESET_PASSWORD_BTN.addEventListener('click', async () => {
+      try {
+        await sendPasswordResetEmail(AUTH, userInfo.email)
+        alert('해당 직원의 이메일 주소로 비밀번호 재설정 메일이 발송되었습니다.')
+      } catch (error) {
+        console.error('Error sending password reset email:', error)
+        alert('비밀번호 재설정 메일 발송 중 오류가 발생했습니다.')
+      }
+    })
 
     const MODAL_PREVIEW_IMAGE = editModal.querySelector('.profile-img-preview');
     const MODAL_CHANGE_IMAGE_BTN = editModal.querySelector('.change-img-btn');

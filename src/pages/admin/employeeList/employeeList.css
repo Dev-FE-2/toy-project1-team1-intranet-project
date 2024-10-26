@@ -214,7 +214,7 @@
 }
 
 .edit-profile-modal div {
-  padding-left: .5rem;
+  padding-left: 1rem;
   font-size: 1.5rem;
 }
 
@@ -236,9 +236,9 @@
 }
 
 .edit-profile-modal .address-button-box {
-
   width: 100%;
   padding: 0;
+  margin-top: .3rem;
 }
 
 .edit-profile-modal .modal-user-address {
@@ -278,8 +278,8 @@
 
 .edit-profile-modal .assign-user-btn {
   box-sizing: border-box;
-  border: 2px solid var(--main1);
-  color: var(--main1);
+  border: 2px solid var(--color-success);
+  color: var(--color-success);
   width: 100%;
   height: 4.325rem;
 }
@@ -287,7 +287,7 @@
 .edit-profile-modal .assign-user-btn:hover {
   box-sizing: border-box;
   border: none;
-  background-color: var(--main1);
+  background-color: var(--color-success);
   height: 4.325rem;
   color: #fff;
 }
@@ -306,6 +306,12 @@
   background-color: var(--color-error);
   height: 4.325rem;
   color: #fff;
+}
+
+.edit-profile-modal .reset-password-btn {
+  width: 100%;
+  padding: 1rem 0;
+  margin: .5rem 0 1rem 0;
 }
 
 /* 직원 정보 수정 모달 스크롤 바 삭제 */
