@@ -31,38 +31,16 @@ export default function Announcement() {
     // 현재 페이지 (처음에는 1페이지부터 시작)
     let currentPage = 1;
     // 전체 페이지 수 계산 (공지사항을 몇 페이지로 나눌 수 있는지)
-    const totalPage = Math.ceil(totalCount / limit);
+    let totalPage = Math.ceil(totalCount / limit);
     // 보여줄 페이지 개수
-    const pageCount = 5;
+    const pageCount = totalCount > 40 ? 5 : totalPage;
     // 현재 페이지의 그룹
     let pageGroup = Math.ceil(currentPage / pageCount);
     // 마지막 페이지 (한 화면에 나타낼 페이지 그룹 x 현재 페이지 그룹)
     let lastPage = pageGroup * pageCount;
     // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
-    // 검색기능을 위한 변수
 
-    const searchInput = document.querySelector('input[type="search"]');
-    const searchButton = document.querySelector('.material-symbols-outlined');
-
-    // 검색기능
-    searchInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter') {
-        handleSearch();
-      }
-    });
-
-    searchButton.addEventListener('click', handleSearch);
-
-    function handleSearch() {
-      const searchTerm = searchInput.value.trim().toLowerCase();
-      const filteredData = noticeData.filter(post =>
-        post.title.toLowerCase().includes(searchTerm),
-      );
-      renderPosts(filteredData);
-    }
-
-    // 페이지네이션 버튼을 그릴 위치를 찾음
     const page = document.querySelector('.paging-list');
 
     // 페이지네이션 UI를 그리는 함수 (페이지 번호와 이전/다음 버튼)
@@ -113,6 +91,28 @@ export default function Announcement() {
       attachEvent();
     }
 
+    // 검색기능을 위한 변수
+    const searchInput = document.querySelector('input[type="search"]');
+    const searchButton = document.querySelector('.material-symbols-outlined');
+
+    // 검색기능 함수
+    function handleSearch() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const filteredData = noticeData.filter(post =>
+        post.title.toLowerCase().includes(searchTerm),
+      );
+      currentPage = 1;
+
+      updatePagination(filteredData);
+      renderPosts(filteredData);
+    }
+
+    // 검색 버튼과 엔터 키 이벤트
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') handleSearch();
+    });
+    searchButton.addEventListener('click', handleSearch());
+
     // 페이지 버튼과 이전/다음 버튼 클릭 이벤트를 처리하는 함수
     function attachEvent() {
       // 이전 버튼을 클릭했을 때, 현재 페이지를 1 감소시키고 페이지를 업데이트
@@ -145,14 +145,17 @@ export default function Announcement() {
     }
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
-    function updatePagination() {
+    function updatePagination(data = noticeData) {
+      totalPage = Math.ceil(data.length / limit);
       pageGroup = Math.ceil(currentPage / pageCount);
       lastPage = pageGroup * pageCount;
       firstPage = lastPage - (pageCount - 1);
 
-      if (lastPage > totalPage) {
-        lastPage = totalPage;
-      }
+      if (totalPage === 0) currentPage = 1;
+      else if (currentPage > totalPage) currentPage = totalPage;
+
+      if (lastPage > totalPage) lastPage = totalPage;
+
       pageRendering(); // 페이지네이션 UI 다시 그리기
       renderPosts(); // 공지사항 목록 다시 그리기
     }

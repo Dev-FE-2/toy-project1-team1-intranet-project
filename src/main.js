@@ -55,7 +55,7 @@ const route = () => {
       break;
     case '/Announcement':
       Announcement();
-      loadStylesheet('./src/pages/front/Announcement/announcement.css');
+      loadStylesheet('./src/pages/front/announcement.css');
       break;
     // case '/download':
     //   downloadPage.render(); //렌더
