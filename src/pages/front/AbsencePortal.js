@@ -10,13 +10,13 @@ import {
   orderBy,
   serverTimestamp,
 } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Storage 관련 메서드 추가
 import firebaseConfig from '../../../firebaseConfig';
 import {
   createPagination,
   addPaginationListeners,
 } from '@components/pagination/_pagination';
 import createModal from '@components/Modal/Modal';
-// 페이지네이션 임시
 
 // Firestore 인스턴스 생성
 const app = initializeApp(firebaseConfig);
@@ -157,7 +157,7 @@ const absenceApplyModal = createModal({
           </li>
           <li>
 						<label for="file">증빙파일 첨부 &#40;&#42;.jpeg, png, 5MB 이하&#41;</label>
-						<input class="" type="file" id="file" name="file" accept=".jpg, .png">
+						<button id="fileupload">임시</button>
 					</li>
         </ul>
       </form>
@@ -176,13 +176,13 @@ const absenceApplyModal = createModal({
 });
 
 // 부재 신청 > 신청 버튼 클릭 핸들러
+let selectedFile = null; // 전역 변수로 파일 참조
 const handleSubmit = async () => {
   const absenceTypeKey = document.getElementById('absence-type').value;
   const absenceType = absenceTypeMapping[absenceTypeKey] || absenceTypeKey;
   const absenceDate = document.getElementById('datepicker').value;
   const reason = document.getElementById('reason').value;
-  const fileInput = document.getElementById('file');
-  const file = fileInput.files.length > 0 ? fileInput.files[0].name : '';
+  let fileUrl = null;
 
   if (!absenceType || !absenceDate || !reason) {
     const missingFields = [];
@@ -194,34 +194,50 @@ const handleSubmit = async () => {
   }
 
   try {
-    await setDoc(
-      doc(collection(DB, 'absences')), // Firestore 자동 ID 생성
-      {
-        absenceType, // 매핑된 텍스트로 저장
-        absenceDate,
-        reason,
-        file,
-        status: '승인대기',
-        createdAt: serverTimestamp(),
-      },
-    );
+    if (selectedFile) {
+      fileUrl = await uploadFileToStorage(selectedFile);
+    }
+
+    await setDoc(doc(collection(DB, 'absences')), {
+      absenceType,
+      absenceDate,
+      reason,
+      fileUrl,
+      status: '승인대기',
+      createdAt: serverTimestamp(),
+    });
+
     alert('신청이 완료되었습니다.');
     resetForm();
     absenceApplyModal.close();
+    selectedFile = null;
   } catch (error) {
     console.error('부재 신청 저장 실패:', error);
     alert('신청 중 오류가 발생했습니다. 다시 시도해 주세요.');
   }
 };
 
+// Firebase Storage에 파일 업로드 함수
+const uploadFileToStorage = async file => {
+  const STORAGE = getStorage();
+  const STORAGE_REF = ref(STORAGE, `absence-files/${Date.now()}_${file.name}`);
+
+  try {
+    const UPLOAD_SNAPSHOT = await uploadBytes(STORAGE_REF, file);
+    const DOWNLOAD_URL = await getDownloadURL(UPLOAD_SNAPSHOT.ref);
+    return DOWNLOAD_URL;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw new Error('파일 업로드에 실패했습니다.');
+  }
+};
 // 폼 초기화
 const resetForm = () => {
   document.getElementById('absence-type').value = '';
   document.getElementById('datepicker').value = '';
   document.getElementById('reason').value = '';
-  document.getElementById('file').value = '';
+  selectedFile = null;
 };
-
 // 모달이 열리면 easepick
 const setupDatePicker = () => {
   const datepickerElement = document.getElementById('datepicker');
@@ -332,6 +348,7 @@ const applyFilter = (data, itemsPerPage, currentPage, filter) => {
     handlePageChange(newPage, filteredData, itemsPerPage, currentPage),
   );
 };
+
 // 초기 화면
 const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
   renderTable(data, currentPage, itemsPerPage);
@@ -341,7 +358,6 @@ const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
     currentPage,
     itemsPerPage,
   );
-
   addPaginationListeners(newPage =>
     handlePageChange(newPage, data, itemsPerPage, currentPage),
   );
@@ -403,6 +419,38 @@ export default async function AbsencePortal() {
       .forEach(button => {
         button.addEventListener('click', handlePopupClose);
       });
+
+    // 파일 업로드
+    document.getElementById('fileupload').addEventListener('click', () => {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/png, image/jpeg';
+
+      fileInput.addEventListener('change', event => {
+        selectedFile = event.target.files[0];
+
+        if (selectedFile) {
+          const allowedExtensions = ['image/png', 'image/jpeg'];
+          const maxSizeInMB = 5 * 1024 * 1024; // 5MB 제한
+
+          if (!allowedExtensions.includes(selectedFile.type)) {
+            alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.');
+            selectedFile = null;
+            return;
+          }
+
+          if (selectedFile.size > maxSizeInMB) {
+            alert('파일 크기는 5MB 이하로 제한됩니다.');
+            selectedFile = null;
+            return;
+          }
+
+          console.log('유효한 파일 선택:', selectedFile.name);
+        }
+      });
+
+      fileInput.click(); // 파일 선택 강제 트리거
+    });
 
     // 부재 등록
     document
