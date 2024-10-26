@@ -241,7 +241,11 @@ const setupDatePicker = () => {
       calendars: 1,
       plugins: [LockPlugin],
       LockPlugin: {
-        minDate: today,
+        minDate: today, // 오늘 이전 선택 불가
+        filter: date => {
+          const day = date.getDay();
+          return day === 0 || day === 6; // 주말 lock
+        },
       },
       ...options,
     });
@@ -261,6 +265,13 @@ const setupDatePicker = () => {
           apply: '선택',
         },
         plugins: [RangePlugin, LockPlugin],
+        LockPlugin: {
+          minDate: today,
+          filter: date => {
+            const day = date.getDay();
+            return day === 0 || day === 6;
+          },
+        },
         RangePlugin: {
           tooltip: false,
         },
