@@ -240,6 +240,16 @@ const handleSubmit = async () => {
     return;
   }
 
+  // 중복 확인
+  const isOverlapOrDuplicate = await checkForOverlappingOrDuplicateAbsence(
+    absenceDate,
+    absenceType,
+  );
+  if (isOverlapOrDuplicate) {
+    alert('이미 신청한 날입니다.');
+    return;
+  }
+
   let fileUrl = null;
   if (selectedFile) fileUrl = await uploadFileToStorage(selectedFile);
 
@@ -256,6 +266,38 @@ const handleSubmit = async () => {
   resetForm();
   absenceApplyModal.close();
   selectedFile = null;
+  window.location.reload(); // 강제 새로고침 임시
+};
+
+// 날짜 범위 중복 여부
+const isDateRangeOverlapping = (startDate1, endDate1, startDate2, endDate2) => {
+  return (
+    (startDate1 <= endDate2 && endDate1 >= startDate2) ||
+    startDate1 === startDate2
+  );
+};
+
+// 중복된 날짜, 휴가 유형 확인
+const checkForOverlappingOrDuplicateAbsence = async (
+  absenceDate,
+  absenceType,
+) => {
+  const existingData = await fetchAbsenceData();
+  const isOverlapOrDuplicate = existingData.some(item => {
+    const [start, end] = item.absenceDate.split(' - ');
+    const [newStart, newEnd] = absenceDate.split(' - ');
+
+    const hasOverlap = isDateRangeOverlapping(
+      newStart,
+      newEnd || newStart,
+      start,
+      end || start,
+    );
+    const isSameTypeOnSameDay = item.absenceType === absenceType && hasOverlap;
+    return hasOverlap || isSameTypeOnSameDay;
+  });
+
+  return isOverlapOrDuplicate;
 };
 
 // 폼 초기화
