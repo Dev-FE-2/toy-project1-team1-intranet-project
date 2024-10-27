@@ -28,7 +28,7 @@ export default function Announcement() {
     const totalCount = noticeData.length;
     // 한 페이지에 보여줄 공지사항 수 (여기서는 8개씩 보여줌)
     const limit = 8;
-    // 현재 페이지 (처음에는 1페이지부터 시작)
+    // 현재 페이지 (페이지와 데이터 바인딩의 핵심 flag)
     let currentPage = 1;
     // 전체 페이지 수 계산 (공지사항을 몇 페이지로 나눌 수 있는지)
     let totalPage = Math.ceil(totalCount / limit);
@@ -91,28 +91,6 @@ export default function Announcement() {
       attachEvent();
     }
 
-    // 검색기능을 위한 변수
-    const searchInput = document.querySelector('input[type="search"]');
-    const searchButton = document.querySelector('.material-symbols-outlined');
-
-    // 검색기능 함수
-    function handleSearch() {
-      const searchTerm = searchInput.value.trim().toLowerCase();
-      const filteredData = noticeData.filter(post =>
-        post.title.toLowerCase().includes(searchTerm),
-      );
-      currentPage = 1;
-
-      updatePagination(filteredData);
-      renderPosts(filteredData);
-    }
-
-    // 검색 버튼과 엔터 키 이벤트
-    searchInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter') handleSearch();
-    });
-    searchButton.addEventListener('click', handleSearch());
-
     // 페이지 버튼과 이전/다음 버튼 클릭 이벤트를 처리하는 함수
     function attachEvent() {
       // 이전 버튼을 클릭했을 때, 현재 페이지를 1 감소시키고 페이지를 업데이트
@@ -142,6 +120,28 @@ export default function Announcement() {
           updatePagination(); // 페이지 업데이트
         });
       });
+    }
+
+    // 검색기능을 위한 변수
+    const searchInput = document.querySelector('input[type="search"]');
+    const searchButton = document.querySelector('.material-symbols-outlined');
+
+    // 검색 버튼과 엔터 키 이벤트
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') handleSearch();
+    });
+    searchButton.addEventListener('click', handleSearch());
+
+    // 검색기능 함수
+    function handleSearch() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const filteredData = noticeData.filter(post =>
+        post.title.toLowerCase().includes(searchTerm),
+      );
+      currentPage = 1;
+
+      updatePagination(filteredData);
+      renderPosts(filteredData);
     }
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
