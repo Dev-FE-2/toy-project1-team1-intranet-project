@@ -19,7 +19,8 @@
   gap: 3rem;
   width: 83%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0, 2rem, 2rem, 2rem;
+
   list-style: none;
 }
 .postcard {
@@ -65,7 +66,7 @@
 .announcement .helper-text {
   width: 80%;
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 0;
 }
 .postcard-container.no-result {
   display: block;

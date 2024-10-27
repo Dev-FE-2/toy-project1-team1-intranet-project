@@ -148,11 +148,10 @@ export default function Announcement() {
       });
     }
 
+    // 공지사항 카드를 렌더링할 위치를 찾음
     const postContainer = document.querySelector('.postcard-container');
     // 공지사항 카드를 화면에 렌더링하는 함수
     function renderPosts(posts = noticeData) {
-      // 공지사항 카드를 렌더링할 위치를 찾음
-
       postContainer.innerHTML = ''; // 기존 공지사항을 초기화
 
       // 현재 페이지에 맞는 공지사항을 계산
@@ -199,7 +198,8 @@ export default function Announcement() {
 
       if (filteredData.length === 0) {
         postContainer.innerHTML = '';
-        postContainer.innerHTML = ` <section class="postcard-container no-result">
+        postContainer.innerHTML = `
+         <section class="postcard-container no-result">
         <p>찾으시는 검색결과가 없습니다.</p>
       </section>`;
       } else {
