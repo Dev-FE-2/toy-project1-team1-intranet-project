@@ -73,6 +73,8 @@
   text-align: center;
   background-color: var(--gray3);
   border-radius: 0.5rem;
+  width: 100%;
+  grid-column: 1 / -1;
 }
 /* 뷰포트 768px 미만에서 실행될 스타일 */
 @media screen and (max-width: 768px) {

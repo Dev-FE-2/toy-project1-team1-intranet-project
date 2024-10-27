@@ -41,6 +41,32 @@ export default function Announcement() {
     // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
 
+    // 공지사항 UI를 동적으로 생성하는 함수
+    function createAnnouncementSection() {
+      // 공지사항을 감싸는 전체 컨테이너를 생성
+      const container = document.createElement('div');
+      container.classList.add('container', 'announcement');
+
+      // 공지사항 UI 구조를 HTML로 작성하여 추가
+      container.innerHTML = `
+      <div class="container__title title">
+        <h1 class="title">공지사항</h1>
+        <div class="announcement__search-box">
+          <input type="search" id="search" placeholder="검색어를 입력하세요" />
+          <span class="material-symbols-outlined">search</span>
+        </div>
+      </div>
+      <ul class="postcard-container"></ul>
+      <div class="pagination">
+        <ul class="paging-list" role="list"></ul>
+      </div>
+    `;
+
+      // 생성한 공지사항 UI를 body에 추가
+      document.body.append(container);
+    }
+    createAnnouncementSection(); // 공지사항 UI를 생성
+
     const page = document.querySelector('.paging-list');
 
     // 페이지네이션 UI를 그리는 함수 (페이지 번호와 이전/다음 버튼)
@@ -122,48 +148,11 @@ export default function Announcement() {
       });
     }
 
-    // 검색기능을 위한 변수
-    const searchInput = document.querySelector('input[type="search"]');
-    const searchButton = document.querySelector('.material-symbols-outlined');
-
-    // 검색 버튼과 엔터 키 이벤트
-    searchInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter') handleSearch();
-    });
-    searchButton.addEventListener('click', handleSearch());
-
-    // 검색기능 함수
-    function handleSearch() {
-      const searchTerm = searchInput.value.trim().toLowerCase();
-      const filteredData = noticeData.filter(post =>
-        post.title.toLowerCase().includes(searchTerm),
-      );
-      currentPage = 1;
-
-      updatePagination(filteredData);
-      renderPosts(filteredData);
-    }
-
-    // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
-    function updatePagination(data = noticeData) {
-      totalPage = Math.ceil(data.length / limit);
-      pageGroup = Math.ceil(currentPage / pageCount);
-      lastPage = pageGroup * pageCount;
-      firstPage = lastPage - (pageCount - 1);
-
-      if (totalPage === 0) currentPage = 1;
-      else if (currentPage > totalPage) currentPage = totalPage;
-
-      if (lastPage > totalPage) lastPage = totalPage;
-
-      pageRendering(); // 페이지네이션 UI 다시 그리기
-      renderPosts(); // 공지사항 목록 다시 그리기
-    }
-
+    const postContainer = document.querySelector('.postcard-container');
     // 공지사항 카드를 화면에 렌더링하는 함수
     function renderPosts(posts = noticeData) {
       // 공지사항 카드를 렌더링할 위치를 찾음
-      const postContainer = document.querySelector('.postcard-container');
+
       postContainer.innerHTML = ''; // 기존 공지사항을 초기화
 
       // 현재 페이지에 맞는 공지사항을 계산
@@ -190,37 +179,55 @@ export default function Announcement() {
       });
     }
 
+    // 검색기능을 위한 변수
+    const searchInput = document.querySelector('input[type="search"]');
+    const searchButton = document.querySelector('.material-symbols-outlined');
+
+    // 검색 버튼과 엔터 키 이벤트
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') handleSearch();
+    });
+    searchButton.addEventListener('click', handleSearch);
+
+    // 검색기능 함수
+    function handleSearch() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const filteredData = noticeData.filter(post =>
+        post.title.toLowerCase().includes(searchTerm),
+      );
+      currentPage = 1;
+
+      if (filteredData.length === 0) {
+        postContainer.innerHTML = '';
+        postContainer.innerHTML = ` <section class="postcard-container no-result">
+        <p>찾으시는 검색결과가 없습니다.</p>
+      </section>`;
+      } else {
+        updatePagination(filteredData);
+        renderPosts(filteredData);
+      }
+    }
+
+    // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
+    function updatePagination(data = noticeData) {
+      totalPage = Math.ceil(data.length / limit);
+      pageGroup = Math.ceil(currentPage / pageCount);
+      lastPage = pageGroup * pageCount;
+      firstPage = lastPage - (pageCount - 1);
+
+      if (totalPage === 0) currentPage = 1;
+      else if (currentPage > totalPage) currentPage = totalPage;
+
+      if (lastPage > totalPage) lastPage = totalPage;
+
+      pageRendering(); // 페이지네이션 UI 다시 그리기
+      renderPosts(); // 공지사항 목록 다시 그리기
+    }
+
     // 페이지네이션 실행 및 공지사항 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
     renderPosts(); // 첫 번째 페이지의 공지사항을 그림
   }
 
-  // 공지사항 UI를 동적으로 생성하는 함수
-  function createAnnouncementSection() {
-    // 공지사항을 감싸는 전체 컨테이너를 생성
-    const container = document.createElement('div');
-    container.classList.add('container', 'announcement');
-
-    // 공지사항 UI 구조를 HTML로 작성하여 추가
-    container.innerHTML = `
-      <div class="container__title title">
-        <h1 class="title">공지사항</h1>
-        <div class="announcement__search-box">
-          <input type="search" id="search" placeholder="검색어를 입력하세요" />
-          <span class="material-symbols-outlined">search</span>
-        </div>
-      </div>
-      <ul class="postcard-container"></ul>
-      <div class="pagination">
-        <ul class="paging-list" role="list"></ul>
-      </div>
-    `;
-
-    // 생성한 공지사항 UI를 body에 추가
-    document.body.appendChild(container);
-  }
-
-  // 초기화 작업을 수행
-  createAnnouncementSection(); // 공지사항 UI를 생성
   fetchNoticeData(); // 공지사항 데이터를 가져오고 페이지네이션을 실행
 }
