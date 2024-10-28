@@ -1,48 +1,72 @@
-import express from 'express'
-import morgan from 'morgan'
-import fs from 'fs'
-import db from './database.js'
+import express from 'express';
+import morgan from 'morgan';
+import fs from 'fs';
 
 const THRESHOLD = 2000;
 const port = process.env.PORT || 8080;
 const app = express();
 
 app.use((req, res, next) => {
-  const delayTime = Math.floor(Math.random() * THRESHOLD)
+  const delayTime = Math.floor(Math.random() * THRESHOLD);
 
   setTimeout(() => {
     next();
   }, delayTime);
-})
+});
 
-app.use(morgan('dev'))
-app.use(express.static('dist'))
-app.use(express.json())
+app.use(morgan('dev'));
+app.use(express.static('dist'));
+app.use(express.json());
 
 app.get('/api/notice', (req, res) => {
   fs.readFile('./server/data/notice.json', 'utf8', (err, data) => {
     if (err) {
-      console.error('Error reading JSON file:', err)
-      return res.status(500).send({ 
+      console.error('Error reading JSON file:', err);
+      return res.status(500).send({
         status: 'Internal Server Error',
         message: err,
         data: null,
       });
     }
-    
+
     try {
       const jsonData = JSON.parse(data);
       res.json(jsonData);
     } catch (listErr) {
-      console.error('Error parsing JSON file:', listErr)
-      return res.status(500).send({ 
+      console.error('Error parsing JSON file:', listErr);
+      return res.status(500).send({
         status: 'Internal Server Error',
         message: listErr,
         data: null,
-      })
+      });
     }
   });
-})
+});
+
+app.get('/api/absence', (req, res) => {
+  fs.readFile('./server/data/absence.json', 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading JSON file:', err);
+      return res.status(500).send({
+        status: 'Internal Server Error',
+        message: err,
+        data: null,
+      });
+    }
+
+    try {
+      const jsonData = JSON.parse(data);
+      res.json(jsonData);
+    } catch (listErr) {
+      console.error('Error parsing JSON file:', listErr);
+      return res.status(500).send({
+        status: 'Internal Server Error',
+        message: listErr,
+        data: null,
+      });
+    }
+  });
+});
 
 // 참고 후 나중에 삭제하기~
 // app.get('/api/counter', (req, res) => {
@@ -63,7 +87,7 @@ app.get('/api/notice', (req, res) => {
 //   fs.readFile('./server/data/users.json', 'utf8', (err, data) => {
 //     if (err) {
 //         console.error('Error reading JSON file:', err)
-//         return res.status(500).send({ 
+//         return res.status(500).send({
 //           status: 'Internal Server Error',
 //           message: err,
 //           data: null,
@@ -74,7 +98,7 @@ app.get('/api/notice', (req, res) => {
 //         res.json(jsonData)
 //     } catch (parseErr) {
 //         console.error('Error parsing JSON file:', parseErr)
-//         return res.status(500).send({ 
+//         return res.status(500).send({
 //           status: 'Internal Server Error',
 //           message: parseErr,
 //           data: null,
@@ -86,18 +110,18 @@ app.get('/api/notice', (req, res) => {
 //   const sql = 'SELECT * FROM Users'
 //   db.all(sql, [], (err, rows) => {
 //     if (err) {
-//       return res.status(500).json({ 
+//       return res.status(500).json({
 //         status: 'Error',
 //         error: err.message
 //       })
 //     }
-//     res.json({ 
+//     res.json({
 //       status: 'OK',
-//       data: rows 
+//       data: rows
 //     })
 //   })
 // })
 
 app.listen(port, () => {
-  console.log(`ready to ${port}`)
-})
+  console.log(`ready to ${port}`);
+});

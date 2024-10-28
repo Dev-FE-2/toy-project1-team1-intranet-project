@@ -4,6 +4,7 @@
 // import pageNotFound from './pages/PageNotFound';
 import Header from './components/layouts/header/Header';
 import Main from './pages/front/Main';
+import AbsencePortal from './pages/front/AbsencePortal';
 
 const loadStylesheet = href => {
   const existingLink = document.querySelector('link[data-role="page-style"]');
@@ -58,10 +59,10 @@ const route = () => {
     // case '/about':
     //   content.innerHTML = '<h1>About</h1>'; //루트 경로. 하드코딩2
     //   break;
-    // case '/download':
-    //   downloadPage.render(); //렌더
-    //   loadStylesheet('./src/styles/download.css'); //vite으로 간단하게 경로 지정할 방법이 따로 있을 것 같음(추측)
-    //   break;
+    case '/AbsencePortal':
+      AbsencePortal();
+      loadStylesheet('./src/pages/front/absencePortal.css');
+      break;
     // case '/support':
     //   content.innerHTML = supportPage.render(); //클래스로 정의하는 방식
     //   break;
