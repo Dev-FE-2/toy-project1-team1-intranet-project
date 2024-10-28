@@ -17,7 +17,7 @@
     }
   },
   "rules": {
-    // "no-unused-vars": "warn"
+    "no-unused-vars": false,
     "no-use-before-define": "off"
   }
 }

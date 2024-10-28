@@ -1,26 +1,9 @@
 import 'material-symbols';
+import { fetchCollectionData } from '../../../utils/fetchCollectionData';
 
-export default function Announcement() {
+export default async function Announcement() {
   // 공지사항 데이터를 저장할 배열
-  let noticeData = [];
-
-  // 공지사항 데이터를 API에서 가져오는 함수
-  const fetchNoticeData = async () => {
-    try {
-      // API 요청을 보내서 공지사항 데이터를 받아옴
-      const response = await fetch('/api/notice');
-      const json = await response.json(); // 받은 데이터를 JSON 형식으로 변환
-      noticeData = json.data; // 받은 데이터를 noticeData 배열에 저장
-
-      // 데이터가 성공적으로 로드되면 페이지네이션을 실행
-      if (noticeData.length > 0) {
-        pagination();
-      }
-    } catch (err) {
-      // 데이터 가져오기에 실패하면 오류를 콘솔에 출력
-      console.error(err);
-    }
-  };
+  const noticeData = await fetchCollectionData('notices');
 
   // 페이지네이션을 처리하는 함수
   function pagination() {
@@ -162,14 +145,15 @@ export default function Announcement() {
       // 각 공지사항을 카드 형식으로 렌더링
       currentPosts.forEach(post => {
         const postHTML = `
+       
         <div class="postcard">
-          <img class="postcard-img" src="${post.thumb}" alt="Post Image"/>
+          <img class="postcard-img" src="${post.image}" alt="Post Image"/>
           <div class="contents">
             <h2 class="contents__title">${post.title}</h2>
-            <p class="contents__content">${post.content}</p>
+            <p class="contents__content">${post.contents}</p>
             <div class="contents__information">
-              <span class="information-author">${post.writer}</span>
-              <span class="information-date">${post.creatat}</span>
+              <span class="information-author">${post.author}</span>
+              <span class="information-date">${post.writedAt}</span>
             </div>
           </div>
         </div>
@@ -198,8 +182,7 @@ export default function Announcement() {
 
       if (filteredData.length === 0) {
         postContainer.innerHTML = '';
-        postContainer.innerHTML = `
-         <section class="postcard-container no-result">
+        postContainer.innerHTML = ` <section class="postcard-container no-result">
         <p>찾으시는 검색결과가 없습니다.</p>
       </section>`;
       } else {
@@ -226,8 +209,6 @@ export default function Announcement() {
 
     // 페이지네이션 실행 및 공지사항 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
-    renderPosts(); // 첫 번째 페이지의 공지사항을 그림
   }
-
-  fetchNoticeData(); // 공지사항 데이터를 가져오고 페이지네이션을 실행
+  pagination();
 }
