@@ -59,7 +59,12 @@ const employeeList = async () => {
 
   try {
     const ALL_USERS = await fetchCollectionData('users');
-    console.log(ALL_USERS); // 모든 사용자 데이터 확인
+    ALL_USERS.sort((a, b) => {
+      if ((a.isDeleted ?? false) === (b.isDeleted ?? false)) {
+        return a.name.localeCompare(b.name, 'ko');
+      }
+      return (a.isDeleted ?? false) - (b.isDeleted ?? false);
+    });
 
     // 📌 사용자 근무 상태 변환 필요
     // ALL_USERS 안에 있는 객체들의 isWorking : true인 경우 badge-success 클래스명 추가, textContent = '근무 중'으로 변경
@@ -82,7 +87,7 @@ const employeeList = async () => {
         ${ALL_USERS.map(
           users =>
             `
-              <li class="col">
+              <li class="col ${users.isDeleted ? 'deleted-user-col' : 'asd'}">
                 <ul class="cell" role="list" data-id='${users.id}'>
 					  	    <li class="number">${users.employeeNumber}</li>
 						      <li class="profile-img">
@@ -272,7 +277,7 @@ const employeeList = async () => {
           </div>
           <div class="modal-button-box2">
             <button class="btn assign-user-btn" ${userInfo.isApproved ? 'style="display: none"' : ''}>가입 승인하기</button>
-            <button class="btn  delete-user-btn">계정 삭제하기</button>
+            ${userInfo.isDeleted ? '<button class="btn restore-user-btn">계정 복원하기</button>' : '<button class="btn delete-user-btn">계정 삭제하기</button>'}
           </div>
         </div>
     `;
@@ -283,7 +288,6 @@ const employeeList = async () => {
     const ROLE_SELECT = editModal.querySelector('select[name="role"]');
     ROLE_SELECT.value = userInfo.role;
 
-    
     const USER_REF = doc(DB, 'users', userInfo.id);
 
     const handleAddressSearch = () => {
@@ -327,7 +331,6 @@ const employeeList = async () => {
 
       try {
         if (confirm('가입을 승인하시겠습니까?')) {
-          
           await updateDoc(USER_REF, {
             team: TEAM_SELECT.value,
             role: ROLE_SELECT.value,
@@ -342,25 +345,45 @@ const employeeList = async () => {
       }
     });
 
-    const DELETE_USER_BTN = editModal.querySelector('.delete-user-btn');
+    if (!userInfo.isDeleted) {
+      const DELETE_USER_BTN = editModal.querySelector('.delete-user-btn');
 
-    DELETE_USER_BTN.addEventListener('click', async () => {
-      try {
-        if (confirm('정말로 이 계정을 삭제하시겠습니까?')) {
-          await updateDoc(USER_REF, {
-            isDeleted: true,
-            deletedAt: new Date(),
-          });
+      DELETE_USER_BTN.addEventListener('click', async () => {
+        try {
+          if (confirm('정말로 이 계정을 삭제하시겠습니까?')) {
+            await updateDoc(USER_REF, {
+              isDeleted: true,
+              deletedAt: new Date(),
+            });
 
-          alert('정상적으로 삭제되었습니다');
-          window.location.reload();
+            alert('정상적으로 삭제되었습니다.');
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error('Error deleting user:', error);
+          alert('삭제 중 오류가 발생했습니다.');
         }
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        alert('삭제 중 오류가 발생했습니다.');
-      }
-    });
+      });
+    } else {
+      const RESTORE_USER_BTN = editModal.querySelector('.restore-user-btn');
 
+      RESTORE_USER_BTN.addEventListener('click', async () => {
+        try {
+          if (confirm('정말로 이 계정을 복원하시겠습니까?')) {
+            await updateDoc(USER_REF, {
+              isDeleted: false,
+              restoredAt: new Date(),
+            });
+
+            alert('정상적으로 복원되었습니다.');
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error('Error restoring user:', error);
+          alert('복원 중 오류가 발생했습니다.');
+        }
+      });
+    }
     const RESET_PASSWORD_BTN = editModal.querySelector('.reset-password-btn');
 
     RESET_PASSWORD_BTN.addEventListener('click', async () => {
@@ -591,9 +614,6 @@ const employeeList = async () => {
     uploadImageTemporarily();
     MODAL_CONFIRM_EDIT_BTN.addEventListener('click', handleEditSubmit);
   };
-  // 이미지 변경 버튼 클릭으로 이미지 수정 함수
-
-  // 변경 값 저장 함수
 
   return CONTAINER;
 };
