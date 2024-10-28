@@ -2,7 +2,7 @@ import axios from 'axios';
 import {
   createPagination,
   addPaginationListeners,
-} from '/src/components/pagination/_pagination';
+} from '/src/components/Pagination/_pagination';
 // 페이지네이션 임시
 
 // 테이블 헤더
