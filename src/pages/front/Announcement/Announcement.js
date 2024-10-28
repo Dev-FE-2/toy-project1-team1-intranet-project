@@ -209,6 +209,7 @@ export default async function Announcement() {
 
     // 페이지네이션 실행 및 공지사항 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
+    renderPosts(); // 첫 번째 페이지의 공지사항을 그림
   }
   pagination();
 }
