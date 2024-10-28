@@ -16,7 +16,7 @@ const employeeList = async () => {
     <div class="container-header">
 			<h1 class="title">직원 목록</h1>
 			<div class="search-box">
-				<input type="search" placeholder="어쩌구를 검색하세요.">
+				<input class="employeeList-search-input"  placeholder="어쩌구를 검색하세요.">
 				<span class="material-symbols-outlined"> search </span>
 			</div>
 		</div>
@@ -56,6 +56,8 @@ const employeeList = async () => {
 			</ul>
 		</div>
   `;
+  const EMPLOYEE_DATA = CONTAINER.querySelector('#employee-data-ul');
+  const SEARCH_INPUT = CONTAINER.querySelector('.employeeList-search-input');
 
   try {
     const ALL_USERS = await fetchCollectionData('users');
@@ -66,14 +68,11 @@ const employeeList = async () => {
       return (a.isDeleted ?? false) - (b.isDeleted ?? false);
     });
 
-    // 📌 사용자 근무 상태 변환 필요
-    // ALL_USERS 안에 있는 객체들의 isWorking : true인 경우 badge-success 클래스명 추가, textContent = '근무 중'으로 변경
-    // isWorking: false인 경우 badge-error 클래스명 추가, textContent = '근무 중 아님'으로 변경
-
-    const EMPLOYEE_DATA = CONTAINER.querySelector('#employee-data-ul');
-    if (EMPLOYEE_DATA) {
-      // 모든 사용자 데이터를 HTML로 변환
-      EMPLOYEE_DATA.innerHTML = `
+    const renderEmployeeList = users => {
+      console.log(users);
+      if (EMPLOYEE_DATA) {
+        // 모든 사용자 데이터를 HTML로 변환
+        EMPLOYEE_DATA.innerHTML = `
         <li class="col">
 				  <ul class="head" role="list-head">
 					  <li class="number">사번</li>
@@ -84,39 +83,70 @@ const employeeList = async () => {
 			  		<li class="status">근무 상태</li>
 			  	</ul>
 		  	</li>
-        ${ALL_USERS.map(
-          users =>
-            `
-              <li class="col ${users.isDeleted ? 'deleted-user-col' : 'asd'}">
-                <ul class="cell" role="list" data-id='${users.id}'>
-					  	    <li class="number">${users.employeeNumber}</li>
+        ${
+          users.length === 0
+            ? `<div class='no-result-searched'>검색 결과가 없습니다.</div>`
+            : users
+                .map(
+                  user =>
+                    `
+              <li class="col ${user.isDeleted ? 'deleted-user-col' : ''}">
+                <ul class="cell" role="list" data-id='${user.id}'>
+					  	    <li class="number">${user.employeeNumber}</li>
 						      <li class="profile-img">
 							      <div class="img-box">
-								    <img src=${users.profileImg} alt="프로필 이미지 미리보기">
+								    <img src=${user.profileImg} alt="프로필 이미지 미리보기">
 							      </div>
 						      </li>
-						      <li class="name">${users.name}</li>
-						      <li class="team">${users.team}</li>
-					  	    <li class="role">${users.role}</li>
+						      <li class="name">${user.name}</li>
+						      <li class="team">${user.team}</li>
+					  	    <li class="role">${user.role}</li>
 					  	    <li class="user-status">
-						  	    <div class="badge ${users.isWorking ? 'badge-success' : 'badge-error'}">
-                      ${users.isWorking ? '근무 중' : '근무 중 아님'}
+						  	    <div class="badge ${user.isWorking ? 'badge-success' : 'badge-error'}">
+                      ${user.isWorking ? '근무 중' : '근무 중 아님'}
                     </div>
 						      </li>
 					      </ul>
               </li>      
             `,
-        ).join('')}`;
-    }
+                )
+                .join('')
+        }`;
+      }
+    };
 
-    const USER_CELLS = EMPLOYEE_DATA.querySelectorAll('.cell');
-    // 직원 목록 중 상세 정보를 보고싶은 직원을 클릭시 직원 상세 페이지로 이동
-    USER_CELLS.forEach(userCell => {
-      userCell.addEventListener('click', e => {
-        const USER_ID = e.currentTarget.getAttribute('data-id');
-        renderSpecificUserInfo(USER_ID, ALL_USERS);
-      });
+    SEARCH_INPUT.addEventListener('keypress', event => {
+      if (event.key === 'Enter') {
+        const SEARCH_INPUT_VALUE = event.target.value.trim().toLowerCase();
+        const SEARCHED_USERS = ALL_USERS.filter(
+          user =>
+            user.employeeNumber?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
+            user.name?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
+            user.team?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
+            user.role?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
+            user.phone?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
+            user.email?.toLowerCase().includes(SEARCH_INPUT_VALUE),
+        );
+
+        renderEmployeeList(SEARCHED_USERS); // 필터된 결과를 렌더링하는 함수 호출
+        clickUserCellEvent();
+      }
     });
+
+    renderEmployeeList(ALL_USERS);
+
+    const clickUserCellEvent = () => {
+      const USER_CELLS = EMPLOYEE_DATA.querySelectorAll('.cell');
+      // 직원 목록 중 상세 정보를 보고싶은 직원을 클릭시 직원 상세 페이지로 이동
+      USER_CELLS.forEach(userCell => {
+        userCell.addEventListener('click', e => {
+          const USER_ID = e.currentTarget.getAttribute('data-id');
+          renderSpecificUserInfo(USER_ID, ALL_USERS);
+        });
+      });
+    };
+
+    clickUserCellEvent();
   } catch (error) {
     console.log('데이터 로드 실패:', error);
     const employeeData = CONTAINER.querySelector('#employee-data');
@@ -163,6 +193,7 @@ const employeeList = async () => {
 
   // 직원 상세 페이지 렌더링
   const renderSpecificUserInfo = (userId, users) => {
+    console.log('호출 성공');
     const SPECIFIC_USER_INFO = users.find(user => user.id === userId);
 
     if (SPECIFIC_USER_INFO) {
@@ -202,7 +233,6 @@ const employeeList = async () => {
 
   // 특정 직원 정보 수정
   const renderEditModal = (userInfo, editModal) => {
-    console.log('뭐야');
     editModal.style.display = 'flex';
     editModal.innerHTML = `
         <div class="edit-profile-modal">

@@ -121,6 +121,15 @@
   text-decoration: line-through;
 }
 
+#employee-data-ul .no-result-searched {
+  width: 100%;
+  text-align: center;
+  font-size: 2rem;
+  padding: 2rem 0;
+  border-radius: 0 0 1rem 1rem;
+  background-color: var(--gray2);
+}
+
 /* 직원 상세 페이지 */
 .container .user-profile {
   display: flex;
