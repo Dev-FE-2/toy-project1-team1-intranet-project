@@ -318,9 +318,7 @@ const setupDatePicker = () => {
     if (picker) picker.destroy();
     picker = new easepick.create({
       element: datepickerElement,
-      css: [
-        'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',
-      ],
+      css: ['/src/easepick.css'],
       lang: 'ko-KR',
       format: 'YYYY-MM-DD',
       calendars: 1,
