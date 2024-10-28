@@ -101,22 +101,29 @@ export default async function Announcement() {
       // 페이지 버튼에 이벤트를 연결하는 함수 실행
       attachEvent();
     }
+
     // 새로고침시에 쿼리스트링유지
     const urlParams = new URLSearchParams(window.location.search);
     const initialPage = urlParams.get('page')
       ? Number(urlParams.get('page'))
       : 1;
     currentPage = initialPage;
-
-    // history 넣기
-    function updateHistory(pageNumber) {
-      history.pushState({ page: pageNumber }, '', `?page=${pageNumber}`);
+    // history 업데이트
+    function updateHistory(pageNumber, searchTerm = '') {
+      const newQuery = `?page=${pageNumber}${searchTerm ? `&search=${searchTerm}` : ''}`;
+      history.pushState({ page: pageNumber, search: searchTerm }, '', newQuery);
     }
-
     window.addEventListener('popstate', event => {
       if (event.state && event.state.page) {
         currentPage = event.state.page;
-        updatePagination();
+        const searchTerm = event.state.search || '';
+        updatePagination(
+          searchTerm
+            ? noticeData.filter(post =>
+                post.title.toLowerCase().includes(searchTerm),
+              )
+            : noticeData,
+        );
       }
     });
 
@@ -173,17 +180,24 @@ export default async function Announcement() {
       const end = start + limit;
       const currentPosts = posts.slice(start, end); // 현재 페이지에 해당하는 공지사항만 잘라서 가져옴
 
+      function cuttingString(text, limit) {
+        if (text.length > limit) {
+          return text.slice(0, limit) + '...';
+        }
+        return text;
+      }
+
       // 각 공지사항을 카드 형식으로 렌더링
       currentPosts.forEach(post => {
         const postHTML = `
         <div class="postcard">
           <img class="postcard-img" src="${post.image}" alt="Post Image"/>
           <div class="contents">
-            <h2 class="contents__title">${post.title}</h2>
-            <p class="contents__content">${post.contents}</p>
+            <h2 class="contents__title">${cuttingString(post.title, 20)}</h2>
+            <p class="contents__content">${cuttingString(post.contents, 30)}</p>
             <div class="contents__information">
-              <span class="information-author">${post.author}</span>
-              <span class="information-date">${post.writedAt}</span>
+              <span class="information-author">${cuttingString(post.author, 10)}</span>
+              <span class="information-date">${cuttingString(post.writedAt, 15)}</span>
             </div>
           </div>
         </div>
@@ -222,8 +236,9 @@ export default async function Announcement() {
         'beforebegin',
         `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
       );
-      updatePagination(filteredData);
-      renderPosts(filteredData);
+      updateHistory(currentPage, searchTerm); // 상태 업데이트
+      updatePagination(filteredData); // 페이지네이션 업데이트
+      renderPosts(filteredData); // 필터링된 데이터로 포스트 렌더링
     }
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
@@ -239,9 +254,8 @@ export default async function Announcement() {
       if (lastPage > totalPage) lastPage = totalPage;
 
       pageRendering(); // 페이지네이션 UI 다시 그리기
-      renderPosts(); // 공지사항 목록 다시 그리기
+      renderPosts(data); // 필터링된 데이터로 포스트 렌더링
     }
-
     // 페이지네이션 실행 및 공지사항 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
     renderPosts(); // 첫 번째 페이지의 공지사항을 그림
