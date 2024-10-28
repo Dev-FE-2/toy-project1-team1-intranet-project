@@ -216,9 +216,14 @@ export default async function Announcement() {
       if (filteredData.length === 0) {
         textStyle = 'text-error';
       } else {
-        updatePagination(filteredData);
-        renderPosts(filteredData);
+        textStyle = 'text-success';
       }
+      postContainer.insertAdjacentHTML(
+        'beforebegin',
+        `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
+      );
+      updatePagination(filteredData);
+      renderPosts(filteredData);
     }
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
