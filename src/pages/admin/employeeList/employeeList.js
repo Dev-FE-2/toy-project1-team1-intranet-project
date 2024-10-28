@@ -5,8 +5,8 @@ import '../../../common.css';
 
 import { fetchCollectionData } from '../../../utils/fetchCollectionData';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, updateDoc, deleteDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
-import { deleteUser, sendPasswordResetEmail } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
+import { sendPasswordResetEmail } from 'firebase/auth';
 import { DB, AUTH } from '../../../../firebaseConfig'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
 
 const employeeList = async () => {
@@ -283,6 +283,9 @@ const employeeList = async () => {
     const ROLE_SELECT = editModal.querySelector('select[name="role"]');
     ROLE_SELECT.value = userInfo.role;
 
+    
+    const USER_REF = doc(DB, 'users', userInfo.id);
+
     const handleAddressSearch = () => {
       const ADDRESS = document.querySelector('.modal-user-address');
 
@@ -324,7 +327,7 @@ const employeeList = async () => {
 
       try {
         if (confirm('가입을 승인하시겠습니까?')) {
-          const USER_REF = doc(DB, 'users', userInfo.id);
+          
           await updateDoc(USER_REF, {
             team: TEAM_SELECT.value,
             role: ROLE_SELECT.value,
@@ -343,29 +346,34 @@ const employeeList = async () => {
 
     DELETE_USER_BTN.addEventListener('click', async () => {
       try {
-        if(confirm('정말로 이 계정을 삭제하시겠습니까?')) {
-          await deleteDoc(doc(DB, 'users', userInfo.id))
-          // 📌 auth 계정 삭제는 서버 사이드에서 작성된 코드로 진행해야한다. 따라서 우선 보류해두고 추후에 추가할 지 논의해보자!!!
+        if (confirm('정말로 이 계정을 삭제하시겠습니까?')) {
+          await updateDoc(USER_REF, {
+            isDeleted: true,
+            deletedAt: new Date(),
+          });
+
           alert('정상적으로 삭제되었습니다');
           window.location.reload();
-        } 
-      } catch(error) {
+        }
+      } catch (error) {
         console.error('Error deleting user:', error);
         alert('삭제 중 오류가 발생했습니다.');
       }
     });
 
-    const RESET_PASSWORD_BTN = editModal.querySelector('.reset-password-btn')
+    const RESET_PASSWORD_BTN = editModal.querySelector('.reset-password-btn');
 
     RESET_PASSWORD_BTN.addEventListener('click', async () => {
       try {
-        await sendPasswordResetEmail(AUTH, userInfo.email)
-        alert('해당 직원의 이메일 주소로 비밀번호 재설정 메일이 발송되었습니다.')
+        await sendPasswordResetEmail(AUTH, userInfo.email);
+        alert(
+          '해당 직원의 이메일 주소로 비밀번호 재설정 메일이 발송되었습니다.',
+        );
       } catch (error) {
-        console.error('Error sending password reset email:', error)
-        alert('비밀번호 재설정 메일 발송 중 오류가 발생했습니다.')
+        console.error('Error sending password reset email:', error);
+        alert('비밀번호 재설정 메일 발송 중 오류가 발생했습니다.');
       }
-    })
+    });
 
     const MODAL_PREVIEW_IMAGE = editModal.querySelector('.profile-img-preview');
     const MODAL_CHANGE_IMAGE_BTN = editModal.querySelector('.change-img-btn');
