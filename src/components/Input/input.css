@@ -1,0 +1,52 @@
+input,
+select,
+textarea {
+  padding: 1rem 2rem;
+  border: 1px solid #dfe4ea;
+  border-radius: 6px;
+  font-size: 1.4rem;
+  box-sizing: border-box;
+}
+textarea {
+  resize: none;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 1px solid var(--main1);
+}
+.input-default {
+  margin-top: 1rem;
+}
+.input-double {
+  display: flex;
+}
+.input-double .btn {
+  width: 34%;
+  margin-left: 2%;
+}
+input.error,
+select.error,
+textarea.error {
+  outline: 1px solid var(--color-error);
+}
+input.error ~ .helper-text,
+select.error ~ .helper-text,
+textarea.error ~ .helper-text {
+  color: var(--color-error);
+}
+input.success,
+select.success,
+textarea.success {
+  outline: 1px solid var(--color-success);
+}
+input.success ~ .helper-text,
+select.success ~ .helper-text,
+textarea.success ~ .helper-text {
+  color: var(--color-success);
+}
+.helper-text {
+  padding: 0.8rem 0.4rem 0;
+  text-align: left;
+  font-size: 1.2rem;
+}
