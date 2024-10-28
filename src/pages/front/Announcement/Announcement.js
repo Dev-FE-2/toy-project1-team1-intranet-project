@@ -40,7 +40,7 @@ export default async function Announcement() {
           <span class="material-symbols-outlined">search</span>
         </div>
       </div>
-      <ul class="postcard-container"></ul>
+      <div class="postcard-container"></div>
       <div class="pagination">
         <ul class="paging-list" role="list"></ul>
       </div>
@@ -160,6 +160,14 @@ export default async function Announcement() {
     function renderPosts(posts = noticeData) {
       postContainer.innerHTML = ''; // 기존 공지사항을 초기화
 
+      if (posts.length === 0) {
+        postContainer.classList.add('no-result');
+        postContainer.innerHTML = `<p>찾으시는 게시물이 없습니다.</p>`;
+        return;
+      } else {
+        postContainer.classList.remove('no-result');
+      }
+
       // 현재 페이지에 맞는 공지사항을 계산
       const start = (currentPage - 1) * limit;
       const end = start + limit;
@@ -168,7 +176,6 @@ export default async function Announcement() {
       // 각 공지사항을 카드 형식으로 렌더링
       currentPosts.forEach(post => {
         const postHTML = `
-       
         <div class="postcard">
           <img class="postcard-img" src="${post.image}" alt="Post Image"/>
           <div class="contents">
@@ -201,19 +208,17 @@ export default async function Announcement() {
       const filteredData = noticeData.filter(post =>
         post.title.toLowerCase().includes(searchTerm),
       );
+
+      let textStyle = '';
       currentPage = 1;
+      document.querySelector('.helper-text')?.remove();
 
       if (filteredData.length === 0) {
-        postContainer.innerHTML = '';
-        postContainer.innerHTML = ` <section class="postcard-container no-result">
-        <p>찾으시는 검색결과가 없습니다.</p>
-      </section>`;
+        textStyle = 'text-error';
       } else {
         updatePagination(filteredData);
         renderPosts(filteredData);
       }
-
-      updateHistory(currentPage);
     }
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
