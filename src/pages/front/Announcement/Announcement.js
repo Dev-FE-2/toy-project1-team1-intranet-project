@@ -1,6 +1,6 @@
 import 'material-symbols';
 import { fetchCollectionData } from '../../../utils/fetchCollectionData';
-
+let isAnnouncementSectionCreated = false;
 export default async function Announcement() {
   // 공지사항 데이터를 저장할 배열
   const noticeData = await fetchCollectionData('notices');
@@ -26,6 +26,7 @@ export default async function Announcement() {
 
     // 공지사항 UI를 동적으로 생성하는 함수
     function createAnnouncementSection() {
+      if (isAnnouncementSectionCreated) return;
       // 공지사항을 감싸는 전체 컨테이너를 생성
       const container = document.createElement('div');
       container.classList.add('container', 'announcement');
@@ -47,6 +48,7 @@ export default async function Announcement() {
 
       // 생성한 공지사항 UI를 body에 추가
       document.body.append(container);
+      isAnnouncementSectionCreated = true;
     }
     createAnnouncementSection(); // 공지사항 UI를 생성
 
@@ -99,6 +101,24 @@ export default async function Announcement() {
       // 페이지 버튼에 이벤트를 연결하는 함수 실행
       attachEvent();
     }
+    // 새로고침시에 쿼리스트링유지
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialPage = urlParams.get('page')
+      ? Number(urlParams.get('page'))
+      : 1;
+    currentPage = initialPage;
+
+    // history 넣기
+    function updateHistory(pageNumber) {
+      history.pushState({ page: pageNumber }, '', `?page=${pageNumber}`);
+    }
+
+    window.addEventListener('popstate', event => {
+      if (event.state && event.state.page) {
+        currentPage = event.state.page;
+        updatePagination();
+      }
+    });
 
     // 페이지 버튼과 이전/다음 버튼 클릭 이벤트를 처리하는 함수
     function attachEvent() {
@@ -107,6 +127,7 @@ export default async function Announcement() {
       prevBtn?.addEventListener('click', () => {
         if (currentPage > 1) {
           currentPage -= 1; // 페이지 감소
+          updateHistory(currentPage);
           updatePagination(); // 페이지 업데이트
         }
       });
@@ -116,6 +137,7 @@ export default async function Announcement() {
       nextBtn?.addEventListener('click', () => {
         if (currentPage < totalPage) {
           currentPage += 1; // 페이지 증가
+          updateHistory(currentPage);
           updatePagination(); // 페이지 업데이트
         }
       });
@@ -126,6 +148,7 @@ export default async function Announcement() {
         cur.addEventListener('click', event => {
           const selectedPage = Number(event.target.textContent); // 클릭한 페이지 번호 가져옴
           currentPage = selectedPage; // 클릭한 페이지로 현재 페이지 설정
+          updateHistory(currentPage);
           updatePagination(); // 페이지 업데이트
         });
       });
@@ -189,6 +212,8 @@ export default async function Announcement() {
         updatePagination(filteredData);
         renderPosts(filteredData);
       }
+
+      updateHistory(currentPage);
     }
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
