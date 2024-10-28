@@ -5,7 +5,7 @@
 import Header from './components/layouts/header/Header';
 import Main from './pages/front/Main';
 import AbsencePortal from './pages/front/AbsencePortal';
-import initJoinPage from './pages/join/join';
+// import initJoinPage from './pages/join/join';
 // import employeeList from './pages/admin/employeeList/employeeList';
 
 const loadStylesheet = href => {
@@ -52,7 +52,10 @@ const route = async () => {
   // const downloadPage = new Page('#content', download());
   // const supportPage = new Support({ title: 'Support' });
 
-  content.insertAdjacentHTML('beforebegin', Header());
+  const renderHeader = async () => {
+    content.insertAdjacentHTML('beforebegin', await Header());
+  }
+  renderHeader();
 
   switch (path) {
     case '/':
@@ -71,11 +74,11 @@ const route = async () => {
     case '/join':
       case '/join/login':
         loadStylesheet('./src/pages/join/join.css');
-        initJoinPage(content, 'login'); // login 페이지 초기화
+        // initJoinPage(content, 'login'); // login 페이지 초기화
         break;
       case '/join/signup':
         loadStylesheet('./src/pages/join/join.css');
-        initJoinPage(content, 'signup'); // signup 페이지 초기화
+        // initJoinPage(content, 'signup'); // signup 페이지 초기화
         break;
     // case '/admin':
     //   content.innerHTML = employeeList()
