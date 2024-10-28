@@ -68,8 +68,42 @@ const employeeList = async () => {
       return (a.isDeleted ?? false) - (b.isDeleted ?? false);
     });
 
+    const MEDIA_QUERY_1230 = window.matchMedia('(max-width: 1230px)');
+    const MEDIA_QUERY_768 = window.matchMedia('(max-width: 768px)');
+    const MEDIA_QUERY_480 = window.matchMedia('(max-width: 480px)');
+
+    const USER_STATUS_OG_VALUE = [];
+
+    // 디바이스 너비에 따라 사용자 근무 상태 값 처리 함수
+    const updateUserStatus = () => {
+      const USER_STATUS = EMPLOYEE_DATA.querySelectorAll('.badge');
+
+      if (USER_STATUS_OG_VALUE.length === 0) {
+        USER_STATUS.forEach(value => {
+          USER_STATUS_OG_VALUE.push(value.textContent);
+        });
+      }
+
+      if (MEDIA_QUERY_1230.matches) {
+        USER_STATUS.forEach(el => {
+          el.textContent = '';
+        });
+      } else if (MEDIA_QUERY_768.matches) {
+        USER_STATUS.forEach((el, index) => {
+          el.textContent = USER_STATUS_OG_VALUE[index];
+        });
+      } else if (MEDIA_QUERY_480.matches) {
+        USER_STATUS.forEach(el => {
+          el.textContent = '';
+        });
+      } else {
+        USER_STATUS.forEach((el, index) => {
+          el.textContent = USER_STATUS_OG_VALUE[index];
+        });
+      }
+    };
+
     const renderEmployeeList = users => {
-      console.log(users);
       if (EMPLOYEE_DATA) {
         // 모든 사용자 데이터를 HTML로 변환
         EMPLOYEE_DATA.innerHTML = `
@@ -112,6 +146,7 @@ const employeeList = async () => {
                 )
                 .join('')
         }`;
+        updateUserStatus();
       }
     };
 
@@ -147,6 +182,10 @@ const employeeList = async () => {
     };
 
     clickUserCellEvent();
+
+    MEDIA_QUERY_1230.addEventListener('change', updateUserStatus);
+    MEDIA_QUERY_768.addEventListener('change', updateUserStatus);
+    MEDIA_QUERY_480.addEventListener('change', updateUserStatus);
   } catch (error) {
     console.log('데이터 로드 실패:', error);
     const employeeData = CONTAINER.querySelector('#employee-data');
@@ -155,45 +194,8 @@ const employeeList = async () => {
     }
   }
 
-  // 디바이스 너비에 따라 사용자 근무 상태 UI 변경
-  const USER_STATUS = CONTAINER.querySelectorAll('.user-status .badge');
-  console.log(USER_STATUS);
-  const MEDIA_QUERY_1230 = window.matchMedia('(max-width: 1230px)');
-  const MEDIA_QUERY_768 = window.matchMedia('(max-width: 768px)');
-  const MEDIA_QUERY_480 = window.matchMedia('(max-width: 480px)');
-
-  const USER_STATUS_OG_VALUE = [...USER_STATUS].map(value => value.textContent);
-
-  const updateUserStatus = () => {
-    if (MEDIA_QUERY_1230.matches) {
-      USER_STATUS.forEach(el => {
-        el.textContent = '';
-      });
-    } else if (MEDIA_QUERY_768.matches) {
-      USER_STATUS.forEach((el, index) => {
-        el.textContent = USER_STATUS_OG_VALUE[index];
-      });
-    } else if (MEDIA_QUERY_480.matches) {
-      USER_STATUS.forEach(el => {
-        el.textContent = '';
-      });
-    } else {
-      USER_STATUS.forEach((el, index) => {
-        el.textContent = USER_STATUS_OG_VALUE[index];
-        // 📌 추후 DB 데이터 추가 시, 다른 페이지로 이동했을 때도 정상 동작하는 지 확인
-      });
-    }
-  };
-
-  updateUserStatus();
-
-  MEDIA_QUERY_1230.addEventListener('change', updateUserStatus);
-  MEDIA_QUERY_768.addEventListener('change', updateUserStatus);
-  MEDIA_QUERY_480.addEventListener('change', updateUserStatus);
-
   // 직원 상세 페이지 렌더링
   const renderSpecificUserInfo = (userId, users) => {
-    console.log('호출 성공');
     const SPECIFIC_USER_INFO = users.find(user => user.id === userId);
 
     if (SPECIFIC_USER_INFO) {
@@ -219,10 +221,6 @@ const employeeList = async () => {
       <div class="edit-profile-modal-wrapper">
       </div>
 		`;
-
-      console.log(SPECIFIC_USER_INFO);
-
-      // 정보 수정 버튼 클릭시 이벤트 리스터 호출 editSpecificUserInfo(SPECIFIC_USER_INFO) 함수 호출
     }
     const OPEN_MODAL_BTN = CONTAINER.querySelector('.open-modal-btn');
     const EDIT_MODAL = CONTAINER.querySelector('.edit-profile-modal-wrapper');
@@ -393,6 +391,7 @@ const employeeList = async () => {
           console.error('Error deleting user:', error);
           alert('삭제 중 오류가 발생했습니다.');
         }
+        ㅁ;
       });
     } else {
       const RESTORE_USER_BTN = editModal.querySelector('.restore-user-btn');
