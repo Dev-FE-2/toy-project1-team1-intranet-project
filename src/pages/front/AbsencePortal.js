@@ -112,11 +112,11 @@ const absenceApplyModal = createModal({
   title: '부재 신청',
   content: `
     <div class="cont">
-      <div class="info-box text-success">잔여 연차 <span>5.5</span>일</div>
+      <div class="info-box"><span class="text-error">&#42;</span>는 필수 항목입니다.</div>
       <form action="" method="post">
         <ul class="input-list">
           <li>
-            <label for="absence-type">&#42;구분</label>
+            <label for="absence-type"><span class="text-error">&#42;</span>구분</label>
             <select class="" id="absence-type" name="absence-type" required>
               <option value="" selected disabled>휴가 종류</option>
               <option value="am-half">오전반차</option>
@@ -128,11 +128,11 @@ const absenceApplyModal = createModal({
             </select>
           </li>
           <li>
-            <label for="absence-date">&#42;기간</label>
+            <label for="absence-date"><span class="text-error">&#42;</span>기간</label>
             <input class="" type="text" name="absence-date" placeholder="YYYY-MM-DD" id="datepicker" readonly>
           </li>
           <li>
-            <label for="reason">&#42;사유 입력 (50자 이내)</label>
+            <label for="reason"><span class="text-error">&#42;</span>사유 입력 (50자 이내)</label>
             <textarea class="" id="reason" name="reason" placeholder="사유를 입력하세요" required maxlength="50"></textarea>
           </li>
           <li>
