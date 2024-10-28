@@ -3,7 +3,7 @@ import '../../../reset.css';
 import '../../../style.css';
 import '../../../common.css';
 
-import { fetchAllUsers } from '../../../utils/fetchAllUserData';
+import { fetchCollectionData } from '../../../utils/fetchCollectionData';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
 import { deleteUser, sendPasswordResetEmail } from 'firebase/auth';
@@ -58,7 +58,7 @@ const employeeList = async () => {
   `;
 
   try {
-    const ALL_USERS = await fetchAllUsers();
+    const ALL_USERS = await fetchCollectionData('users');
     console.log(ALL_USERS); // 모든 사용자 데이터 확인
 
     // 📌 사용자 근무 상태 변환 필요
