@@ -147,6 +147,36 @@
   margin: 0 auto 6rem;
 }
 
+/* btn */
+.btn {
+  padding: 1.2rem 2.8rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-weight: 700;
+}
+.btn-solid {
+  background: var(--main1);
+  color: var(--white1);
+}
+.btn:hover {
+  background: #e1e8ff;
+  border: 1px solid var(--main1);
+  color: var(--main1);
+}
+.btn-outline {
+  background: var(--white1);
+  border: 1px solid var(--main1);
+  color: var(--main1);
+}
+.btn-box {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+.btn-box .btn + .btn {
+  margin-left: 0.8rem;
+}
+
 /* input search 공지사항 페이지에 아이콘(link참고)과 함께 적용  */
 .search-box {
   display: flex;
@@ -397,6 +427,64 @@ textarea.success ~ .helper-text {
   padding: 0.8rem 0.4rem 0;
   text-align: left;
   font-size: 1.2rem;
+}
+
+/* Postcard */
+.postcard {
+  background-color: #fff;
+  border: 0.1rem solid #ddd;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.postcard.empty {
+  height: 30rem;
+  background: gray;
+}
+
+.postcard:hover {
+  transform: translateY(-0.5rem);
+}
+
+.postcard > a {
+  display: block;
+}
+
+.postcard img {
+  width: 100%; /* 일단 프레임대로 100%로함 */
+  height: 20rem;
+  object-fit: cover;
+}
+
+.postcard .contents {
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.postcard .contents__title {
+  font-size: 1.6rem;
+  margin: 0;
+  color: #333;
+}
+
+.postcard .contents__content {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 1rem 0;
+}
+
+.postcard .contents__information {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  color: #999;
+}
+
+.postcard .contents__information .information-author {
+  font-weight: 700;
 }
 
 /* swiper */
