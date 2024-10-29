@@ -1,28 +1,28 @@
 import { easepick, LockPlugin, RangePlugin } from '@easepick/bundle';
 import { initializeApp } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc,
-  getDocs,
-  query,
-  orderBy,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import firebaseConfig from '../../../firebaseConfig';
+// import {
+//   getFirestore,
+//   collection,
+//   doc,
+//   setDoc,
+//   getDocs,
+//   query,
+//   orderBy,
+//   serverTimestamp,
+// } from 'firebase/firestore';
+// import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+// import firebaseConfig from '../../../firebaseConfig';
 import {
   createPagination,
   addPaginationListeners,
-} from '@components/Pagination/_pagination';
+} from '@components/Pagination/Pagination';
 import createModal from '@components/Modal/Modal';
 import createTitle from '@components/Title/Title';
 
 // Firebase 초기화
-const app = initializeApp(firebaseConfig);
-const DB = getFirestore(app);
-const STORAGE = getStorage(app);
+// const app = initializeApp(firebaseConfig);
+// const DB = getFirestore(app);
+// const STORAGE = getStorage(app);
 
 // 테이블 헤더
 const TABLE_HEADER = `
