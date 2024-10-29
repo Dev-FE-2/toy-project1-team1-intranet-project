@@ -1,76 +1,63 @@
 import 'material-symbols';
 import { fetchCollectionData } from '../../../utils/fetchCollectionData';
+let isAnnouncementSectionCreated = false;
 export default async function Announcement() {
   const noticeData = await fetchCollectionData('notices');
-  const urlParams = new URLSearchParams(window.location.search); // URL의 쿼리스트링 파라미터 가져오기
-  const INIT_NOTICE_INFO_VALUE = urlParams.get('noticeinfo');
-  //메모리상에 모든 것을 다 만들어 놓을 변수
-  const container = document.createElement('div');
-  container.classList.add('container', 'announcement');
-  container.innerHTML = `
-    <div class="container__title title">
-      <h1 class="title">공지사항</h1>
-      <div class="announcement__search-box">
-        <input type="search" id="search" placeholder="검색어를 입력하세요" />
-        <span class="material-symbols-outlined">search</span>
-      </div>
-    </div>
-    <div class="postcard-container"></div>
-    <div class="pagination">
-      <ul class="paging-list" role="list"></ul>
-    </div>
-  `;
+
+  // 페이지네이션을 처리하는 함수
   function pagination() {
+    // 전체 공지사항 수 (몇 개의 공지사항이 있는지)
     const totalCount = noticeData.length;
+    // 한 페이지에 보여줄 공지사항 수 (여기서는 8개씩 보여줌)
     const limit = 8;
-    // 페이지와 데이터 바인딩의 핵심 flag
+    // 현재 페이지 (페이지와 데이터 바인딩의 핵심 flag)
     let currentPage = 1;
+    // 전체 페이지 수 계산 (공지사항을 몇 페이지로 나눌 수 있는지)
     let totalPage = Math.ceil(totalCount / limit);
+    // 보여줄 페이지 개수
     const pageCount = totalCount > 40 ? 5 : totalPage;
+    // 현재 페이지의 그룹
     let pageGroup = Math.ceil(currentPage / pageCount);
+    // 마지막 페이지 (한 화면에 나타낼 페이지 그룹 x 현재 페이지 그룹)
     let lastPage = pageGroup * pageCount;
+    // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
-    const searchInput = container.querySelector('input[type="search"]');
-    const searchButton = container.querySelector('.material-symbols-outlined');
-    const initialPage = urlParams.get('page')
-      ? Number(urlParams.get('page'))
-      : 1; // 페이지 파라미터 값 가져오기
-    const initialSearch = urlParams.get('search') || ''; // 검색어 파라미터 값 가져오기
-    currentPage = initialPage; // 현재 페이지 설정
-    searchInput.value = initialSearch; // 검색어 입력창에 초기값 설정
-    // - `encodeURIComponent`를 사용하여 검색어를 인코딩하여 URL에 포함 시킬 수 있도록 수정하였습니다.
-    function updateHistory(pageNumber, searchTerm = '') {
-      // 히스토리 상태를 업데이트하는 함수
-      const newQuery = `?page=${pageNumber}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`; // 쿼리스트링 생성
-      if (window.location.search !== newQuery) {
-        // 현재 URL과 다를 경우에만 히스토리 업데이트
-        history.pushState(
-          { page: pageNumber, search: searchTerm },
-          '', // title을 비워 두고 URL 쿼리스트링 추가
-          newQuery,
-        );
-      }
+
+    // 공지사항 UI를 동적으로 생성하는 함수
+    function createAnnouncementSection() {
+      if (isAnnouncementSectionCreated) return;
+      // 공지사항을 감싸는 전체 컨테이너를 생성
+      const container = document.createElement('div');
+      container.classList.add('container', 'announcement');
+
+      // 공지사항 UI 구조를 HTML로 작성하여 추가
+      container.innerHTML = `
+      <div class="container__title title">
+        <h1 class="title">공지사항</h1>
+        <div class="announcement__search-box">
+          <input type="search" id="search" placeholder="검색어를 입력하세요" />
+          <span class="material-symbols-outlined">search</span>
+        </div>
+      </div>
+      <div class="postcard-container"></div>
+      <div class="pagination">
+        <ul class="paging-list" role="list"></ul>
+      </div>
+    `;
+
+      // 생성한 공지사항 UI를 body에 추가
+      document.body.append(container);
+      isAnnouncementSectionCreated = true;
     }
-    //히스토리 변화를 감지하기 위한 코드 => 이거없으면 helpertext관리못함
-    window.addEventListener('popstate', event => {
-      const { page, search } = event.state || {}; // 상태에서 페이지와 검색어 가져오기
-      if (page) {
-        currentPage = page; // 히스토리 상태에서 currentPage 업데이트
-      }
-      // 검색어가 있는 경우
-      if (search) {
-        searchInput.value = search; // 이전 검색어로 검색 입력 필드 업데이트
-        handleSearch(); // handleSearch 호출하여 필터링된 데이터와 페이지네이션 업데이트
-      } else {
-        currentPage = 1; // 검색어가 없으면 1페이지로 리셋
-        updatePagination('', false); // 검색 없이 페이지네이션 리셋
-        container.querySelector('.helper-text')?.remove(); // helper-text 제거
-      }
-    });
-    const page = container.querySelector('.paging-list');
+    createAnnouncementSection(); // 공지사항 UI를 생성
+
+    const page = document.querySelector('.paging-list');
+
+    // 페이지네이션 UI를 그리는 함수 (페이지 번호와 이전/다음 버튼)
     function pageRendering() {
       page.innerHTML = '';
-      if (currentPage > 1) {
+
+      if (pageGroup > 1) {
         page.insertAdjacentHTML(
           'beforeend',
           `<li class="paging-item prev">
@@ -198,38 +185,39 @@ export default async function Announcement() {
       const filteredData = getFilteredData(searchTerm);
       container.querySelector('.helper-text')?.remove();
       let textStyle = '';
-      textStyle = filteredData.length === 0 ? 'text-error' : 'text-success';
+      currentPage = 1;
+      document.querySelector('.helper-text')?.remove();
+
+      if (filteredData.length === 0) {
+        textStyle = 'text-error';
+      } else {
+        textStyle = 'text-success';
+      }
       postContainer.insertAdjacentHTML(
         'beforebegin',
         `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
       );
-      updatePagination(searchTerm, true);
+
+      updatePagination(filteredData); // 페이지네이션 업데이트
+      renderPosts(filteredData); // 필터링된 데이터로 포스트 렌더링
     }
 
-    // - 새로운 `filteredData` 배열을 받아 페이지네이션과 게시물 목록을 업데이트
-    // - `updateHistoryFlag` 플래그로 히스토리 업데이트 여부를 제어
-    function updatePagination(searchTerm = '', updateHistoryFlag = false) {
-      const filteredData = getFilteredData(searchTerm);
+    // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
+    function updatePagination(data = noticeData) {
+      totalPage = Math.ceil(data.length / limit);
       pageGroup = Math.ceil(currentPage / pageCount);
       lastPage = pageGroup * pageCount;
       firstPage = lastPage - (pageCount - 1);
-      if (totalPage === 0)
-        currentPage = 1; // 검색 결과가 없을 경우 첫 페이지로 설정
-      else if (currentPage > totalPage) currentPage = totalPage; // 현재 페이지가 전체 페이지를 초과하지 않도록 제한
-      if (lastPage > totalPage) lastPage = totalPage; // 마지막 페이지가 전체 페이지를 초과하지 않도록 제한
-      pageRendering();
-      renderPosts(filteredData); // 필터링된 데이터로 게시물 렌더링
-      if (updateHistoryFlag) {
-        // 히스토리 업데이트 플래그가 true일 경우에만 히스토리 업데이트
-        updateHistory(currentPage, searchTerm);
-      }
+
+      if (totalPage === 0) currentPage = 1;
+      else if (currentPage > totalPage) currentPage = totalPage;
+
+      if (lastPage > totalPage) lastPage = totalPage;
+
+      pageRendering(); // 페이지네이션 UI 다시 그리기
+      renderPosts(data); // 필터링된 데이터로 포스트 렌더링
     }
-    if (INIT_NOTICE_INFO_VALUE) {
-      renderNoticeDetail(INIT_NOTICE_INFO_VALUE);
-    } else {
-      renderPosts(noticeData);
-    }
-    //초기 렌더링
+    // 페이지네이션 실행 및 공지사항 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
     updatePagination(initialSearch, false); // 초기 렌더링 시 필터링과 히스토리 업데이트 방지
   }
