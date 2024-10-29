@@ -1,3 +1,8 @@
+// import Page from './pages/Page';
+// import Support from './pages/Support';
+// import download from './pages/Download';
+// import pageNotFound from './pages/PageNotFound';
+import Header from './components/layouts/header/Header';
 import Main from './pages/front/Main';
 import Announcement from './pages/front/Announcement/Announcement';
 import AbsencePortal from './pages/front/AbsencePortal/AbsencePortal';
@@ -50,6 +55,11 @@ const route = async () => {
     content.appendChild(await employeeList(USER_UID));
     return;
   }
+
+  const renderHeader = async () => {
+    content.insertAdjacentHTML('beforebegin', await Header());
+  }
+  renderHeader();
 
   switch (path) {
     case '/':
