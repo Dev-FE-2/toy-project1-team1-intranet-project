@@ -5,6 +5,37 @@ import {
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { DB, AUTH } from '../../../../firebaseConfig';
 
+const PAGE_TYPES = {
+  login: 'login',
+  signup: 'signup'
+};
+
+const updateURL = (pageType) => {
+  const url = new URL(window.location);
+  url.searchParams.set('page', pageType);
+  window.history.pushState({ pageType }, '', url);
+};
+
+const renderPage = (pageType) => {
+  switch (pageType) {
+    case PAGE_TYPES.signup:
+      renderSignupForm();
+      break;
+    case PAGE_TYPES.login:
+    default:
+      renderLoginForm();
+  }
+};
+
+const navigateToSignup = () => {
+  updateURL(PAGE_TYPES.signup);
+  renderSignupForm();
+};
+
+const navigateToLogin = () => {
+  updateURL(PAGE_TYPES.login);
+  renderLoginForm();
+};
 
 // ========================== 로그인 ==========================
 // 로그인 폼 렌더링 함수
@@ -26,18 +57,27 @@ const renderLoginForm = () => {
       <button class='btn btn-solid login-button'>로그인</button>
     </div>
   </div>
-  `; // 📌 input, button 공통 component로 변경 예정
+  `;
 
   document
     .querySelector('.login-button')
     .addEventListener('click', handleLogin);
-  // document
-  //   .querySelector('.go-to-signup')
-  //   .addEventListener('click', renderSignupForm);
 
   document
     .querySelector('.go-to-signup')
-    .addEventListener('click', renderSignupForm);
+    .addEventListener('click', navigateToSignup);
+
+  const LOGIN_FORM_INPUTS = document.querySelectorAll('.login-form input');
+
+  const handleKeyDown = e => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
+  LOGIN_FORM_INPUTS.forEach(input => {
+    input.addEventListener('keydown', handleKeyDown);
+  });
 };
 
 // 로그인 핸들러
@@ -67,6 +107,12 @@ const handleLogin = async () => {
       if (!USER_DATA.isApproved) {
         // 관리자 승인 되었는지 확인
         ERROR_MESSAGE.textContent = '로그인 실패: 관리자 승인 대기 중입니다.';
+        await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
+        return;
+      }
+
+      if (USER_DATA.isDeleted) {
+        ERROR_MESSAGE.textContent = '로그인 실패: 삭제된 계정입니다.';
         await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
         return;
       }
@@ -163,15 +209,11 @@ const renderSignupForm = () => {
       <button class='btn btn-solid signup-button'>회원가입</button>
     </div>
   </div>
-  `; // 📌 input, button 공통 component로 변경 예정
-
-  // document
-  //   .querySelector('.go-to-login')
-  //   .addEventListener('click', renderLoginForm);
+  `;
 
   document
     .querySelector('.go-to-login')
-    .addEventListener('click', renderLoginForm);
+    .addEventListener('click', navigateToLogin);
 
   const handleAddressSearch = () => {
     const ADDRESS = document.querySelector('.signup-address');
@@ -355,8 +397,7 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
       createdAt: new Date(),
     });
 
-    // 📌 회원가입 성공 안내 toast 메시지 추가
-    renderLoginForm(); // 로그인 폼 렌더
+    navigateToLogin(); // 로그인 페이지 렌더
     await AUTH.signOut(); // 관리자 승인 전이므로 즉시 로그아웃 처리
   } catch (error) {
     switch (error.code) {
@@ -374,13 +415,20 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
 
 const initJoinPage = (container, pageType) => {
   if (!container) {
-    console.error('container가 없어!');
+    console.error('NO CONTAINER');
     return;
   }
 
   window.APP_DIV = container;
 
-  renderLoginForm();
+  const URL_PARAMS = new URLSearchParams(window.location.search)
+  const INIT_PAGE = URL_PARAMS.get('page') || PAGE_TYPES.login
+  renderPage(INIT_PAGE)
+
+  window.addEventListener('popstate', e => {
+    const PAGE_TYPE = e.state?.pageType || PAGE_TYPES.login
+    renderPage(PAGE_TYPE)
+  })
 };
 
 export default initJoinPage;

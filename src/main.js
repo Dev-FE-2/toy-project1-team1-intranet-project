@@ -73,7 +73,7 @@ const route = async () => {
       loadStylesheet('./src/pages/front/AbsencePortal/absencePortal.css');
       break;
     case '/join':
-    // case '/join/login':
+      // case '/join/login':
       loadStylesheet('./src/pages/front/join/join.css');
       initJoinPage(content, 'login');
       break;
