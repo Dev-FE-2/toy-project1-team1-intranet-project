@@ -1,5 +1,6 @@
+import createButton from '@components/Button/Button';
 import './main.css';
-import Modal from '/src/components/Modal/Modal';
+import createModal from '/src/components/Modal/Modal';
 import Swiper from 'swiper';
 import 'swiper/css';
 
@@ -13,9 +14,21 @@ export default function Main(container) {
   getTime();
   setInterval(getTime, 1000);
 
+  // 근무시작 토글 버튼
+  const workConfirmButton = createButton({
+    classList: ['btn', 'btn-solid', 'confirm-popup-btn'],
+    id: 'confirmWorkBtn',
+    text: '확인',
+    onClick: () => {
+      // 유저데이터 불러와서 근무상태 바꿔야함
+      
+      workConfirmModal.close();
+    }
+  });
+
   // 모달
-  const workConfirmModal = new Modal({
-    classList: 'test-class',
+  const workConfirmModal = createModal({
+    classList: ['test-class'],
     id: 'confirmWork',
     content: `
       <div>
@@ -25,7 +38,7 @@ export default function Main(container) {
       <p class="text">근무를 시작하시겠습니까?</p>
     `,
     buttons: `
-      <button type="button" id="confirmWorkBtn" class="btn btn-solid confirm-popup-btn">확인</button>
+      ${workConfirmButton.render()}
       <button type="button" id="cancelWorkBtn" class="btn btn-outline close-popup-btn">취소</button>
     `,
   });

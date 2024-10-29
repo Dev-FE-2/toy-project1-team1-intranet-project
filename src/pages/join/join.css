@@ -1,0 +1,85 @@
+.wrapper {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+
+.join-box {
+  max-width: 480px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  padding-top: 5%;
+  gap: 1rem;
+}
+
+.instruction {
+  display: flex;
+  font-size: 3rem;
+}
+
+.instruction .nav-auth-button {
+  background-color: #fff;
+  border: none;
+  text-decoration: underline;
+  color: var(--main1);
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin: 0 0 .7rem .7rem;
+}
+
+.instruction .nav-auth-button:hover {
+  color: var(--main2);
+}
+
+.signup-form, .login-form {
+  display: flex;
+  flex-direction: column;
+  width: 65%;
+  gap: 1rem;
+}
+
+.signup-form input, .login-form input {
+  font-size: 1.5rem;
+}
+
+.signup-form .signup-address-box {
+  width: 100%;
+  display: flex;
+  gap: 5%;
+}
+
+.join-box span {
+  color: red;
+  font-size: 1.2rem;
+}
+
+.join-box .signup-button, .login-button {
+  width: 65%;
+}
+
+.address-btn-box {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+
+.address-btn-box p {
+  font-size: 1.3rem;
+  color: rgba(0, 0, 0, .5);
+}
+
+.signup-button:disabled, .login-button:disabled, .signup-button:disabled:hover, .login-button:disabled:hover {
+  background-color: var(--gray2);
+  border: 1px solid #6b7280;
+  color: #6b7280;
+  cursor: not-allowed;
+  /* pointer-events: none; */
+}
+
