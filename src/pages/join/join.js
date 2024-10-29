@@ -408,11 +408,11 @@ const initJoinPage = (container, pageType) => {
   // }
 
   if (pageType === 'signup') {
-    navigateTo('signup')
-    renderSignupForm()
+    navigateTo('signup');
+    renderSignupForm();
   } else {
-    navigateTo('login')
-    renderLoginForm()
+    navigateTo('login');
+    renderLoginForm();
   }
 
   // renderLoginForm();

@@ -1,3 +1,10 @@
+/**
+ * 페이지네이션 생성기
+ * @param {number} totalItems - 전체 아이템 개수
+ * @param {number} currentPage - 현재 페이지 번호
+ * @param {number} itemsPerPage - 페이지당 아이템 개수
+ * @returns {string} HTML 형식의 페이지네이션 요소 문자열
+ */
 export const createPagination = (totalItems, currentPage, itemsPerPage) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   let paginationHTML = '';
