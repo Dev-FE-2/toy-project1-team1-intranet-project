@@ -73,14 +73,14 @@ const route = async () => {
       loadStylesheet('./src/pages/front/AbsencePortal/absencePortal.css');
       break;
     case '/join':
-    case '/join/login':
+    // case '/join/login':
       loadStylesheet('./src/pages/front/join/join.css');
       initJoinPage(content, 'login');
       break;
-    case '/join/signup':
-      loadStylesheet('./src/pages/front/join/join.css');
-      initJoinPage(content, 'signup');
-      break;
+    // case '/join/signup':
+    //   loadStylesheet('./src/pages/front/join/join.css');
+    //   initJoinPage(content, 'signup');
+    //   break;
     case '/admin':
       content.innerHTML = '';
       content.appendChild(await employeeList());
