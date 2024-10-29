@@ -1,31 +1,9 @@
-import './join.css';
-import '../../../reset.css';
-import '../../../common.css';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { DB, AUTH } from '../../../../firebaseConfig';
-
-// 페이지 전환 기록을 위한 함수
-const navigateTo = page => {
-  // 현재 페이지 기록
-  history.pushState({ page }, '', `/join/${page}`);
-
-  // 페이지에 따라 렌더링할 함수를 호출
-  if (page === 'login') {
-    renderLoginForm();
-  } else if (page === 'signup') {
-    renderSignupForm();
-  }
-};
-
-// popstate 이벤트 핸들러 추가
-window.addEventListener('popstate', event => {
-  const { page } = event.state || { page: 'login' }; // 기본값: 로그인 페이지
-  navigateTo(page);
-});
 
 // ========================== 로그인 ==========================
 // 로그인 폼 렌더링 함수
@@ -55,7 +33,7 @@ const renderLoginForm = () => {
 
   document
     .querySelector('.go-to-signup')
-    .addEventListener('click', () => navigateTo('signup'));
+    .addEventListener('click', renderSignupForm);
 };
 
 // 로그인 핸들러
@@ -189,7 +167,7 @@ const renderSignupForm = () => {
 
   document
     .querySelector('.go-to-login')
-    .addEventListener('click', () => navigateTo('login'));
+    .addEventListener('click', renderLoginForm);
 
   const handleAddressSearch = () => {
     const ADDRESS = document.querySelector('.signup-address');
@@ -398,22 +376,7 @@ const initJoinPage = (container, pageType) => {
 
   window.APP_DIV = container;
 
-  // 현재 URL에 따라 초기 페이지 결정
-  // if (window.location.pathname.endsWith('/signup')) {
-  //   navigateTo('signup');
-  // } else {
-  //   navigateTo('login');
-  // }
-
-  if (pageType === 'signup') {
-    navigateTo('signup');
-    renderSignupForm();
-  } else {
-    navigateTo('login');
-    renderLoginForm();
-  }
-
-  // renderLoginForm();
+  renderLoginForm();
 };
 
 export default initJoinPage;
