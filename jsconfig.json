@@ -4,7 +4,8 @@
     "paths": {
       "@components/*": ["src/components/*"],
       "@utils/*": ["src/utils/*"],
-      "@pages/*": ["src/pages/front/*"]
+      "@pages/*": ["src/pages/front/*"],
+      "@adminPages/*": ["src/pages/admin/*"]
     }
   },
   "exclude": ["node_modules"]
