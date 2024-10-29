@@ -1,14 +1,14 @@
 import 'material-symbols';
 
 import { fetchCollectionData } from '../../../utils/fetchCollectionData';
-let isAnnouncementSectionCreated = false;
+
 export default async function Announcement() {
   // 공지사항 데이터를 저장할 배열
   const noticeData = await fetchCollectionData('notices');
 
   // 페이지네이션을 처리하는 함수
   function pagination() {
-    // 전체 공지사항 수 (몇 개의 공지사항이 있는지)
+    // 전체 공지사항 수 (몇 개의 공지사항이n 있는지)
     const totalCount = noticeData.length;
     // 한 페이지에 보여줄 공지사항 수 (여기서는 8개씩 보여줌)
     const limit = 8;
@@ -25,6 +25,7 @@ export default async function Announcement() {
     // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
 
+    let isAnnouncementSectionCreated = false;
     // 공지사항 UI를 동적으로 생성하는 함수
     function createAnnouncementSection() {
       if (isAnnouncementSectionCreated) return;
@@ -60,7 +61,7 @@ export default async function Announcement() {
       // 이전에 있던 페이지 번호 및 버튼을 초기화
       page.innerHTML = '';
 
-      if (pageGroup > 1) {
+      if (currentPage > 1) {
         page.insertAdjacentHTML(
           'beforeend',
           `<li class="paging-item prev">
@@ -203,18 +204,14 @@ export default async function Announcement() {
       currentPage = 1;
       document.querySelector('.helper-text')?.remove();
 
-      if (filteredData.length === 0) {
-        textStyle = 'text-error';
-      } else {
-        textStyle = 'text-success';
-      }
+      textStyle = filteredData.length === 0 ? 'text-error' : 'text-success';
       postContainer.insertAdjacentHTML(
         'beforebegin',
         `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
       );
 
-      updatePagination(filteredData); // 페이지네이션 업데이트
-      renderPosts(filteredData); // 필터링된 데이터로 포스트 렌더링
+      updatePagination(filteredData);
+      // renderPosts(filteredData); // 이 줄은 필요 없습니다.
     }
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
@@ -229,9 +226,10 @@ export default async function Announcement() {
 
       if (lastPage > totalPage) lastPage = totalPage;
 
-      pageRendering(); // 페이지네이션 UI 다시 그리기
-      renderPosts(data); // 필터링된 데이터로 포스트 렌더링
+      pageRendering();
+      renderPosts(data); // 올바른 데이터로 게시물 렌더링
     }
+
     // 페이지네이션 실행 및 공지사항 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
     renderPosts(); // 첫 번째 페이지의 공지사항을 그림
