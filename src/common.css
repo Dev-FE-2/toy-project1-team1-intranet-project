@@ -246,7 +246,6 @@
 .layer-popup .info-box span {
   font-weight: 700;
 }
-
 .layer-popup .img-box {
   width: 10rem;
   height: 10rem;
@@ -256,6 +255,13 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
+}
+.layer-popup .cont::-webkit-scrollbar {
+  display: none;
+}
+.layer-popup .cont {
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none; /* 파이어폭스 */
 }
 
 /* table-body layout */
@@ -491,6 +497,11 @@ textarea.success ~ .helper-text {
 .swiper-button-next,
 .swiper-button-prev {
   color: var(--main1);
+}
+
+/* etc */
+.w100 {
+  width: 100%;
 }
 
 /* responsive  */
