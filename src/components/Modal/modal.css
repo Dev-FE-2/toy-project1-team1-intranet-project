@@ -56,7 +56,6 @@
 .layer-popup .info-box span {
   font-weight: 700;
 }
-
 .layer-popup .img-box {
   width: 10rem;
   height: 10rem;
@@ -66,4 +65,10 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .layer-popup {
+    width: 80%;
+  }
 }
