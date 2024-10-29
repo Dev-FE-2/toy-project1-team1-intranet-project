@@ -1,4 +1,5 @@
 import './join.css';
+import '../../reset.css'
 import '../../common.css';
 import {
   createUserWithEmailAndPassword,
