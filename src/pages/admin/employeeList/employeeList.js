@@ -9,7 +9,11 @@ import { doc, updateDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 ut
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { DB, AUTH } from '../../../../firebaseConfig'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
 
-const employeeList = async () => {
+const employeeList = async userUID => {
+  const URL_PARAMS = new URLSearchParams(window.location.search);
+  const INIT_SEARCH_VALUE = URL_PARAMS.get('search')?.trim().toLowerCase();
+  const ALL_USERS = await fetchCollectionData('users');
+  
   const CONTAINER = document.createElement('div');
   CONTAINER.className = 'container employee-list';
   CONTAINER.innerHTML = `
@@ -60,7 +64,6 @@ const employeeList = async () => {
   const SEARCH_INPUT = CONTAINER.querySelector('.employeeList-search-input');
 
   try {
-    const ALL_USERS = await fetchCollectionData('users');
     ALL_USERS.sort((a, b) => {
       if ((a.isDeleted ?? false) === (b.isDeleted ?? false)) {
         return a.name.localeCompare(b.name, 'ko');
@@ -150,25 +153,36 @@ const employeeList = async () => {
       }
     };
 
+    const getSearchedUsers = searchValue => {
+      return ALL_USERS.filter(
+        users =>
+          users.employeeNumber?.toLowerCase().includes(searchValue) ||
+          users.name?.toLowerCase().includes(searchValue) ||
+          users.team?.toLowerCase().includes(searchValue) ||
+          users.role?.toLowerCase().includes(searchValue) ||
+          users.phone?.toLowerCase().includes(searchValue) ||
+          users.email?.toLowerCase().includes(searchValue),
+      );
+    };
+
+    if (INIT_SEARCH_VALUE) {
+      const SEARCHED_USERS = getSearchedUsers(INIT_SEARCH_VALUE);
+      renderEmployeeList(SEARCHED_USERS);
+    } else {
+      renderEmployeeList(ALL_USERS);
+    }
+
     SEARCH_INPUT.addEventListener('keypress', event => {
       if (event.key === 'Enter') {
         const SEARCH_INPUT_VALUE = event.target.value.trim().toLowerCase();
-        const SEARCHED_USERS = ALL_USERS.filter(
-          user =>
-            user.employeeNumber?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
-            user.name?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
-            user.team?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
-            user.role?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
-            user.phone?.toLowerCase().includes(SEARCH_INPUT_VALUE) ||
-            user.email?.toLowerCase().includes(SEARCH_INPUT_VALUE),
-        );
+        history.pushState(null, null, `/admin?search=${SEARCH_INPUT_VALUE}`);
+
+        const SEARCHED_USERS = getSearchedUsers(SEARCH_INPUT_VALUE);
 
         renderEmployeeList(SEARCHED_USERS); // 필터된 결과를 렌더링하는 함수 호출
         clickUserCellEvent();
       }
     });
-
-    renderEmployeeList(ALL_USERS);
 
     const clickUserCellEvent = () => {
       const USER_CELLS = EMPLOYEE_DATA.querySelectorAll('.cell');
@@ -199,6 +213,8 @@ const employeeList = async () => {
     const SPECIFIC_USER_INFO = users.find(user => user.id === userId);
 
     if (SPECIFIC_USER_INFO) {
+      history.pushState(null, null, `/admin/${userId}`);
+
       CONTAINER.innerHTML = `
 			<h2>${SPECIFIC_USER_INFO.name}님의 상세 페이지</h2>
 			<div class='user-profile'>

@@ -1,7 +1,7 @@
 // import Page from './pages/Page';
 // import Support from './pages/Support';
 // import download from './pages/Download';
-// import pageNotFound from './pages/PageNotFound';
+import pageNotFound from './pages/PageNotFound';
 import Main from './pages/front/Main';
 // import initJoinPage from './pages/join/join';
 import employeeList from './pages/admin/employeeList/employeeList';
@@ -50,35 +50,40 @@ const route = async () => {
   // const downloadPage = new Page('#content', download());
   // const supportPage = new Support({ title: 'Support' });
 
-  switch (path) {
-    case '/':
-      Main(content);
-      break;
-    // case '/about':
-    //   content.innerHTML = '<h1>About</h1>'; //루트 경로. 하드코딩2
-    //   break;
-    // case '/download':
-    //   downloadPage.render(); //렌더
-    //   loadStylesheet('./src/styles/download.css'); //vite으로 간단하게 경로 지정할 방법이 따로 있을 것 같음(추측)
-    //   break;
-    // case '/support':
-    //   content.innerHTML = supportPage.render(); //클래스로 정의하는 방식
-    //   break;
-    case '/join':
-      loadStylesheet('./src/pages/join/join.css');
-      initJoinPage(content);
-      break;
-    // case '/admin':
-    //   content.innerHTML = employeeList()
-    //   break
-    case '/admin':
-      content.innerHTML = '';
-      content.appendChild(await employeeList());
-      break;
-    default:
-      content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식
-      break;
+  const ADMIN_USER_MATCH = path.match(/^\/admin\/(\w+)$/)
+  if (ADMIN_USER_MATCH) {
+    const USER_UID = ADMIN_USER_MATCH[1]
+    content.innerHTML = ''
+    content.appendChild(await employeeList(USER_UID))
+    return
   }
+
+    switch (path) {
+      case '/':
+        Main(content);
+        break;
+      // case '/about':
+      //   content.innerHTML = '<h1>About</h1>'; //루트 경로. 하드코딩2
+      //   break;
+      // case '/download':
+      //   downloadPage.render(); //렌더
+      //   loadStylesheet('./src/styles/download.css'); //vite으로 간단하게 경로 지정할 방법이 따로 있을 것 같음(추측)
+      //   break;
+      // case '/support':
+      //   content.innerHTML = supportPage.render(); //클래스로 정의하는 방식
+      //   break;
+      case '/join':
+        loadStylesheet('./src/pages/join/join.css');
+        initJoinPage(content);
+        break;
+      case '/admin':
+        content.innerHTML = '';
+        content.appendChild(await employeeList());
+        break;
+      default:
+        content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식
+        break;
+    }
 };
 
 document.addEventListener('DOMContentLoaded', app); // 돔이 모두 로드되면 app()실행
