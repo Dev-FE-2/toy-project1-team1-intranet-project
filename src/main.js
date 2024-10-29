@@ -4,6 +4,7 @@ import Announcement from './pages/front/Announcement/Announcement';
 import AbsencePortal from './pages/front/AbsencePortal/AbsencePortal';
 import initJoinPage from './pages/front/join/join';
 import employeeList from './pages/admin/employeeList/employeeList';
+import pageNotFound from './pages/front/pageNotFound/pageNotFound';
 
 const loadStylesheet = href => {
   const existingLink = document.querySelector('link[data-role="page-style"]');
@@ -63,7 +64,6 @@ const route = async () => {
       Main(content);
       loadStylesheet('./src/pages/front/main.css');
       break;
-
     case '/Announcement':
       Announcement();
       loadStylesheet('./src/pages/front/announcement/announcement.css');
@@ -86,7 +86,7 @@ const route = async () => {
       content.appendChild(await employeeList());
       break;
     default:
-      // content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식 => 추후 생성 필요!
+      pageNotFound();
       break;
   }
 };

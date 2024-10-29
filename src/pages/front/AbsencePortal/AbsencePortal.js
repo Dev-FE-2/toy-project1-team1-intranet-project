@@ -1,28 +1,12 @@
 import { easepick, LockPlugin, RangePlugin } from '@easepick/bundle';
-import { initializeApp } from 'firebase/app';
-// import {
-//   getFirestore,
-//   collection,
-//   doc,
-//   setDoc,
-//   getDocs,
-//   query,
-//   orderBy,
-//   serverTimestamp,
-// } from 'firebase/firestore';
-// import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-// import firebaseConfig from '../../../firebaseConfig';
+import { fetchCollectionData } from '@utils/fetchCollectionData';
+import { saveDataToDB, uploadFileToStorage } from '@utils/saveDataToDB';
 import {
   createPagination,
   addPaginationListeners,
 } from '@components/Pagination/Pagination';
 import createModal from '@components/Modal/Modal';
 import createTitle from '@components/Title/Title';
-
-// Firebase 초기화
-// const app = initializeApp(firebaseConfig);
-// const DB = getFirestore(app);
-// const STORAGE = getStorage(app);
 
 // 테이블 헤더
 const TABLE_HEADER = `
@@ -52,13 +36,7 @@ let selectedUploadFile = null; // 파일 참조 변수
 // Firestore 데이터 가져오기
 const fetchAbsenceRecords = async () => {
   try {
-    const absencesCollection = collection(DB, 'absences');
-    const absencesQuery = query(
-      absencesCollection,
-      orderBy('createdAt', 'desc'),
-    );
-    const absencesSnapshot = await getDocs(absencesQuery);
-    return absencesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return await fetchCollectionData('absences', 'createdAt', 'desc');
   } catch (error) {
     console.error('Error fetching absence data:', error);
     return [];
@@ -223,13 +201,6 @@ const handleFileUpload = event => {
   fileInputElement.click();
 };
 
-// Firebase Storage에 파일 업로드
-const uploadFileToStorage = async file => {
-  const storageRef = ref(STORAGE, `absence-files/${Date.now()}_${file.name}`);
-  const uploadSnapshot = await uploadBytes(storageRef, file);
-  return getDownloadURL(uploadSnapshot.ref);
-};
-
 // 부재 신청 처리
 const handleSubmit = async () => {
   const absenceType = document.getElementById('absence-type').value;
@@ -246,29 +217,39 @@ const handleSubmit = async () => {
     absenceDate,
     absenceType,
   );
+
   if (isOverlapOrDuplicate) {
     alert('이미 신청한 날입니다.');
     return;
   }
 
   const fileUrl = selectedUploadFile
-    ? await uploadFileToStorage(selectedUploadFile)
+    ? await uploadFileToStorage(
+        `absence-files/${Date.now()}_${selectedUploadFile.name}`,
+        selectedUploadFile,
+      ) // 수정된 함수에 맞게 변경
     : null;
 
-  await setDoc(doc(collection(DB, 'absences')), {
+  // 데이터 저장
+  const absenceData = {
     absenceType,
     absenceDate,
     reason,
     fileUrl,
     status: '승인대기',
-    createdAt: serverTimestamp(),
-  });
+    createdAt: new Date(),
+  };
 
-  alert('신청이 완료되었습니다.');
-  resetForm();
-  absenceApplyModal.close();
-  selectedUploadFile = null;
-  window.location.reload(); // 강제 새로고침 임시
+  try {
+    await saveDataToDB('absences', absenceData);
+    alert('신청이 완료되었습니다.');
+    resetForm();
+    absenceApplyModal.close();
+    window.location.reload(); // 강제 새로고침 임시
+  } catch (error) {
+    console.error('부재 신청 저장 중 오류 발생:', error);
+    alert('부재 신청 저장에 실패했습니다. 다시 시도해 주세요.');
+  }
 };
 
 // 날짜 범위 중복 여부
@@ -285,16 +266,23 @@ const checkForOverlappingOrDuplicateAbsence = async (
   absenceType,
 ) => {
   const existingData = await fetchAbsenceRecords();
+
   const isOverlapOrDuplicate = existingData.some(item => {
+    // item.absenceDate가 undefined일 수 있으므로 방어 코드 추가
+    if (!item.absenceDate) return false;
+
+    // 예상되는 형식에 맞게 absenceDate를 분할, 아니면 단일 날짜로 처리
     const [start, end] = item.absenceDate.split(' - ');
     const [newStart, newEnd] = absenceDate.split(' - ');
 
+    // start와 end가 없을 경우 default 값 설정
     const hasOverlap = isDateRangeOverlapping(
-      newStart,
-      newEnd || newStart,
+      newStart || absenceDate, // newStart가 없으면 absenceDate 자체를 사용
+      newEnd || newStart || absenceDate, // newEnd가 없으면 newStart 또는 absenceDate 자체를 사용
       start,
-      end || start,
+      end || start, // end가 없으면 start 사용
     );
+
     const isSameTypeOnSameDay = item.absenceType === absenceType && hasOverlap;
     return hasOverlap || isSameTypeOnSameDay;
   });
