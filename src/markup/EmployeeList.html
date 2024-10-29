@@ -113,6 +113,7 @@
 						<li class="role">사원</li>
 						<li class="user-status">
 							<div class="badge badge-success">근무 중</div>
+							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
 						</li>
 					</ul>
 				</li>
@@ -194,11 +195,6 @@
 						<li class="user-status">
 							<div class="badge badge-success">ONLINE</div>
 						</li>
-						<!-- <li>
-							<button class="btn btn-solid" data-popup="lp2">정보 수정</button>
-						</li> -->
-					</ul>
-				</li>
 					</ul>
 				</li>
 			</ul>
@@ -324,6 +320,7 @@
 					<button type="button" class="btn btn-outline" id="cancelBtn">취소</button>
 				</div>
 			</form>
+			<label for=""></label>
 		</div>
 		<button type="button" class="close" aria-label="팝업 닫기" title="팝업 닫기" id="closePopupBtn">
 			<svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
@@ -506,6 +503,7 @@
 		profileImageInput.click();
 	});
 
+	// 이미지 업로드
 	profileImageInput.addEventListener('change', (event) => {
 		const file = event.target.files[0];
 

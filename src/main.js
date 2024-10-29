@@ -2,12 +2,11 @@ import Main from './pages/front/Main';
 import Announcement from './pages/front/Announcement/Announcement';
 import AbsencePortal from './pages/front/AbsencePortal';
 import initJoinPage from './pages/join/join';
-// import employeeList from './pages/admin/employeeList/employeeList';
+import employeeList from './pages/admin/employeeList/employeeList';
 
 const loadStylesheet = href => {
   const existingLink = document.querySelector('link[data-role="page-style"]');
 
-  // 기존에 스타일 시트가 있으면 교체, 없으면 새로 생성
   if (existingLink) {
     existingLink.setAttribute('href', href);
   } else {
@@ -25,28 +24,32 @@ const app = () => {
 };
 
 const init = () => {
-  // 초기화
-  window.addEventListener('popstate', route); // 뒤로가기, 앞으로가기 시 발생하는 이벤트. route() 호출해서 리로드
-  document.body.addEventListener('click', navigatePage); // 본문에서 a 클릭 시 navigatePage() 호출
+  window.addEventListener('popstate', route);
+  document.body.addEventListener('click', navigatePage);
 };
 
 const navigatePage = event => {
-  event.preventDefault(); // a태그 기본 동작 삭제(새로고침 막기)
+  event.preventDefault();
 
-  const anchor = event.target.closest('a'); //클릭요소중 가장 가까운 a 찾기
+  const anchor = event.target.closest('a');
 
   if (anchor && anchor.href) {
-    history.pushState(null, null, anchor.href); //url을 변경한 하고 히스토리 추가
+    history.pushState(null, null, anchor.href);
     route();
   }
 };
 
 const route = async () => {
-  // 경로에 맞는 페이지 노출
   const path = window.location.pathname;
   const content = document.querySelector('#app');
-  // const downloadPage = new Page('#content', download());
-  // const supportPage = new Support({ title: 'Support' });
+
+  const ADMIN_USER_MATCH = path.match(/^\/admin\/(\w+)$/);
+  if (ADMIN_USER_MATCH) {
+    const USER_UID = ADMIN_USER_MATCH[1];
+    content.innerHTML = '';
+    content.appendChild(await employeeList(USER_UID));
+    return;
+  }
 
   switch (path) {
     case '/':
@@ -61,38 +64,23 @@ const route = async () => {
       AbsencePortal();
       loadStylesheet('./src/pages/front/absencePortal.css');
       break;
-    // case '/support':
-    //   content.innerHTML = supportPage.render(); //클래스로 정의하는 방식
-    //   break;
     case '/join':
-      case '/join/login':
-        loadStylesheet('./src/pages/join/join.css');
-        initJoinPage(content, 'login'); // login 페이지 초기화
-        break;
-      case '/join/signup':
-        loadStylesheet('./src/pages/join/join.css');
-        initJoinPage(content, 'signup'); // signup 페이지 초기화
-        break;
-    // case '/admin':
-    //   content.innerHTML = employeeList()
-    //   break
-    // case '/admin':
-    //   content.innerHTML = '';
-    //   content.appendChild(await employeeList());
-    //   break;
+    case '/join/login':
+      loadStylesheet('./src/pages/join/join.css');
+      initJoinPage(content, 'login');
+      break;
+    case '/join/signup':
+      loadStylesheet('./src/pages/join/join.css');
+      initJoinPage(content, 'signup');
+      break;
+    case '/admin':
+      content.innerHTML = '';
+      content.appendChild(await employeeList());
+      break;
     default:
-      // content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식
+      // content.innerHTML = pageNotFound(); // 단순 함수로 정의하는 방식 => 추후 생성 필요!
       break;
   }
 };
 
-document.addEventListener('DOMContentLoaded', app); // 돔이 모두 로드되면 app()실행
-
-export default function Button(payload = {}) {
-  const { className = '', slot = '', onClick = () => {} } = payload;
-  const el = document.createElement('button');
-  el.className = `btn ${className}`;
-  el.innerHTML = slot;
-  el.addEventListener('click', onClick);
-  return el;
-}
+document.addEventListener('DOMContentLoaded', app);
