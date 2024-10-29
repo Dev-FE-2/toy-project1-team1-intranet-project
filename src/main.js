@@ -1,7 +1,3 @@
-// import Page from './pages/Page';
-// import Support from './pages/Support';
-// import download from './pages/Download';
-// import pageNotFound from './pages/PageNotFound';
 import Header from './components/layouts/header/Header';
 import Main from './pages/front/Main';
 import Announcement from './pages/front/Announcement/Announcement';
@@ -64,6 +60,7 @@ const route = async () => {
   switch (path) {
     case '/':
       Main(content);
+      loadStylesheet('./src/pages/front/main.css');
       break;
 
     case '/Announcement':

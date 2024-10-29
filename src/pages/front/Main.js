@@ -1,5 +1,4 @@
 import createButton from '@components/Button/Button';
-import './main.css';
 import createModal from '/src/components/Modal/Modal';
 import Swiper from 'swiper';
 import 'swiper/css';
