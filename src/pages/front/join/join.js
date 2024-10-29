@@ -1,12 +1,9 @@
-import './join.css';
-import '../../style.css';
-import '../../common.css';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { DB, AUTH } from '../../../firebaseConfig';
+import { DB, AUTH } from '../../../../firebaseConfig';
 
 // 페이지 전환 기록을 위한 함수
 const navigateTo = page => {

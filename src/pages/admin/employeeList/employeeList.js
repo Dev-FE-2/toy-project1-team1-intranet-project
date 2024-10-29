@@ -1,8 +1,3 @@
-import './employeeList.css';
-import '../../../reset.css';
-import '../../../style.css';
-import '../../../common.css';
-
 import { fetchCollectionData } from '../../../utils/fetchCollectionData';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
@@ -13,7 +8,7 @@ const employeeList = async userUID => {
   const URL_PARAMS = new URLSearchParams(window.location.search);
   const INIT_SEARCH_VALUE = URL_PARAMS.get('search')?.trim().toLowerCase();
   const ALL_USERS = await fetchCollectionData('users');
-  
+
   const CONTAINER = document.createElement('div');
   CONTAINER.className = 'container employee-list';
   CONTAINER.innerHTML = `
