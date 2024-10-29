@@ -5,7 +5,7 @@
 import Header from './components/layouts/header/Header';
 import Main from './pages/front/Main';
 import Announcement from './pages/front/Announcement/Announcement';
-import AbsencePortal from './pages/front/AbsencePortal';
+import AbsencePortal from './pages/front/AbsencePortal/AbsencePortal';
 import initJoinPage from './pages/join/join';
 import employeeList from './pages/admin/employeeList/employeeList';
 
@@ -72,7 +72,7 @@ const route = async () => {
       break;
     case '/AbsencePortal':
       AbsencePortal();
-      loadStylesheet('./src/pages/front/absencePortal.css');
+      loadStylesheet('./src/pages/front/AbsencePortal/absencePortal.css');
       break;
     case '/join':
     case '/join/login':
