@@ -15,7 +15,7 @@ import firebaseConfig from '../../../firebaseConfig';
 import {
   createPagination,
   addPaginationListeners,
-} from '@components/pagination/_pagination';
+} from '@components/Pagination/_pagination';
 import createModal from '@components/Modal/Modal';
 import createTitle from '@components/Title/Title';
 
