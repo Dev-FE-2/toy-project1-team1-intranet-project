@@ -110,7 +110,7 @@ export default async function Announcement() {
       prevBtn?.addEventListener('click', () => {
         if (currentPage > 1) {
           currentPage -= 1; // 페이지 감소
-          updateHistory(currentPage);
+
           updatePagination(); // 페이지 업데이트
         }
       });
@@ -120,7 +120,7 @@ export default async function Announcement() {
       nextBtn?.addEventListener('click', () => {
         if (currentPage < totalPage) {
           currentPage += 1; // 페이지 증가
-          updateHistory(currentPage);
+
           updatePagination(); // 페이지 업데이트
         }
       });
@@ -131,7 +131,7 @@ export default async function Announcement() {
         cur.addEventListener('click', event => {
           const selectedPage = Number(event.target.textContent); // 클릭한 페이지 번호 가져옴
           currentPage = selectedPage; // 클릭한 페이지로 현재 페이지 설정
-          updateHistory(currentPage);
+
           updatePagination(); // 페이지 업데이트
         });
       });
@@ -212,35 +212,10 @@ export default async function Announcement() {
         'beforebegin',
         `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
       );
-      updateHistory(currentPage, searchTerm); // 상태 업데이트
+
       updatePagination(filteredData); // 페이지네이션 업데이트
       renderPosts(filteredData); // 필터링된 데이터로 포스트 렌더링
     }
-
-    // 새로고침시에 쿼리스트링유지
-    const urlParams = new URLSearchParams(window.location.search);
-    const initialPage = urlParams.get('page')
-      ? Number(urlParams.get('page'))
-      : 1;
-    currentPage = initialPage;
-    // history 업데이트
-    function updateHistory(pageNumber, searchTerm = '') {
-      const newQuery = `?page=${pageNumber}${searchTerm ? `&search=${searchTerm}` : ''}`;
-      history.pushState({ page: pageNumber, search: searchTerm }, '', newQuery);
-    }
-    window.addEventListener('popstate', event => {
-      if (event.state && event.state.page) {
-        currentPage = event.state.page;
-        const searchTerm = event.state.search || '';
-        updatePagination(
-          searchTerm
-            ? noticeData.filter(post =>
-                post.title.toLowerCase().includes(searchTerm),
-              )
-            : noticeData,
-        );
-      }
-    });
 
     // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
     function updatePagination(data = noticeData) {
