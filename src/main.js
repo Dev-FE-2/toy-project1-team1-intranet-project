@@ -2,7 +2,7 @@ import Header from './components/layouts/header/Header';
 import Main from './pages/front/Main';
 import Announcement from './pages/front/Announcement/Announcement';
 import AbsencePortal from './pages/front/AbsencePortal/AbsencePortal';
-import initJoinPage from '@pages/join/join';
+import initJoinPage from './pages/front/join/join'
 import employeeList from './pages/admin/employeeList/employeeList';
 
 const loadStylesheet = href => {
@@ -49,6 +49,7 @@ const route = async () => {
     const USER_UID = ADMIN_USER_MATCH[1];
     content.innerHTML = '';
     content.appendChild(await employeeList(USER_UID));
+    loadStylesheet('./src/pages/admin/employeeList/employeeList.css')
     return;
   }
 
