@@ -1,6 +1,6 @@
 import { easepick, LockPlugin, RangePlugin } from '@easepick/bundle';
 import { fetchCollectionData } from '@utils/fetchCollectionData';
-import { saveDataToDB } from '@utils/saveDataToDB';
+import { saveDataToDB, uploadFileToStorage } from '@utils/saveDataToDB';
 import {
   createPagination,
   addPaginationListeners,
@@ -201,18 +201,6 @@ const handleFileUpload = event => {
   fileInputElement.click();
 };
 
-// Firebase Storage에 파일 업로드
-const uploadFileToStorage = async file => {
-  try {
-    const storageRef = ref(STORAGE, `absence-files/${Date.now()}_${file.name}`);
-    const uploadSnapshot = await uploadBytes(storageRef, file);
-    return await getDownloadURL(uploadSnapshot.ref);
-  } catch (error) {
-    console.error('파일 업로드 오류:', error);
-    throw error; // 에러를 던져서 상위 호출에서 처리할 수 있도록 함
-  }
-};
-
 // 부재 신청 처리
 const handleSubmit = async () => {
   const absenceType = document.getElementById('absence-type').value;
@@ -236,7 +224,10 @@ const handleSubmit = async () => {
   }
 
   const fileUrl = selectedUploadFile
-    ? await uploadFileToStorage(selectedUploadFile)
+    ? await uploadFileToStorage(
+        `absence-files/${Date.now()}_${selectedUploadFile.name}`,
+        selectedUploadFile,
+      ) // 수정된 함수에 맞게 변경
     : null;
 
   // 데이터 저장

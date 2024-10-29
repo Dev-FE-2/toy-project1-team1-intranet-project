@@ -1,5 +1,6 @@
 import { collection, addDoc } from 'firebase/firestore';
-import { DB } from '../../firebaseConfig';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { DB, STORAGE } from '../../firebaseConfig';
 
 // Firestore에 데이터 저장하기
 export const saveDataToDB = async (collectionName, data) => {
@@ -15,6 +16,17 @@ export const saveDataToDB = async (collectionName, data) => {
   }
 };
 
+// Firebase Storage에 파일 업로드하기
+export const uploadFileToStorage = async (filePath, file) => {
+  try {
+    const storageRef = ref(STORAGE, filePath);
+    const uploadSnapshot = await uploadBytes(storageRef, file);
+    return await getDownloadURL(uploadSnapshot.ref);
+  } catch (error) {
+    console.error('파일 업로드 실패:', error);
+    throw error;
+  }
+};
 // 사용 방법
 // import saveDataToDB from ...~~
 // saveDataToDB('컬렉션 이름', 데이터 객체)
