@@ -1,7 +1,7 @@
 import Main from './pages/front/Main';
 import Announcement from './pages/front/Announcement/Announcement';
 import AbsencePortal from './pages/front/AbsencePortal';
-import initJoinPage from './pages/join/join';
+import initJoinPage from './pages/front/join/join';
 import employeeList from './pages/admin/employeeList/employeeList';
 
 const loadStylesheet = href => {

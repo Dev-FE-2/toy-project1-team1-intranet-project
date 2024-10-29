@@ -1,6 +1,5 @@
 import './employeeList.css';
 import '../../../reset.css';
-import '../../../style.css';
 import '../../../common.css';
 
 import { fetchCollectionData } from '../../../utils/fetchCollectionData';
