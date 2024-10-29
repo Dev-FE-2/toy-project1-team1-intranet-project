@@ -205,11 +205,11 @@ export default async function Announcement() {
       );
       updatePagination(searchTerm, true);
     }
+
     // - 새로운 `filteredData` 배열을 받아 페이지네이션과 게시물 목록을 업데이트
     // - `updateHistoryFlag` 플래그로 히스토리 업데이트 여부를 제어
     function updatePagination(searchTerm = '', updateHistoryFlag = false) {
       const filteredData = getFilteredData(searchTerm);
-      totalPage = Math.ceil(filteredData.length / limit);
       pageGroup = Math.ceil(currentPage / pageCount);
       lastPage = pageGroup * pageCount;
       firstPage = lastPage - (pageCount - 1);
