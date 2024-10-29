@@ -34,6 +34,18 @@ const renderLoginForm = () => {
   document
     .querySelector('.go-to-signup')
     .addEventListener('click', renderSignupForm);
+
+  const LOGIN_FORM_INPUTS = document.querySelectorAll('.login-form input');
+
+  const handleKeyDown = e => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
+  LOGIN_FORM_INPUTS.forEach(input => {
+    input.addEventListener('keydown', handleKeyDown);
+  });
 };
 
 // 로그인 핸들러
@@ -63,6 +75,12 @@ const handleLogin = async () => {
       if (!USER_DATA.isApproved) {
         // 관리자 승인 되었는지 확인
         ERROR_MESSAGE.textContent = '로그인 실패: 관리자 승인 대기 중입니다.';
+        await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
+        return;
+      }
+
+      if (USER_DATA.isDeleted) {
+        ERROR_MESSAGE.textContent = '로그인 실패: 삭제된 계정입니다.';
         await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
         return;
       }
