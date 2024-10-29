@@ -1,8 +1,8 @@
 import { NAV } from '/src/constants/constants';
-import './header.css';
 import { getFirestore, collection, getDoc } from 'firebase/firestore';
 import { DB, AUTH } from '../../../../firebaseConfig';
 import { fetchCurrentUserData } from '@utils/fetchCurrentUserData';
+import './header.css';
 
 
 const Header = async () => {
@@ -19,7 +19,7 @@ const Header = async () => {
   const adminNav = NAV.admin;
 
   // 어드민인지 유저페이지인지 판별 필요
-  const isAdmin = true;
+  const isAdmin = false;
 
   // 내비게이션 항목 생성기
   const createNavItems = (navItems) => {
@@ -49,7 +49,7 @@ const Header = async () => {
       </div>
       <nav>
         <ul>
-          ${isAdmin ? createNavItems(frontNav) : createNavItems(adminNav)}
+          ${isAdmin ? createNavItems(adminNav) : createNavItems(frontNav)}
         </ul>
       </nav>
     </header>
