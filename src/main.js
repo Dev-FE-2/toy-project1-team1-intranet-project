@@ -8,19 +8,20 @@ import { NO_HEADER_PAGE } from './constants/constants';
 import { AUTH } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import pageNotFound from './pages/front/pageNotFound/pageNotFound';
+import announcementAdmin from './pages/admin/announcementAdmin/announcementAdmin';
 
-const loadStylesheet = href => {
-  const existingLink = document.querySelector('link[data-role="page-style"]');
+const loadStylesheet = hrefs => {
+  hrefs.forEach(href => {
+    const existingLink = document.querySelector(`link[data-href="${href}"]`);
 
-  if (existingLink) {
-    existingLink.setAttribute('href', href);
-  } else {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    link.setAttribute('data-role', 'page-style');
-    document.head.appendChild(link);
-  }
+    if (!existingLink) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.setAttribute('data-href', href);
+      document.head.appendChild(link);
+    }
+  });
 };
 
 // 로그인 된 상태인지 판별하기
@@ -103,24 +104,31 @@ const route = async () => {
   switch (path) {
     case '/':
       Main(content);
-      loadStylesheet('./src/pages/front/main.css');
+      loadStylesheet(['./src/pages/front/main.css']);
       break;
     case '/Announcement':
       Announcement();
-      loadStylesheet('./src/pages/front/announcement/announcement.css');
+      loadStylesheet(['./src/pages/front/announcement/announcement.css']);
       break;
     case '/AbsencePortal':
-      AbsencePortal(content);
-      loadStylesheet('./src/pages/front/AbsencePortal/absencePortal.css');
+      AbsencePortal();
+      loadStylesheet(['./src/pages/front/AbsencePortal/absencePortal.css']);
       break;
     case '/join':
-      loadStylesheet('./src/pages/front/join/join.css');
+      loadStylesheet(['./src/pages/front/join/join.css']);
       initJoinPage(content, 'login');
       break;
     case '/admin':
       content.innerHTML = '';
       content.appendChild(await employeeList());
-      loadStylesheet('./src/pages/admin/employeeList/employeeList.css');
+      loadStylesheet(['./src/pages/admin/employeeList/employeeList.css']);
+      break;
+    case '/temp':
+      announcementAdmin();
+      loadStylesheet([
+        './src/pages/front/announcement/announcement.css',
+        './src/pages/front/announcementAdmin/announcementAdmin.css',
+      ]);
       break;
     default:
       pageNotFound();
