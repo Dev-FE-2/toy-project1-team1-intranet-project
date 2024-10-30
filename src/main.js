@@ -8,19 +8,21 @@ import { NO_HEADER_PAGE } from './constants/constants';
 import { AUTH } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import pageNotFound from './pages/front/pageNotFound/pageNotFound';
+import announcementAdmin from './pages/admin/announcementAdmin/announcementAdmin';
 
-const loadStylesheet = href => {
-  const existingLink = document.querySelector('link[data-role="page-style"]');
+const loadStylesheet = (hrefs) => {
 
-  if (existingLink) {
-    existingLink.setAttribute('href', href);
-  } else {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    link.setAttribute('data-role', 'page-style');
-    document.head.appendChild(link);
-  }
+  hrefs.forEach(href => {
+    const existingLink = document.querySelector(`link[data-href="${href}"]`);
+
+    if (!existingLink) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.setAttribute('data-href', href);
+      document.head.appendChild(link);
+    }
+  });
 };
 
 // 로그인 된 상태인지 판별하기
@@ -59,8 +61,6 @@ const init = () => {
 };
 
 const navigatePage = event => {
-  
-
   const anchor = event.target.closest('a');
 
   if (anchor && anchor.href) {
@@ -70,7 +70,7 @@ const navigatePage = event => {
   }
 };
 
-export const goToPage = (url) => {
+export const goToPage = url => {
   history.pushState(null, null, url);
   route();
 };
@@ -91,40 +91,44 @@ const route = async () => {
   const renderHeader = async () => {
     const headerEle = document.querySelector('.header');
     const isHeaderImport = !!headerEle; // 헤더 한번만 호출하도록
-    const {headerHtml, logoutButton} = await Header(path);
-    if(!(NO_HEADER_PAGE.includes(path)) && !isHeaderImport) {
+    const { headerHtml, logoutButton } = await Header(path);
+    if (!NO_HEADER_PAGE.includes(path) && !isHeaderImport) {
       content.insertAdjacentHTML('beforebegin', headerHtml);
       logoutButton.buttonClickEvent();
-    } else if(NO_HEADER_PAGE.includes(path) && isHeaderImport) {
+    } else if (NO_HEADER_PAGE.includes(path) && isHeaderImport) {
       // 헤더가 한번 호출된 상태에서 NO_HEADER_PAGE로 이동하면 헤더가 남아있음. 이를 제거하기 위함
       headerEle.remove();
-    };
+    }
   };
-  
+
   await renderHeader();
-  
+
   switch (path) {
     case '/':
-        Main(content);
-        loadStylesheet('./src/pages/front/main.css');
+      Main(content);
+      loadStylesheet(['./src/pages/front/main.css']);
       break;
     case '/Announcement':
       Announcement();
-      loadStylesheet('./src/pages/front/announcement/announcement.css');
+      loadStylesheet(['./src/pages/front/announcement/announcement.css']);
       break;
     case '/AbsencePortal':
       AbsencePortal();
-      loadStylesheet('./src/pages/front/AbsencePortal/absencePortal.css');
+      loadStylesheet(['./src/pages/front/AbsencePortal/absencePortal.css']);
       break;
     case '/join':
-      loadStylesheet('./src/pages/front/join/join.css');
+      loadStylesheet(['./src/pages/front/join/join.css']);
       initJoinPage(content, 'login');
       break;
     case '/admin':
       content.innerHTML = '';
       content.appendChild(await employeeList());
-      loadStylesheet('./src/pages/admin/employeeList/employeeList.css');
+      loadStylesheet(['./src/pages/admin/employeeList/employeeList.css']);
       break;
+    case '/temp':
+      announcementAdmin();
+      loadStylesheet(['./src/pages/front/announcement/announcement.css', './src/pages/front/announcementAdmin/announcementAdmin.css'])
+      break
     default:
       pageNotFound();
       break;
