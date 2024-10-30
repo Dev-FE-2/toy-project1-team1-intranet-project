@@ -2,21 +2,21 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, getDocs, collection } from 'firebase/firestore';
 import { DB, AUTH } from '../../../../firebaseConfig';
 
 const PAGE_TYPES = {
   login: 'login',
-  signup: 'signup'
+  signup: 'signup',
 };
 
-const updateURL = (pageType) => {
+const updateURL = pageType => {
   const url = new URL(window.location);
   url.searchParams.set('page', pageType);
   window.history.pushState({ pageType }, '', url);
 };
 
-const renderPage = (pageType) => {
+const renderPage = pageType => {
   switch (pageType) {
     case PAGE_TYPES.signup:
       renderSignupForm();
@@ -350,6 +350,9 @@ const renderSignupForm = () => {
 // 회원가입 핸들러
 const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
   const SIGNUP_BUTTON = document.querySelector('.signup-button');
+  const EMPLOYEE_NUMBER_ERROR = document.querySelector(
+    '.employee-number-error',
+  );
 
   const IS_VALID = {
     email: inputValidators.validateEmail(),
@@ -366,6 +369,19 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
 
   if (!Object.values(IS_VALID).every(Boolean)) {
     ERROR_MESSAGE.textContent = '모든 입력값을 올바르게 입력해 주세요.';
+    return;
+  }
+
+  const USERS_DOC = await getDocs(collection(DB, 'users'));
+  const IS_EMPLOYEE_NUMBER_DUPLICATE = USERS_DOC.docs.some(
+    doc => doc.data().employeeNumber === SIGNUP_INPUT.employeeNumber.value,
+  );
+
+  if (IS_EMPLOYEE_NUMBER_DUPLICATE) {
+    console.log('ghcnf')
+    EMPLOYEE_NUMBER_ERROR.textContent =
+      '현재 사용중인 사번입니다. 입력을 확인해주세요.';
+    SIGNUP_BUTTON.disabled = false;
     return;
   }
 
@@ -404,9 +420,9 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
       case 'auth/email-already-in-use':
         ERROR_MESSAGE.textContent = '이미 존재하는 이메일입니다.';
         break;
-      default:
-        ERROR_MESSAGE.textContent =
-          '회원가입에 실패했습니다. 다시 시도해 주세요.';
+      // default:
+      //   ERROR_MESSAGE.textContent =
+      //     '회원가입에 실패했습니다. 다시 시도해 주세요.';
     }
   } finally {
     SIGNUP_BUTTON.disabled = false;
@@ -421,14 +437,14 @@ const initJoinPage = (container, pageType) => {
 
   window.APP_DIV = container;
 
-  const URL_PARAMS = new URLSearchParams(window.location.search)
-  const INIT_PAGE = URL_PARAMS.get('page') || PAGE_TYPES.login
-  renderPage(INIT_PAGE)
+  const URL_PARAMS = new URLSearchParams(window.location.search);
+  const INIT_PAGE = URL_PARAMS.get('page') || PAGE_TYPES.login;
+  renderPage(INIT_PAGE);
 
   window.addEventListener('popstate', e => {
-    const PAGE_TYPE = e.state?.pageType || PAGE_TYPES.login
-    renderPage(PAGE_TYPE)
-  })
+    const PAGE_TYPE = e.state?.pageType || PAGE_TYPES.login;
+    renderPage(PAGE_TYPE);
+  });
 };
 
 export default initJoinPage;
