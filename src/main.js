@@ -59,8 +59,6 @@ const init = () => {
 };
 
 const navigatePage = event => {
-  
-
   const anchor = event.target.closest('a');
 
   if (anchor && anchor.href) {
@@ -70,7 +68,7 @@ const navigatePage = event => {
   }
 };
 
-export const goToPage = (url) => {
+export const goToPage = url => {
   history.pushState(null, null, url);
   route();
 };
@@ -84,29 +82,28 @@ const route = async () => {
     await checkAuthState();
   } catch (err) {
     console.error(err.message);
-    return;
   }
 
   // 헤더 호출
   const renderHeader = async () => {
     const headerEle = document.querySelector('.header');
     const isHeaderImport = !!headerEle; // 헤더 한번만 호출하도록
-    const {headerHtml, logoutButton} = await Header(path);
-    if(!(NO_HEADER_PAGE.includes(path)) && !isHeaderImport) {
+    const { headerHtml, logoutButton } = await Header(path);
+    if (!NO_HEADER_PAGE.includes(path) && !isHeaderImport) {
       content.insertAdjacentHTML('beforebegin', headerHtml);
       logoutButton.buttonClickEvent();
-    } else if(NO_HEADER_PAGE.includes(path) && isHeaderImport) {
+    } else if (NO_HEADER_PAGE.includes(path) && isHeaderImport) {
       // 헤더가 한번 호출된 상태에서 NO_HEADER_PAGE로 이동하면 헤더가 남아있음. 이를 제거하기 위함
       headerEle.remove();
-    };
+    }
   };
-  
+
   await renderHeader();
-  
+
   switch (path) {
     case '/':
-        Main(content);
-        loadStylesheet('./src/pages/front/main.css');
+      Main(content);
+      loadStylesheet('./src/pages/front/main.css');
       break;
     case '/Announcement':
       Announcement();
