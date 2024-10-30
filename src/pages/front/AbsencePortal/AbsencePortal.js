@@ -175,7 +175,7 @@ const handlePageChange = (page, data, itemsPerPage, currentPage) => {
 
 // 파일 업로드
 const handleFileUpload = event => {
-  event.preventDefault(); // 기본 클릭 이벤트 방지
+  event.preventDefault();
   const fileInputElement = document.createElement('input');
   fileInputElement.type = 'file';
   fileInputElement.accept = 'image/png, image/jpeg';
@@ -192,8 +192,6 @@ const handleFileUpload = event => {
       ) {
         alert('PNG 또는 JPG, 5MB 이하 파일만 첨부 가능합니다.');
         selectedUploadFile = null;
-      } else {
-        console.log('유효한 파일 선택:', selectedUploadFile.name);
       }
     }
   });
@@ -213,10 +211,7 @@ const handleSubmit = async () => {
   }
 
   // 중복 확인
-  const isOverlapOrDuplicate = await checkForOverlappingOrDuplicateAbsence(
-    absenceDate,
-    absenceType,
-  );
+  const isOverlapOrDuplicate = await isAbsenceOverlap(absenceDate, absenceType);
 
   if (isOverlapOrDuplicate) {
     alert('이미 신청한 날입니다.');
@@ -227,7 +222,7 @@ const handleSubmit = async () => {
     ? await uploadFileToStorage(
         `absence-files/${Date.now()}_${selectedUploadFile.name}`,
         selectedUploadFile,
-      ) // 수정된 함수에 맞게 변경
+      )
     : null;
 
   // 데이터 저장
@@ -261,10 +256,7 @@ const isDateRangeOverlapping = (startDate1, endDate1, startDate2, endDate2) => {
 };
 
 // 중복된 날짜, 휴가 유형 확인
-const checkForOverlappingOrDuplicateAbsence = async (
-  absenceDate,
-  absenceType,
-) => {
+const isAbsenceOverlap = async (absenceDate, absenceType) => {
   const existingData = await fetchAbsenceRecords();
 
   const isOverlapOrDuplicate = existingData.some(item => {
@@ -338,7 +330,6 @@ const setupDatePicker = () => {
           },
     );
   });
-
   createPicker();
 };
 
@@ -358,8 +349,8 @@ const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
 // 메인 함수
 export default async function AbsencePortal() {
   const absenceTitle = createTitle('부재 내역 및 신청', 1);
-  const itemsPerPage = 15; // 최대 행 갯수
-  const currentPage = 1; // 진입 시 페이지네이션
+  const itemsPerPage = 15;
+  const currentPage = 1;
 
   try {
     // 데이터 가져오기
@@ -416,13 +407,12 @@ export default async function AbsencePortal() {
       .querySelectorAll('#closePopupBtn, #cancelApplyBtn')
       .forEach(button => {
         button.addEventListener('click', () => {
-          // 닫기 전에 확인 메시지 표시
           const confirmation = confirm(
             '작성한 내용이 모두 사라집니다. 그래도 닫으시겠습니까?',
           );
           if (confirmation) {
-            resetForm(); // 작성된 내용 초기화
-            absenceApplyModal.close(); // 모달 닫기
+            resetForm();
+            absenceApplyModal.close();
           }
         });
       });
