@@ -8,7 +8,6 @@ import {
 import createModal from '@components/Modal/Modal';
 import createTitle from '@components/Title/Title';
 
-// 테이블 헤더
 const TABLE_HEADER = `
   <li class="col">
     <ul class="head" role="list-head">
@@ -21,7 +20,6 @@ const TABLE_HEADER = `
   </li>
 `;
 
-// 부재 유형 매핑
 const ABSENCE_TYPE_MAPPING = {
   'am-half': '오전반차',
   'pm-half': '오후반차',
@@ -31,9 +29,8 @@ const ABSENCE_TYPE_MAPPING = {
   alternative: '대체휴가',
 };
 
-let selectedUploadFile = null; // 파일 참조 변수
+let selectedUploadFile = null;
 
-// Firestore 데이터 가져오기
 const fetchAbsenceRecords = async () => {
   try {
     return await fetchCollectionData('absences', 'createdAt', 'desc');
@@ -43,7 +40,6 @@ const fetchAbsenceRecords = async () => {
   }
 };
 
-// 부재 상태에 따른 CSS 클래스 반환
 const getStatusBadgeClassName = status => {
   switch (status) {
     case '승인':
@@ -57,7 +53,6 @@ const getStatusBadgeClassName = status => {
   }
 };
 
-// 테이블을 현재 페이지에 맞춰 렌더링
 const renderTable = (data, page, itemsPerPage) => {
   const startIndex = (page - 1) * itemsPerPage;
   const limitedData = data.slice(startIndex, startIndex + itemsPerPage);
@@ -70,7 +65,6 @@ const renderTable = (data, page, itemsPerPage) => {
     `${TABLE_HEADER} ${rows}`;
 };
 
-// 개별 행 렌더링
 const renderRow = item => `
   <li class="col">
     <ul class="cell" role="list">
@@ -85,7 +79,6 @@ const renderRow = item => `
   </li>
 `;
 
-// 모달 컴포넌트 생성
 const absenceApplyModal = createModal({
   id: 'absenceApplyModal',
   title: '부재 신청',
@@ -134,7 +127,6 @@ const absenceApplyModal = createModal({
   `,
 });
 
-// 필터
 const filterAbsenceRecords = (data, itemsPerPage, currentPage, filter) => {
   const filteredData =
     filter === 'all'
@@ -156,7 +148,6 @@ const filterAbsenceRecords = (data, itemsPerPage, currentPage, filter) => {
   );
 };
 
-// 페이지 변경 핸들러
 const handlePageChange = (page, data, itemsPerPage, currentPage) => {
   const totalPages = Math.ceil(data.length / itemsPerPage);
   if (page < 1 || page > totalPages) return;
@@ -173,7 +164,6 @@ const handlePageChange = (page, data, itemsPerPage, currentPage) => {
   );
 };
 
-// 파일 업로드
 const handleFileUpload = event => {
   event.preventDefault();
   const fileInputElement = document.createElement('input');
@@ -199,7 +189,6 @@ const handleFileUpload = event => {
   fileInputElement.click();
 };
 
-// 부재 신청 처리
 const handleSubmit = async () => {
   const absenceType = document.getElementById('absence-type').value;
   const absenceDate = document.getElementById('datepicker').value;
@@ -210,7 +199,6 @@ const handleSubmit = async () => {
     return;
   }
 
-  // 중복 확인
   const isOverlapOrDuplicate = await isAbsenceOverlap(absenceDate, absenceType);
 
   if (isOverlapOrDuplicate) {
@@ -225,7 +213,6 @@ const handleSubmit = async () => {
       )
     : null;
 
-  // 데이터 저장
   const absenceData = {
     absenceType,
     absenceDate,
@@ -240,14 +227,13 @@ const handleSubmit = async () => {
     alert('신청이 완료되었습니다.');
     resetForm();
     absenceApplyModal.close();
-    window.location.reload(); // 강제 새로고침 임시
+    window.location.reload();
   } catch (error) {
     console.error('부재 신청 저장 중 오류 발생:', error);
     alert('부재 신청 저장에 실패했습니다. 다시 시도해 주세요.');
   }
 };
 
-// 날짜 범위 중복 여부
 const isDateRangeOverlapping = (startDate1, endDate1, startDate2, endDate2) => {
   return (
     (startDate1 <= endDate2 && endDate1 >= startDate2) ||
@@ -255,24 +241,20 @@ const isDateRangeOverlapping = (startDate1, endDate1, startDate2, endDate2) => {
   );
 };
 
-// 중복된 날짜, 휴가 유형 확인
 const isAbsenceOverlap = async (absenceDate, absenceType) => {
   const existingData = await fetchAbsenceRecords();
 
   const isOverlapOrDuplicate = existingData.some(item => {
-    // item.absenceDate가 undefined일 수 있으므로 방어 코드 추가
     if (!item.absenceDate) return false;
 
-    // 예상되는 형식에 맞게 absenceDate를 분할, 아니면 단일 날짜로 처리
     const [start, end] = item.absenceDate.split(' - ');
     const [newStart, newEnd] = absenceDate.split(' - ');
 
-    // start와 end가 없을 경우 default 값 설정
     const hasOverlap = isDateRangeOverlapping(
-      newStart || absenceDate, // newStart가 없으면 absenceDate 자체를 사용
-      newEnd || newStart || absenceDate, // newEnd가 없으면 newStart 또는 absenceDate 자체를 사용
+      newStart || absenceDate,
+      newEnd || newStart || absenceDate,
       start,
-      end || start, // end가 없으면 start 사용
+      end || start,
     );
 
     const isSameTypeOnSameDay = item.absenceType === absenceType && hasOverlap;
@@ -282,7 +264,6 @@ const isAbsenceOverlap = async (absenceDate, absenceType) => {
   return isOverlapOrDuplicate;
 };
 
-// 폼 초기화
 const resetForm = () => {
   document.getElementById('absence-type').value = '';
   document.getElementById('datepicker').value = '';
@@ -290,7 +271,6 @@ const resetForm = () => {
   selectedUploadFile = null;
 };
 
-// Datepicker 설정
 const setupDatePicker = () => {
   const datepickerElement = document.getElementById('datepicker');
   const today = new Date().toISOString().split('T')[0];
@@ -306,10 +286,10 @@ const setupDatePicker = () => {
       calendars: 1,
       plugins: [LockPlugin],
       LockPlugin: {
-        minDate: today, // 오늘 이전 날짜 lock
+        minDate: today,
         filter: date => {
           const day = date.getDay();
-          return day === 0 || day === 6; // 주말 lock
+          return day === 0 || day === 6;
         },
       },
       ...options,
@@ -333,10 +313,9 @@ const setupDatePicker = () => {
   createPicker();
 };
 
-// 초기 화면 설정
-const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
+const setupAbsencePortal = (data, itemsPerPage, currentPage, content) => {
   renderTable(data, currentPage, itemsPerPage);
-  document.querySelector('.pagination').innerHTML = createPagination(
+  content.querySelector('.pagination').innerHTML = createPagination(
     data.length,
     currentPage,
     itemsPerPage,
@@ -346,17 +325,14 @@ const setupAbsencePortal = (data, itemsPerPage, currentPage) => {
   );
 };
 
-// 메인 함수
-export default async function AbsencePortal() {
+export default async function AbsencePortal(content) {
   const absenceTitle = createTitle('부재 내역 및 신청', 1);
   const itemsPerPage = 15;
   const currentPage = 1;
 
   try {
-    // 데이터 가져오기
     const data = await fetchAbsenceRecords();
 
-    // 컨테이너 html
     const container = document.createElement('div');
     container.className = 'container absence-portal';
     container.innerHTML = `
@@ -380,18 +356,15 @@ export default async function AbsencePortal() {
       <div class="pagination"></div>
     `;
 
-    // 기존 내용 제거 후 컨테이너 추가, 초기화 렌더
-    document.body.innerHTML = '';
-    document.body.appendChild(container);
-    setupAbsencePortal(data, itemsPerPage, currentPage);
-    document.body.insertAdjacentHTML('beforeend', absenceApplyModal.render());
+    content.innerHTML = '';
+    content.appendChild(container);
+    setupAbsencePortal(data, itemsPerPage, currentPage, content);
+    content.insertAdjacentHTML('beforeend', absenceApplyModal.render());
 
-    // 필터 변경 리스너
     document.getElementById('view-filter').addEventListener('change', event => {
       filterAbsenceRecords(data, itemsPerPage, currentPage, event.target.value);
     });
 
-    // 부재 신청 팝업 리스너
     document
       .querySelector('[data-popup="lp1"]')
       .addEventListener('click', () => {
@@ -402,7 +375,6 @@ export default async function AbsencePortal() {
           .addEventListener('click', handleFileUpload);
       });
 
-    // 팝업 닫기, 취소 리스너
     document
       .querySelectorAll('#closePopupBtn, #cancelApplyBtn')
       .forEach(button => {
@@ -417,12 +389,11 @@ export default async function AbsencePortal() {
         });
       });
 
-    // 부재 등록 리스너
     document
       .getElementById('confirmApplyBtn')
       .addEventListener('click', handleSubmit);
   } catch (error) {
     console.error(error);
-    document.body.innerHTML = `<div class="container absence-portal">데이터를 불러올 수 없습니다.</div>`;
+    content.innerHTML = `<div class="container absence-portal">데이터를 불러올 수 없습니다.</div>`;
   }
 }
