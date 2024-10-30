@@ -3,30 +3,21 @@ import 'material-symbols';
 import { fetchCollectionData } from '../../../utils/fetchCollectionData';
 let isAnnouncementSectionCreated = false;
 export default async function Announcement() {
-  // 공지사항 데이터를 저장할 배열
   const noticeData = await fetchCollectionData('notices');
 
   function pagination() {
-    // 전체 공지사항 수 (몇 개의 공지사항이n 있는지)
     const totalCount = noticeData.length;
-    // 한 페이지에 보여줄 공지사항 수 (여기서는 8개씩 보여줌)
     const limit = 8;
-    // 현재 페이지 (페이지와 데이터 바인딩의 핵심 flag)
+    // 페이지와 데이터 바인딩의 핵심 flag
     let currentPage = 1;
-    // 전체 페이지 수 계산 (공지사항을 몇 페이지로 나눌 수 있는지)
     let totalPage = Math.ceil(totalCount / limit);
-    // 보여줄 페이지 개수
     const pageCount = totalCount > 40 ? 5 : totalPage;
-    // 현재 페이지의 그룹
     let pageGroup = Math.ceil(currentPage / pageCount);
-    // 마지막 페이지 (한 화면에 나타낼 페이지 그룹 x 현재 페이지 그룹)
     let lastPage = pageGroup * pageCount;
-    // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
 
     function createAnnouncementSection() {
       if (isAnnouncementSectionCreated) return;
-      // 공지사항을 감싸는 전체 컨테이너를 생성
       const container = document.createElement('div');
       container.classList.add('container', 'announcement');
 
@@ -50,33 +41,31 @@ export default async function Announcement() {
     }
     createAnnouncementSection(); // 공지사항 UI를 생성
 
-    // 쿼리스트링 가져오는 변수
-    const urlParams = new URLSearchParams(window.location.search);
-    // 초기 페이지 번호 설정하는 변수
+    // 검색기능을 위한 변수
+    const searchInput = document.querySelector('input[type="search"]');
+    const searchButton = document.querySelector('.material-symbols-outlined');
+
+    const urlParams = new URLSearchParams(window.location.search); // URL의 쿼리스트링 파라미터 가져오기
     const initialPage = urlParams.get('page')
       ? Number(urlParams.get('page'))
-      : 1;
-    currentPage = initialPage;
+      : 1; // 페이지 파라미터 값 가져오기
+    const initialSearch = urlParams.get('search') || ''; // 검색어 파라미터 값 가져오기
+    currentPage = initialPage; // 현재 페이지 설정
+    searchInput.value = initialSearch; // 검색어 입력창에 초기값 설정
 
-    // history 업데이트
+    // - `encodeURIComponent`를 사용하여 검색어를 인코딩하여 URL에 포함 시킬 수 있도록 수정하였습니다.
     function updateHistory(pageNumber, searchTerm = '') {
-      const newQuery = `?page=${pageNumber}${searchTerm ? `&search=${searchTerm}` : ''}`;
-      history.pushState({ page: pageNumber, search: searchTerm }, '', newQuery);
-    }
-    //앞으로가기 뒤로가기 해주는 함수.
-    window.addEventListener('popstate', event => {
-      if (event.state && event.state.page) {
-        currentPage = event.state.page;
-        const searchTerm = event.state.search || '';
-        updatePagination(
-          searchTerm
-            ? noticeData.filter(post =>
-                post.title.toLowerCase().includes(searchTerm),
-              )
-            : noticeData,
+      // 히스토리 상태를 업데이트하는 함수
+      const newQuery = `?page=${pageNumber}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`; // 쿼리스트링 생성
+      if (window.location.search !== newQuery) {
+        // 현재 URL과 다를 경우에만 히스토리 업데이트
+        history.pushState(
+          { page: pageNumber, search: searchTerm },
+          '', // title을 비워 두고 URL 쿼리스트링 추가
+          newQuery,
         );
       }
-    });
+    }
 
     const page = document.querySelector('.paging-list');
 
@@ -127,8 +116,8 @@ export default async function Announcement() {
       prevBtn?.addEventListener('click', () => {
         if (currentPage > 1) {
           currentPage -= 1;
-          updateHistory(currentPage);
-          updatePagination();
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
         }
       });
 
@@ -136,8 +125,8 @@ export default async function Announcement() {
       nextBtn?.addEventListener('click', () => {
         if (currentPage < totalPage) {
           currentPage += 1;
-          updateHistory(currentPage);
-          updatePagination();
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
         }
       });
 
@@ -146,8 +135,8 @@ export default async function Announcement() {
         cur.addEventListener('click', event => {
           const selectedPage = Number(event.target.textContent);
           currentPage = selectedPage;
-          updateHistory(currentPage);
-          updatePagination();
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
         });
       });
     }
@@ -182,7 +171,7 @@ export default async function Announcement() {
           <img class="postcard-img" src="${post.image}" alt="Post Image"/>
           <div class="contents">
             <h2 class="contents__title">${cuttingString(post.title, 20)}</h2>
-            <p class="contents__content">${cuttingString(post.contents, 30)}</p>
+            <p class="contents__content">${cuttingString(post.contents, 40)}</p>
             <div class="contents__information">
               <span class="information-author">${cuttingString(post.author, 10)}</span>
               <span class="information-date">${cuttingString(post.writedAt, 15)}</span>
@@ -194,10 +183,6 @@ export default async function Announcement() {
       });
     }
 
-    // 검색기능을 위한 변수
-    const searchInput = document.querySelector('input[type="search"]');
-    const searchButton = document.querySelector('.material-symbols-outlined');
-
     // 검색 버튼과 엔터 키 이벤트
     searchInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') handleSearch();
@@ -206,41 +191,42 @@ export default async function Announcement() {
 
     // 검색기능 함수
     function handleSearch() {
-      const searchTerm = searchInput.value.trim().toLowerCase();
-      const filteredData = noticeData.filter(post =>
-        post.title.toLowerCase().includes(searchTerm),
-      );
-
-      let textStyle = '';
+      const searchTerm = searchInput.value.trim().toLowerCase(); // 검색어 가져오기
       currentPage = 1;
-      document.querySelector('.helper-text')?.remove();
-
-      textStyle = filteredData.length === 0 ? 'text-error' : 'text-success';
-      postContainer.insertAdjacentHTML(
-        'beforebegin',
-        `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
-      );
-      updateHistory(currentPage, searchTerm);
-      updatePagination(filteredData);
+      updatePagination(searchTerm, true);
     }
 
-    function updatePagination(data = noticeData) {
-      totalPage = Math.ceil(data.length / limit);
-      pageGroup = Math.ceil(currentPage / pageCount);
-      lastPage = pageGroup * pageCount;
-      firstPage = lastPage - (pageCount - 1);
+    // - 새로운 `filteredData` 배열을 받아 페이지네이션과 게시물 목록을 업데이트
+    // - `updateHistoryFlag` 플래그로 히스토리 업데이트 여부를 제어
+    function updatePagination(searchTerm = '', updateHistoryFlag = false) {
+      const filteredData = searchTerm // 검색어에 따라 데이터 필터링
+        ? noticeData.filter(post =>
+            post.title.toLowerCase().includes(searchTerm),
+          )
+        : noticeData;
 
-      if (totalPage === 0) currentPage = 1;
-      else if (currentPage > totalPage) currentPage = totalPage;
+      totalPage = Math.ceil(filteredData.length / limit); // 필터링된 데이터에 대한 총 페이지 계산
+      pageGroup = Math.ceil(currentPage / pageCount); // 현재 페이지 그룹 업데이트
+      lastPage = pageGroup * pageCount; // 마지막 페이지 업데이트
+      firstPage = lastPage - (pageCount - 1); // 첫 번째 페이지 업데이트
 
-      if (lastPage > totalPage) lastPage = totalPage;
+      if (totalPage === 0)
+        currentPage = 1; // 검색 결과가 없을 경우 첫 페이지로 설정
+      else if (currentPage > totalPage) currentPage = totalPage; // 현재 페이지가 전체 페이지를 초과하지 않도록 제한
 
-      pageRendering();
-      renderPosts(data);
+      if (lastPage > totalPage) lastPage = totalPage; // 마지막 페이지가 전체 페이지를 초과하지 않도록 제한
+
+      pageRendering(); // 페이지네이션 버튼 렌더링
+      renderPosts(filteredData); // 필터링된 데이터로 게시물 렌더링
+
+      if (updateHistoryFlag) {
+        // 히스토리 업데이트 플래그가 true일 경우에만 히스토리 업데이트
+        updateHistory(currentPage, searchTerm);
+      }
     }
 
     pageRendering(); // 처음에 페이지 버튼들을 그림
-    renderPosts(); // 첫 번째 페이지의 공지사항을 그림
+    updatePagination(initialSearch, false); // 초기 렌더링 시 필터링과 히스토리 업데이트 방지
   }
   pagination();
 }
