@@ -16,6 +16,7 @@ export default async function Announcement() {
     let lastPage = pageGroup * pageCount;
     let firstPage = lastPage - (pageCount - 1);
 
+    // 공지사항 UI를 생성
     function createAnnouncementSection() {
       if (isAnnouncementSectionCreated) return;
       const container = document.createElement('div');
@@ -39,7 +40,7 @@ export default async function Announcement() {
       document.body.append(container);
       isAnnouncementSectionCreated = true;
     }
-    createAnnouncementSection(); // 공지사항 UI를 생성
+    createAnnouncementSection();
 
     // 검색기능을 위한 변수
     const searchInput = document.querySelector('input[type="search"]');
@@ -201,7 +202,6 @@ export default async function Announcement() {
       });
     }
 
-    // 검색 버튼과 엔터 키 이벤트
     searchInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') handleSearch();
     });
@@ -215,7 +215,6 @@ export default async function Announcement() {
         : noticeData;
     }
 
-    // 검색기능 함수
     function handleSearch() {
       const searchTerm = searchInput.value.trim().toLowerCase(); // 검색어 가져오기
       currentPage = 1;
@@ -239,10 +238,10 @@ export default async function Announcement() {
     function updatePagination(searchTerm = '', updateHistoryFlag = false) {
       const filteredData = getFilteredData(searchTerm);
 
-      totalPage = Math.ceil(filteredData.length / limit); // 필터링된 데이터에 대한 총 페이지 계산
-      pageGroup = Math.ceil(currentPage / pageCount); // 현재 페이지 그룹 업데이트
-      lastPage = pageGroup * pageCount; // 마지막 페이지 업데이트
-      firstPage = lastPage - (pageCount - 1); // 첫 번째 페이지 업데이트
+      totalPage = Math.ceil(filteredData.length / limit);
+      pageGroup = Math.ceil(currentPage / pageCount);
+      lastPage = pageGroup * pageCount;
+      firstPage = lastPage - (pageCount - 1);
 
       if (totalPage === 0)
         currentPage = 1; // 검색 결과가 없을 경우 첫 페이지로 설정
@@ -250,7 +249,7 @@ export default async function Announcement() {
 
       if (lastPage > totalPage) lastPage = totalPage; // 마지막 페이지가 전체 페이지를 초과하지 않도록 제한
 
-      pageRendering(); // 페이지네이션 버튼 렌더링
+      pageRendering();
       renderPosts(filteredData); // 필터링된 데이터로 게시물 렌더링
 
       if (updateHistoryFlag) {
@@ -259,6 +258,7 @@ export default async function Announcement() {
       }
     }
 
+    //초기 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
     updatePagination(initialSearch, false); // 초기 렌더링 시 필터링과 히스토리 업데이트 방지
   }
