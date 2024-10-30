@@ -113,7 +113,7 @@ const route = async () => {
       loadStylesheet('./src/pages/front/announcement/announcement.css');
       break;
     case '/AbsencePortal':
-      AbsencePortal();
+      AbsencePortal(content);
       loadStylesheet('./src/pages/front/AbsencePortal/absencePortal.css');
       break;
     case '/join':
