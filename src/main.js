@@ -59,11 +59,12 @@ const init = () => {
 };
 
 const navigatePage = event => {
-  event.preventDefault();
+  
 
   const anchor = event.target.closest('a');
 
   if (anchor && anchor.href) {
+    event.preventDefault();
     history.pushState(null, null, anchor.href);
     route();
   }
@@ -125,17 +126,13 @@ const route = async () => {
       loadStylesheet('./src/pages/front/AbsencePortal/absencePortal.css');
       break;
     case '/join':
-      // case '/join/login':
       loadStylesheet('./src/pages/front/join/join.css');
       initJoinPage(content, 'login');
       break;
-    // case '/join/signup':
-    //   loadStylesheet('./src/pages/front/join/join.css');
-    //   initJoinPage(content, 'signup');
-    //   break;
     case '/admin':
       content.innerHTML = '';
       content.appendChild(await employeeList());
+      loadStylesheet('./src/pages/admin/employeeList/employeeList.css');
       break;
     default:
       pageNotFound();
