@@ -31,11 +31,12 @@ const init = () => {
 };
 
 const navigatePage = event => {
-  event.preventDefault();
+  
 
   const anchor = event.target.closest('a');
 
   if (anchor && anchor.href) {
+    event.preventDefault();
     history.pushState(null, null, anchor.href);
     route();
   }
@@ -44,15 +45,6 @@ const navigatePage = event => {
 const route = async () => {
   const path = window.location.pathname;
   const content = document.querySelector('#app');
-
-  const ADMIN_USER_MATCH = path.match(/^\/admin\/(\w+)$/);
-  if (ADMIN_USER_MATCH) {
-    const USER_UID = ADMIN_USER_MATCH[1];
-    content.innerHTML = '';
-    content.appendChild(await employeeList(USER_UID));
-    loadStylesheet('./src/pages/admin/employeeList/employeeList.css');
-    return;
-  }
 
   const renderHeader = async () => {
     content.insertAdjacentHTML('beforebegin', await Header());
@@ -73,7 +65,7 @@ const route = async () => {
       loadStylesheet('./src/pages/front/AbsencePortal/absencePortal.css');
       break;
     case '/join':
-    // case '/join/login':
+      // case '/join/login':
       loadStylesheet('./src/pages/front/join/join.css');
       initJoinPage(content, 'login');
       break;
@@ -83,7 +75,9 @@ const route = async () => {
     //   break;
     case '/admin':
       content.innerHTML = '';
-      content.appendChild(await employeeList());
+      const test = await employeeList()
+      content.appendChild(test);
+      loadStylesheet('./src/pages/admin/employeeList/employeeList.css');
       break;
     default:
       pageNotFound();
