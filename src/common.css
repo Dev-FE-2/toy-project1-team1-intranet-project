@@ -505,6 +505,24 @@ textarea.success ~ .helper-text {
   width: 100%;
 }
 
+/* empty page */
+.empty-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.empty-page > p {
+  font-size: 3rem;
+  text-align: center;
+}
+
+.empty-page > .btn {
+  margin-top: 2rem;
+}
+
 /* responsive  */
 @media screen and (max-width: 768px) {
   .container {
