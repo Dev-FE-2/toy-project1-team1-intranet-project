@@ -153,6 +153,7 @@
   border-radius: 6px;
   border: 1px solid transparent;
   font-weight: 700;
+  text-align: center;
 }
 .btn-solid {
   background: var(--main1);
