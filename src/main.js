@@ -11,16 +11,16 @@ import pageNotFound from './pages/front/pageNotFound/pageNotFound';
 import announcementAdmin from './pages/admin/announcementAdmin/announcementAdmin';
 
 const loadStylesheet = hrefs => {
-  hrefs.forEach(href => {
-    const existingLink = document.querySelector(`link[data-href="${href}"]`);
+  document.querySelectorAll('link[data-href]').forEach(link => {
+    link.remove();
+  });
 
-    if (!existingLink) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = href;
-      link.setAttribute('data-href', href);
-      document.head.appendChild(link);
-    }
+  hrefs.forEach(href => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.setAttribute('data-href', href);
+    document.head.appendChild(link);
   });
 };
 
@@ -111,7 +111,7 @@ const route = async () => {
       loadStylesheet(['./src/pages/front/announcement/announcement.css']);
       break;
     case '/AbsencePortal':
-      AbsencePortal();
+      AbsencePortal(content);
       loadStylesheet(['./src/pages/front/AbsencePortal/absencePortal.css']);
       break;
     case '/join':
