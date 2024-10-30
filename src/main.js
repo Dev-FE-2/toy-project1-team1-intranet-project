@@ -87,15 +87,6 @@ const route = async () => {
     return;
   }
 
-  const ADMIN_USER_MATCH = path.match(/^\/admin\/(\w+)$/);
-  if (ADMIN_USER_MATCH) {
-    const USER_UID = ADMIN_USER_MATCH[1];
-    content.innerHTML = '';
-    content.appendChild(await employeeList(USER_UID));
-    loadStylesheet('./src/pages/admin/employeeList/employeeList.css');
-    return;
-  }
-
   // 헤더 호출
   const renderHeader = async () => {
     const headerEle = document.querySelector('.header');
