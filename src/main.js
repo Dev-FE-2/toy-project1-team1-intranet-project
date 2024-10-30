@@ -10,8 +10,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import pageNotFound from './pages/front/pageNotFound/pageNotFound';
 import announcementAdmin from './pages/admin/announcementAdmin/announcementAdmin';
 
-const loadStylesheet = (hrefs) => {
-
+const loadStylesheet = hrefs => {
   hrefs.forEach(href => {
     const existingLink = document.querySelector(`link[data-href="${href}"]`);
 
@@ -84,7 +83,6 @@ const route = async () => {
     await checkAuthState();
   } catch (err) {
     console.error(err.message);
-    return;
   }
 
   // 헤더 호출
@@ -127,8 +125,11 @@ const route = async () => {
       break;
     case '/temp':
       announcementAdmin();
-      loadStylesheet(['./src/pages/front/announcement/announcement.css', './src/pages/front/announcementAdmin/announcementAdmin.css'])
-      break
+      loadStylesheet([
+        './src/pages/front/announcement/announcement.css',
+        './src/pages/front/announcementAdmin/announcementAdmin.css',
+      ]);
+      break;
     default:
       pageNotFound();
       break;
