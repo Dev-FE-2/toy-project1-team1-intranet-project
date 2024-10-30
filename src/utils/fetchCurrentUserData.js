@@ -2,7 +2,10 @@ import { doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { DB, AUTH } from '../../firebaseConfig';
 
-// 현재 로그인한 유저 데이터 가져오기 함수
+/**
+ * 현재 로그인한 유저 데이터 가져오기 함수
+ * @example const USER_DATA = await fetchCurrentUserData();
+*/
 export const fetchCurrentUserData = async () => {
   const USER = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(AUTH, USER => {

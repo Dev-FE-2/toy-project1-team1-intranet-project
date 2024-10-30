@@ -3,21 +3,21 @@ export const NAV = {
   front: [
     {
       name: '내 정보',
-      path: '#none'
+      path: '/'
     },
     {
       name: '나의 근태',
-      path: '#'
+      path: '/AbsencePortal'
     },
     {
       name: '공지',
-      path: '#'
+      path: '/Announcement'
     }
   ],
   admin: [
     {
       name: '직원 정보 관리',
-      path: '#none'
+      path: '/admin'
     },
     {
       name: '공지사항 관리',
@@ -25,3 +25,5 @@ export const NAV = {
     }
   ]
 };
+
+export const NO_HEADER_PAGE = ['/join', '/join/login', '/join/signup'];
