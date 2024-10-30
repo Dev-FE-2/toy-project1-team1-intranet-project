@@ -4,7 +4,6 @@ let isAnnouncementSectionCreated = false;
 export default async function Announcement() {
   const noticeData = await fetchCollectionData('notices');
 
-  // 페이지네이션을 처리하는 함수
   function pagination() {
     // 전체 공지사항 수 (몇 개의 공지사항이 있는지)
     const totalCount = noticeData.length;
@@ -23,6 +22,7 @@ export default async function Announcement() {
     // 첫 페이지
     let firstPage = lastPage - (pageCount - 1);
 
+    let isAnnouncementSectionCreated = false;
     // 공지사항 UI를 동적으로 생성하는 함수
     function createAnnouncementSection() {
       if (isAnnouncementSectionCreated) return;
@@ -30,7 +30,6 @@ export default async function Announcement() {
       const container = document.createElement('div');
       container.classList.add('container', 'announcement');
 
-      // 공지사항 UI 구조를 HTML로 작성하여 추가
       container.innerHTML = `
       <div class="container__title title">
         <h1 class="title">공지사항</h1>
@@ -51,9 +50,36 @@ export default async function Announcement() {
     }
     createAnnouncementSection(); // 공지사항 UI를 생성
 
+    // 쿼리스트링 가져오는 변수
+    const urlParams = new URLSearchParams(window.location.search);
+    // 초기 페이지 번호 설정하는 변수
+    const initialPage = urlParams.get('page')
+      ? Number(urlParams.get('page'))
+      : 1;
+    currentPage = initialPage;
+
+    // history 업데이트
+    function updateHistory(pageNumber, searchTerm = '') {
+      const newQuery = `?page=${pageNumber}${searchTerm ? `&search=${searchTerm}` : ''}`;
+      history.pushState({ page: pageNumber, search: searchTerm }, '', newQuery);
+    }
+    //앞으로가기 뒤로가기 해주는 함수.
+    window.addEventListener('popstate', event => {
+      if (event.state && event.state.page) {
+        currentPage = event.state.page;
+        const searchTerm = event.state.search || '';
+        updatePagination(
+          searchTerm
+            ? noticeData.filter(post =>
+                post.title.toLowerCase().includes(searchTerm),
+              )
+            : noticeData,
+        );
+      }
+    });
+
     const page = document.querySelector('.paging-list');
 
-    // 페이지네이션 UI를 그리는 함수 (페이지 번호와 이전/다음 버튼)
     function pageRendering() {
       page.innerHTML = '';
 
@@ -70,6 +96,7 @@ export default async function Announcement() {
          </li>`,
         );
       }
+      // 전체 페이지 수만큼 페이지 번호를 그려줌
       for (let i = firstPage; i <= lastPage; i += 1) {
         const activeClass = i === currentPage ? 'is-active' : '';
         page.insertAdjacentHTML(
@@ -77,6 +104,8 @@ export default async function Announcement() {
           `<li class="paging-item ${activeClass}"><a href="javascript:void(0);">${i}</a></li>`,
         );
       }
+
+      // 다음 버튼 추가 (다음 버튼도 항상 표시됨)
       if (currentPage < totalPage) {
         page.insertAdjacentHTML(
           'beforeend',
@@ -90,38 +119,51 @@ export default async function Announcement() {
          </li>`,
         );
       }
+
+      // 페이지 버튼에 이벤트를 연결하는 함수 실행
       attachEvent();
     }
+
+    // 페이지 버튼과 이전/다음 버튼 클릭 이벤트를 처리하는 함수
     function attachEvent() {
-      const prevBtn = container.querySelector('.paging-item.prev button');
+      // 이전 버튼을 클릭했을 때, 현재 페이지를 1 감소시키고 페이지를 업데이트
+      const prevBtn = document.querySelector('.paging-item.prev button');
       prevBtn?.addEventListener('click', () => {
         if (currentPage > 1) {
-          currentPage -= 1;
-          const searchTerm = searchInput.value.trim().toLowerCase();
-          updatePagination(searchTerm, true);
+          currentPage -= 1; // 페이지 감소
+
+          updatePagination(); // 페이지 업데이트
         }
       });
-      const nextBtn = container.querySelector('.paging-item.next button');
+
+      // 다음 버튼을 클릭했을 때, 현재 페이지를 1 증가시키고 페이지를 업데이트
+      const nextBtn = document.querySelector('.paging-item.next button');
       nextBtn?.addEventListener('click', () => {
         if (currentPage < totalPage) {
-          currentPage += 1;
-          const searchTerm = searchInput.value.trim().toLowerCase();
-          updatePagination(searchTerm, true);
+          currentPage += 1; // 페이지 증가
+
+          updatePagination(); // 페이지 업데이트
         }
       });
-      const pageItems = container.querySelectorAll('.paging-item a');
+
+      // 각 페이지 번호를 클릭했을 때 해당 페이지로 이동
+      const pageItems = document.querySelectorAll('.paging-item a');
       pageItems.forEach(cur => {
         cur.addEventListener('click', event => {
-          const selectedPage = Number(event.target.textContent);
-          currentPage = selectedPage;
-          const searchTerm = searchInput.value.trim().toLowerCase();
-          updatePagination(searchTerm, true);
+          const selectedPage = Number(event.target.textContent); // 클릭한 페이지 번호 가져옴
+          currentPage = selectedPage; // 클릭한 페이지로 현재 페이지 설정
+
+          updatePagination(); // 페이지 업데이트
         });
       });
     }
-    const postContainer = container.querySelector('.postcard-container');
+
+    // 공지사항 카드를 렌더링할 위치를 찾음
+    const postContainer = document.querySelector('.postcard-container');
+    // 공지사항 카드를 화면에 렌더링하는 함수
     function renderPosts(posts = noticeData) {
-      postContainer.innerHTML = '';
+      postContainer.innerHTML = ''; // 기존 공지사항을 초기화
+
       if (posts.length === 0) {
         postContainer.classList.add('no-result');
         postContainer.innerHTML = `<p>찾으시는 게시물이 없습니다.</p>`;
@@ -129,6 +171,8 @@ export default async function Announcement() {
       } else {
         postContainer.classList.remove('no-result');
       }
+
+      // 현재 페이지에 맞는 공지사항을 계산
       const start = (currentPage - 1) * limit;
       const end = start + limit;
       const currentPosts = posts.slice(start, end); // 현재 페이지에 해당하는 공지사항만 잘라서 가져옴
@@ -138,6 +182,8 @@ export default async function Announcement() {
         }
         return text;
       }
+
+      // 각 공지사항을 카드 형식으로 렌더링
       currentPosts.forEach(post => {
         const postHTML = `
         <div class="postcard" data-id="${post.id}">
@@ -152,22 +198,15 @@ export default async function Announcement() {
           </div>
         </div>
       `;
-        postContainer.insertAdjacentHTML('beforeend', postHTML);
-      });
-      const postcards = postContainer.querySelectorAll('.postcard');
-      postcards.forEach(card => {
-        card.addEventListener('click', () => {
-          const postId = card.dataset.id;
-          urlParams.set('noticeinfo', postId);
-          history.pushState(
-            null,
-            null,
-            `/Announcement?${urlParams.toString()}`,
-          );
-          renderNoticeDetail(postId);
-        });
+        postContainer.insertAdjacentHTML('beforeend', postHTML); // 새로운 공지사항을 추가
       });
     }
+
+    // 검색기능을 위한 변수
+    const searchInput = document.querySelector('input[type="search"]');
+    const searchButton = document.querySelector('.material-symbols-outlined');
+
+    // 검색 버튼과 엔터 키 이벤트
     searchInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') handleSearch();
     });
@@ -198,11 +237,10 @@ export default async function Announcement() {
         `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
       );
 
-      updatePagination(filteredData); // 페이지네이션 업데이트
-      renderPosts(filteredData); // 필터링된 데이터로 포스트 렌더링
+      updatePagination(filteredData);
+      // renderPosts(filteredData); // 이 줄은 필요 없습니다.
     }
 
-    // 페이지네이션을 업데이트하고 공지사항 목록을 다시 렌더링하는 함수
     function updatePagination(data = noticeData) {
       totalPage = Math.ceil(data.length / limit);
       pageGroup = Math.ceil(currentPage / pageCount);
@@ -214,9 +252,10 @@ export default async function Announcement() {
 
       if (lastPage > totalPage) lastPage = totalPage;
 
-      pageRendering(); // 페이지네이션 UI 다시 그리기
-      renderPosts(data); // 필터링된 데이터로 포스트 렌더링
+      pageRendering();
+      renderPosts(data); // 올바른 데이터로 게시물 렌더링
     }
+
     // 페이지네이션 실행 및 공지사항 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
     updatePagination(initialSearch, false); // 초기 렌더링 시 필터링과 히스토리 업데이트 방지
