@@ -67,6 +67,24 @@ export default async function Announcement() {
       }
     }
 
+    //히스토리 변화를 감지하기 위한 코드 => 이거없으면 helpertext관리못함
+    window.addEventListener('popstate', event => {
+      const { page, search } = event.state || {}; // 상태에서 페이지와 검색어 가져오기
+      if (page) {
+        currentPage = page; // 히스토리 상태에서 currentPage 업데이트
+      }
+
+      // 검색어가 있는 경우
+      if (search) {
+        searchInput.value = search; // 이전 검색어로 검색 입력 필드 업데이트
+        handleSearch(); // handleSearch 호출하여 필터링된 데이터와 페이지네이션 업데이트
+      } else {
+        currentPage = 1; // 검색어가 없으면 1페이지로 리셋
+        updatePagination('', false); // 검색 없이 페이지네이션 리셋
+        document.querySelector('.helper-text')?.remove(); // helper-text 제거
+      }
+    });
+
     const page = document.querySelector('.paging-list');
 
     function pageRendering() {
@@ -189,21 +207,37 @@ export default async function Announcement() {
     });
     searchButton.addEventListener('click', handleSearch);
 
+    function getFilteredData(searchTerm) {
+      return searchTerm
+        ? noticeData.filter(post =>
+            post.title.toLowerCase().includes(searchTerm),
+          )
+        : noticeData;
+    }
+
     // 검색기능 함수
     function handleSearch() {
       const searchTerm = searchInput.value.trim().toLowerCase(); // 검색어 가져오기
       currentPage = 1;
+
+      const filteredData = getFilteredData(searchTerm);
+      document.querySelector('.helper-text')?.remove();
+
+      let textStyle = '';
+      textStyle = filteredData.length === 0 ? 'text-error' : 'text-success';
+
+      postContainer.insertAdjacentHTML(
+        'beforebegin',
+        `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
+      );
+
       updatePagination(searchTerm, true);
     }
 
     // - 새로운 `filteredData` 배열을 받아 페이지네이션과 게시물 목록을 업데이트
     // - `updateHistoryFlag` 플래그로 히스토리 업데이트 여부를 제어
     function updatePagination(searchTerm = '', updateHistoryFlag = false) {
-      const filteredData = searchTerm // 검색어에 따라 데이터 필터링
-        ? noticeData.filter(post =>
-            post.title.toLowerCase().includes(searchTerm),
-          )
-        : noticeData;
+      const filteredData = getFilteredData(searchTerm);
 
       totalPage = Math.ceil(filteredData.length / limit); // 필터링된 데이터에 대한 총 페이지 계산
       pageGroup = Math.ceil(currentPage / pageCount); // 현재 페이지 그룹 업데이트
