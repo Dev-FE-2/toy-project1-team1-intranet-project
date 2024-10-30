@@ -127,7 +127,7 @@ const route = async () => {
       announcementAdmin();
       loadStylesheet([
         './src/pages/front/announcement/announcement.css',
-        './src/pages/front/announcementAdmin/announcementAdmin.css',
+        './src/pages/admin/announcementAdmin/announcementAdmin.css',
       ]);
       break;
     default:
