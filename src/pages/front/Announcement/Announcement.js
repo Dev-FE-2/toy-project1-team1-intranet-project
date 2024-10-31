@@ -186,7 +186,7 @@ export default async function Announcement() {
             <p class="contents__content">${cuttingString(post.contents, 40)}</p>
             <div class="contents__information">
               <span class="information-author">${cuttingString(post.author, 10)}</span>
-              <span class="information-date">${cuttingString(post.writedAt, 15)}</span>
+              <span class="information-date">${cuttingString(post.updateAt ? cuttingString(post.updateAt, 15) : cuttingString(post.writedAt, 15))}</span>
             </div>
           </div>
         </div>
@@ -282,12 +282,12 @@ export default async function Announcement() {
       </div>
       <div class="content-contents">
         <div class="content-title">
-          <input type="text" value="${specificNotice.title}" readonly />
-          <span class="title-secondary">
-            <input class="secondary-component" type="text" value="${specificNotice.author}" readonly />
-            <input class="secondary-component" type="text" value="${specificNotice.writedAt}" readonly />
-          </span>
-        </div>
+      <div class="title-primary">${specificNotice.title}</div>
+      <span class="title-secondary">
+        <div class="secondary-component">${specificNotice.author}</div>
+        <div class="secondary-component">${specificNotice.updateAt ? specificNotice.updateAt : specificNotice.writedAt}</div>
+      </span>
+    </div>
       </div>
       <textarea class="content-content" name="" id="" readonly>${specificNotice.contents}</textarea>
     </div>
