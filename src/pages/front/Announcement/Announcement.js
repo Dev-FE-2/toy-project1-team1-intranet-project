@@ -282,12 +282,12 @@ export default async function Announcement() {
       </div>
       <div class="content-contents">
         <div class="content-title">
-          <input type="text" value="${specificNotice.title}" readonly />
-          <span class="title-secondary">
-            <input class="secondary-component" type="text" value="${specificNotice.author}" readonly />
-            <input class="secondary-component" type="text" value="${specificNotice.updateAt ? specificNotice.updateAt : specificNotice.writedAt}" readonly />
-          </span>
-        </div>
+      <div class="title-primary">${specificNotice.title}</div>
+      <span class="title-secondary">
+        <div class="secondary-component">${specificNotice.author}</div>
+        <div class="secondary-component">${specificNotice.updateAt ? specificNotice.updateAt : specificNotice.writedAt}</div>
+      </span>
+    </div>
       </div>
       <textarea class="content-content" name="" id="" readonly>${specificNotice.contents}</textarea>
     </div>
