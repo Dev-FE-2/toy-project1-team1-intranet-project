@@ -6,8 +6,8 @@ import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 
 const announcementAdmin = async () => {
   const CURRENT_USER = await fetchCurrentUserData();
-  let currentContainer = null;  // 현재 컨테이너 참조 저장
-  let isAdminView = true
+  let currentContainer = null; // 현재 컨테이너 참조 저장
+  let isAdminView = true;
 
   // DB 저장 로직
   const saveNoticeDataToDB = async (
@@ -21,6 +21,7 @@ const announcementAdmin = async () => {
     contentsValue,
     errorSpan,
     errorSpanMessage,
+    existingImg,
   ) => {
     const NEW_DATE = new Date();
     const NOW = `${NEW_DATE.getFullYear()}년 ${NEW_DATE.getMonth() + 1}월 ${NEW_DATE.getDate()}일`;
@@ -33,7 +34,9 @@ const announcementAdmin = async () => {
 
       if (confirm(askMessage)) {
         let imageURL =
-          'https://firebasestorage.googleapis.com/v0/b/devcamp-toyproject1.appspot.com/o/notice-images%2Fmegaphone-with-empty-sign-copy-space-symbol-background-3d-illustration.jpg?alt=media&token=958f0d7c-f847-49ef-bbbb-2e394d3bf825'; // 기본 이미지 URL
+          workType === 'add'
+            ? 'https://firebasestorage.googleapis.com/v0/b/devcamp-toyproject1.appspot.com/o/notice-images%2Fmegaphone-with-empty-sign-copy-space-symbol-background-3d-illustration.jpg?alt=media&token=958f0d7c-f847-49ef-bbbb-2e394d3bf825'
+            : existingImg;
 
         if (selectedImageFile) {
           console.log(selectedImageFile);
@@ -51,6 +54,8 @@ const announcementAdmin = async () => {
             author: CURRENT_USER.name,
             writedAt: NOW,
           });
+
+          window.location.reload()
         } else if (workType === 'modify') {
           console.log(noticeId);
           await setDoc(doc(DB, 'notices', noticeId), {
@@ -60,11 +65,31 @@ const announcementAdmin = async () => {
             author: CURRENT_USER.name,
             updateAt: NOW,
           });
+
+          // 수정 시 현재 페이지의 내용만 업데이트
+          const container = document.querySelector('.container');
+          if (container) {
+            const imgPreview = container.querySelector('.content-img img');
+            const inputTitle = container.querySelector(
+              '.content-title input:nth-child(1)',
+            );
+            const inputContents = container.querySelector(
+              '.notice-info textarea',
+            );
+
+            imgPreview.src = imageURL;
+            inputTitle.value = titleValue;
+            inputContents.value = contentsValue;
+
+            // 현재 상태 유지
+            modifyExistingNotice(noticeId);
+          }
         } else {
           await deleteDoc(doc(DB, 'notices', noticeId));
+          // await renderNewContainer(); // 삭제 시 전체 화면 리로드
+          window.history.back()
         }
         alert(confirmMessage);
-        await renderNewContainer(); // 저장 후 화면 새로고침
       } else {
         alert(cancelMessage);
       }
@@ -75,7 +100,7 @@ const announcementAdmin = async () => {
 
   const renderNoticeEditor = () => {
     const CONTAINER = document.querySelector('.container');
-    
+
     CONTAINER.innerHTML = `
       <div class="add-notice-wrapper">
         <div class="add-notice-content">
@@ -104,7 +129,9 @@ const announcementAdmin = async () => {
     const REGISTER_NOTICE_BTN = CONTAINER.querySelector('.register-notice-btn');
     const CLOSE_BTN = CONTAINER.querySelector('.close-btn');
     const INPUT_TITLE = CONTAINER.querySelector('.content-contents input');
-    const INPUT_CONTENTS = CONTAINER.querySelector('.content-contents textarea');
+    const INPUT_CONTENTS = CONTAINER.querySelector(
+      '.content-contents textarea',
+    );
     const ERROR_SPAN = CONTAINER.querySelector('span');
 
     let selectedImageFile = null;
@@ -176,15 +203,25 @@ const announcementAdmin = async () => {
 
   const modifyExistingNotice = noticeId => {
     const CONTAINER = document.querySelector('.container');
+
+    // 이미 수정 페이지인 경우 버튼 중복 추가 방지
+    if (CONTAINER.querySelector('.upload-img-btn')) {
+      return;
+    }
+
     const IMG_PREVIEW = CONTAINER.querySelector('.content-img img');
-    const INPUT_TITLE = CONTAINER.querySelector('.content-title input:nth-child(1)');
+    const INPUT_TITLE = CONTAINER.querySelector(
+      '.content-title input:nth-child(1)',
+    );
     const INPUT_CONTENTS = CONTAINER.querySelector('.notice-info textarea');
 
     CONTAINER.querySelector('.notice-info .content-img').insertAdjacentHTML(
       'beforeend',
       '<button class="btn btn-solid upload-img-btn">이미지 등록하기</button>',
     );
-    CONTAINER.querySelector('.notice-info-wrapper .button-box').insertAdjacentHTML(
+    CONTAINER.querySelector(
+      '.notice-info-wrapper .button-box',
+    ).insertAdjacentHTML(
       'beforeend',
       '<button class="btn btn-solid modify-notice-btn">수정</button><button class="btn btn-solid delete-notice-btn">삭제</button>',
     );
@@ -260,6 +297,7 @@ const announcementAdmin = async () => {
         INPUT_CONTENTS.value,
         ERROR_SPAN,
         ERROR_SPAN_MESSAGE,
+        IMG_PREVIEW.src,
       );
     });
 
@@ -282,12 +320,16 @@ const announcementAdmin = async () => {
   const cleanupContainer = () => {
     if (currentContainer) {
       // 이벤트 리스너 제거
-      const POSTCARDS = currentContainer.querySelectorAll('.postcard-container .postcard');
+      const POSTCARDS = currentContainer.querySelectorAll(
+        '.postcard-container .postcard',
+      );
       POSTCARDS.forEach(card => {
         card.removeEventListener('click', () => {});
       });
 
-      const ADD_NOTICE_BTN = currentContainer.querySelector('.add-announcement-btn');
+      const ADD_NOTICE_BTN = currentContainer.querySelector(
+        '.add-announcement-btn',
+      );
       if (ADD_NOTICE_BTN) {
         ADD_NOTICE_BTN.removeEventListener('click', () => {});
       }
@@ -305,7 +347,7 @@ const announcementAdmin = async () => {
     if (!isAdminView) return; // 관리자 뷰가 아니면 렌더링하지 않음
 
     cleanupContainer();
-    
+
     // 기존 #app 내부의 컨테이너 제거
     const APP_CONTAINER = document.querySelector('#app');
     if (APP_CONTAINER) {
@@ -322,7 +364,9 @@ const announcementAdmin = async () => {
     if (!CURRENT_USER.isAdmin) return;
 
     try {
-      const POSTCARDS = container.querySelectorAll('.postcard-container .postcard');
+      const POSTCARDS = container.querySelectorAll(
+        '.postcard-container .postcard',
+      );
       POSTCARDS.forEach(card => {
         const clickHandler = () => {
           const NOTICE_ID = card.getAttribute('data-id');
@@ -352,9 +396,11 @@ const announcementAdmin = async () => {
   }
 
   // popstate 이벤트 핸들러
-  const handlePopState = async (event) => {
+  const handlePopState = async event => {
     // URL을 확인하여 관리자 뷰인지 판단
-    const IS_ADMIN_URL = window.location.pathname.includes('/admin/announcement');
+    const IS_ADMIN_URL = window.location.pathname.includes(
+      '/admin/announcement',
+    );
     isAdminView = IS_ADMIN_URL;
 
     if (isAdminView) {
@@ -365,7 +411,6 @@ const announcementAdmin = async () => {
   // popstate 이벤트 리스너 등록
   window.addEventListener('popstate', handlePopState);
   await renderNewContainer();
-
 };
 
 export default announcementAdmin;

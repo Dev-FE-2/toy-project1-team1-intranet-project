@@ -107,6 +107,7 @@ export default async function AbsencePortal(content) {
             <li>
               <label for="fileupload">증빙 자료 (.jpeg, .png, 5MB 이하)</label>
               <button class="btn btn-outline w100" id="fileupload">파일첨부</button>
+              <span id="file-name" class="file-name helper-text">
             </li>
           </ul>
         </form>
@@ -126,7 +127,7 @@ export default async function AbsencePortal(content) {
 
   const absenceDetailModal = createModal({
     id: 'absenceDetailModal',
-    title: '부재 상세 정보',
+    title: '부재 내역 상세정보',
     content: `
       <button type="button" class="close" aria-label="팝업 닫기" title="팝업 닫기" id="closeDetailIcon">
         <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
@@ -209,7 +210,12 @@ export default async function AbsencePortal(content) {
     document.getElementById('absence-type').value = '';
     document.getElementById('datepicker').value = '';
     document.getElementById('reason').value = '';
+    document.getElementById('file-name').textContent = '';
     selectedAbsenceFile = null;
+
+    const fileUploadButton = document.getElementById('fileupload');
+    fileUploadButton.classList.remove('is-disabled');
+    fileUploadButton.removeAttribute('disabled');
   };
 
   const handleFileUpload = event => {
@@ -230,6 +236,12 @@ export default async function AbsencePortal(content) {
         ) {
           alert('PNG 또는 JPG, 5MB 이하 파일만 첨부 가능합니다.');
           selectedAbsenceFile = null;
+        } else {
+          document.getElementById('file-name').textContent =
+            selectedAbsenceFile.name;
+          const fileUploadButton = document.getElementById('fileupload');
+          fileUploadButton.classList.add('is-disabled');
+          fileUploadButton.setAttribute('disabled', 'true');
         }
       }
     });
