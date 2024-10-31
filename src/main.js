@@ -125,7 +125,8 @@ const route = async () => {
       loadStylesheet(['./src/pages/admin/employeeList/employeeList.css']);
       break;
     case '/temp':
-      announcementAdmin();
+      content.innerHTML = ''
+      content.append(await announcementAdmin())
       loadStylesheet([
         './src/pages/front/announcement/announcement.css',
         './src/pages/admin/announcementAdmin/announcementAdmin.css',
