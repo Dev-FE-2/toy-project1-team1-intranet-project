@@ -238,6 +238,10 @@ announcement .announcement__search-box {
     height: auto;
   }
 
+  .notice-info-wrapper .notice-info {
+    padding: 0;
+  }
+
   .notice-info-wrapper .button-box {
     flex-direction: column;
   }
