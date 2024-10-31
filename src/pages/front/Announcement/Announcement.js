@@ -10,8 +10,8 @@ export default async function Announcement() {
   container.classList.add('container', 'announcement');
 
   container.innerHTML = `
+    <h1 class="title">공지사항</h1>
     <div class="container__title title">
-      <h1 class="title">공지사항</h1>
       <div class="announcement__search-box">
         <input type="search" id="search" placeholder="검색어를 입력하세요" />
         <span class="material-symbols-outlined">search</span>
@@ -282,14 +282,14 @@ export default async function Announcement() {
       </div>
       <div class="content-contents">
         <div class="content-title">
-      <div class="title-primary">${specificNotice.title}</div>
-      <span class="title-secondary">
-        <div class="secondary-component">${specificNotice.author}</div>
-        <div class="secondary-component">${specificNotice.updateAt ? specificNotice.updateAt : specificNotice.writedAt}</div>
-      </span>
-    </div>
+          <div class="title-primary">${specificNotice.title}</div>
+          <div class="title-secondary">
+              <div class="secondary-component">${specificNotice.author}</div>
+              <div class="secondary-component">${specificNotice.updateAt ? specificNotice.updateAt : specificNotice.writedAt}</div>
+          </div>
+        </div>
       </div>
-      <textarea class="content-content" name="" id="" readonly>${specificNotice.contents}</textarea>
+      <div class="content-content" name="" id="">${specificNotice.contents}</div>
     </div>
     <div class="button-box">
       <button class="btn btn-outline close--btn">닫기</button>
