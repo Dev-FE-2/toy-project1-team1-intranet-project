@@ -119,7 +119,7 @@ const employee = async () => {
 				  <ul class="head" role="list-head">
 					  <li class="number">사번</li>
 			  		<li class="profile-img">사진</li>
-			  		<li class="name">이름</li>
+			  		<li class="name">이름 / E-mail</li>
 			  		<li class="team">소속팀</li>
 			  		<li class="role">직급</li>
 			  		<li class="status">근무 상태</li>
@@ -140,7 +140,7 @@ const employee = async () => {
 								    <img src=${user.profileImg} alt="프로필 이미지 미리보기">
 							      </div>
 						      </li>
-						      <li class="name">${user.name}</li>
+						      <li class="name"><div>${user.name}</div><div class='email'>${user.email}</div></li>
 						      <li class="team">${user.team}</li>
 					  	    <li class="role">${user.role}</li>
 					  	    <li class="user-status">
