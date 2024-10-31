@@ -48,6 +48,7 @@ export default async function Announcement() {
     function updateHistory(pageNumber, searchTerm = '') {
       // 히스토리 상태를 업데이트하는 함수
       const newQuery = `?page=${pageNumber}${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`; // 쿼리스트링 생성
+
       if (window.location.search !== newQuery) {
         // 현재 URL과 다를 경우에만 히스토리 업데이트
         history.pushState(
@@ -76,6 +77,7 @@ export default async function Announcement() {
     });
 
     const page = container.querySelector('.paging-list');
+    4;
 
     function pageRendering() {
       page.innerHTML = '';
@@ -282,12 +284,12 @@ export default async function Announcement() {
         <div class="content-title">
           <input type="text" value="${specificNotice.title}" readonly />
           <span class="title-secondary">
-            <input type="text" value="${specificNotice.author}" readonly />
-            <input type="text" value="${specificNotice.writedAt}" readonly />
+            <input class="secondary-component" type="text" value="${specificNotice.author}" readonly />
+            <input class="secondary-component" type="text" value="${specificNotice.writedAt}" readonly />
           </span>
         </div>
       </div>
-      <textarea class="content-content" name="" id="" readonly>${specificNotice.contents}</textarea>
+      <p class="content-content" name="" id="" readonly>${specificNotice.contents}</p>
     </div>
     <div class="button-box">
       <button class="btn btn-outline close--btn">닫기</button>

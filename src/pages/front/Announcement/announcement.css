@@ -51,7 +51,7 @@
 .postcard .contents__content {
   font-size: 1rem;
   color: #666;
-  margin: 1rem 0;**
+  margin: 1rem 0;
 }
 .postcard .contents__information {
   display: flex;
@@ -110,12 +110,13 @@
 }
 
 .add-notice-content div {
-  width: 80%;
+  width: 100%;
   display: flex;
   justify-content: center;
 }
 
 .add-notice-content .content-img {
+  margin: 1rem 0 1em 0;
   width: 70%;
   height: 30%;
   display: flex;
@@ -141,7 +142,7 @@
 }
 
 .add-notice-content .content-content {
- align-self: flex-start;
+  align-self: flex-start;
 }
 
 .add-notice-content .content-contents input,
@@ -162,15 +163,21 @@
 .add-notice-content .content-title .title-secondary {
   display: flex;
   flex-direction: row;
-
 }
 
-.add-notice-content .content-title .title-secondary .secondary-component{
+.add-notice-content .content-title .title-secondary .secondary-component {
   font-size: 1.2rem;
   align-self: flex-end;
 }
 
-.add-notice-content .content-contents textarea {
+.add-notice-content
+  .content-title
+  .title-secondary
+  .secondary-component:first-child {
+  text-align: center;
+}
+
+.add-notice-content .content-contents p {
   outline: none;
   height: 70%;
 }
@@ -178,11 +185,11 @@
 .add-notice-wrapper .button-box {
   display: flex;
   gap: 1rem;
-   justify-content: center; 
+  justify-content: center;
 }
 
-.add-notice-wrapper .button-box .btn{
-align-self: center;
+.add-notice-wrapper .button-box .btn {
+  align-self: center;
 }
 
 /* 뷰포트 768px 미만에서 실행될 스타일 */

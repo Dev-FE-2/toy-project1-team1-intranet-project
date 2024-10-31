@@ -109,8 +109,7 @@ const route = async () => {
     case '/Announcement':
       content.innerHTML = '';
       content.prepend(await Announcement());
-      loadStylesheet('./src/pages/front/announcement/announcement.css');
-      loadStylesheet('./src/pages/front/announcement/announcement.css');
+      loadStylesheet(['./src/pages/front/announcement/announcement.css']);
       break;
     case '/AbsencePortal':
       AbsencePortal(content);
