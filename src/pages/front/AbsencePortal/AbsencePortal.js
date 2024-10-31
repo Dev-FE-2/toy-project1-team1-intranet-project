@@ -1,17 +1,31 @@
 import { easepick, LockPlugin, RangePlugin } from '@easepick/bundle';
 import { fetchCollectionData } from '@utils/fetchCollectionData';
 import { saveDataToDB, uploadFileToStorage } from '@utils/saveDataToDB';
+import createTitle from '@components/Title/Title';
 import {
   createPagination,
   addPaginationListeners,
 } from '@components/Pagination/Pagination';
 import createModal from '@components/Modal/Modal';
-import createTitle from '@components/Title/Title';
+import { ABSENCE_TYPES_LABELS } from '/src/constants/constants';
+
+// comp 전환 필요
+const TABLE_HEADER_TEMPLATE = `
+  <li class="col">
+    <ul class="head" role="list-head">
+      <li class="type">구분</li>
+      <li class="date">일자</li>
+      <li class="status">처리상태</li>
+      <li class="reason">신청사유</li>
+      <li class="etc">비고</li>
+    </ul>
+  </li>
+`;
 
 export default async function AbsencePortal(content) {
-  let selectedFile = null;
+  let selectedAbsenceFile = null;
 
-  const fetchAbsences = async () => {
+  const loadAbsences = async () => {
     try {
       return await fetchCollectionData('absences', 'createdAt', 'desc');
     } catch (error) {
@@ -20,28 +34,14 @@ export default async function AbsencePortal(content) {
     }
   };
 
-  const getBadgeClassForStatus = status => {
-    return (
-      {
-        승인: 'badge-success',
-        승인대기: 'badge-warn',
-        반려: 'badge-error',
-      }[status] || ''
-    );
-  };
+  const getBadgeClassForStatus = status =>
+    ({
+      승인: 'badge-success',
+      승인대기: 'badge-warn',
+      반려: 'badge-error',
+    })[status] || '';
 
   const renderTable = (absences, currentPage, itemsPerPage) => {
-    const TABLE_HEADER_HTML = `
-      <li class="col">
-        <ul class="head" role="list-head">
-          <li class="type">구분</li>
-          <li class="date">일자</li>
-          <li class="status">처리상태</li>
-          <li class="reason">신청사유</li>
-          <li class="etc">비고</li>
-        </ul>
-      </li>
-    `;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedAbsences = absences.slice(
       startIndex,
@@ -52,22 +52,20 @@ export default async function AbsencePortal(content) {
       : `<li class="col"><p>부재 이력이 없습니다.</p></li>`;
 
     document.querySelector('.table-body ul.table').innerHTML =
-      `${TABLE_HEADER_HTML} ${rowsHtml}`;
+      `${TABLE_HEADER_TEMPLATE} ${rowsHtml}`;
+
+    document.querySelectorAll('.table-body ul.table .cell').forEach(cell => {
+      cell.addEventListener('click', () => {
+        const absenceId = cell.getAttribute('data-id');
+        openDetailModal(absenceId);
+      });
+    });
   };
 
-  const renderTableRow = absence => {
-    const ABSENCE_TYPE_LABELS = {
-      'am-half': '오전반차',
-      'pm-half': '오후반차',
-      annual: '연차',
-      official: '공가',
-      sick: '병가',
-      alternative: '대체휴가',
-    };
-    return `
+  const renderTableRow = absence => `
       <li class="col">
-        <ul class="cell" role="list">
-          <li class="type">${ABSENCE_TYPE_LABELS[absence.absenceType] || absence.absenceType}</li>
+        <ul class="cell" role="list" data-id="${absence.id}">
+          <li class="type">${ABSENCE_TYPES_LABELS[absence.absenceType] || absence.absenceType}</li>
           <li class="date">${absence.absenceDate}</li>
           <li class="status">
             <div class="badge ${getBadgeClassForStatus(absence.status)}">${absence.status || '처리중'}</div> 
@@ -77,7 +75,6 @@ export default async function AbsencePortal(content) {
         </ul>
       </li>
     `;
-  };
 
   const absenceApplyModal = createModal({
     id: 'absenceApplyModal',
@@ -127,12 +124,73 @@ export default async function AbsencePortal(content) {
     `,
   });
 
-  const isDateRangeOverlapping = (start1, end1, start2, end2) => {
-    return (start1 <= end2 && end1 >= start2) || start1 === start2;
+  const absenceDetailModal = createModal({
+    id: 'absenceDetailModal',
+    title: '부재 상세 정보',
+    content: `
+      <button type="button" class="close" aria-label="팝업 닫기" title="팝업 닫기" id="closeDetailIcon">
+        <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+          <line x1="8" y1="8" x2="26" y2="26" stroke="black" stroke-width="1" stroke-linecap="round" />
+          <line x1="8" y1="26" x2="26" y2="8" stroke="black" stroke-width="1" stroke-linecap="round" />
+        </svg>
+      </button>
+    `,
+    buttons: '',
+  });
+
+  const openDetailModal = async absenceId => {
+    const absences = await loadAbsences();
+    const absence = absences.find(item => item.id === absenceId);
+
+    if (absence) {
+      const detailContentHtml = `
+          <div id="detail-content">
+            <dl>
+              <dt>구분</dt>
+              <dd>${ABSENCE_TYPES_LABELS[absence.absenceType] || absence.absenceType}</dd>
+              <dt>일자</dt>
+              <dd>${absence.absenceDate}</dd>
+              <dt>처리상태</dt>
+              <dd>${absence.status}</dd>
+              <dt>신청사유</dt>
+              <dd>${absence.reason}</dd>
+              ${absence.etc ? `<dt>비고</dt> <dd>${absence.etc}</dd>` : ''}
+              ${absence.fileUrl ? `<dt>첨부파일</dt> <dd class="file-box"><img src="${absence.fileUrl}"></dd>` : ''}
+            </dl>
+          </div>
+        `;
+
+      if (!document.getElementById('absenceDetailModal')) {
+        document.body.insertAdjacentHTML(
+          'beforeend',
+          absenceDetailModal.render(),
+        );
+      }
+
+      document
+        .getElementById('absenceDetailModal')
+        .querySelector('.btn-box')
+        .insertAdjacentHTML('beforebegin', detailContentHtml);
+      absenceDetailModal.open();
+    } else {
+      document
+        .getElementById('absenceDetailModal')
+        .querySelector('#detail-content').innerHTML =
+        '해당 부재 정보를 찾을 수 없습니다.';
+      absenceDetailModal.open();
+    }
+
+    document.getElementById('closeDetailIcon').addEventListener('click', () => {
+      document
+        .getElementById('absenceDetailModal')
+        .querySelector('#detail-content')
+        ?.remove();
+      absenceDetailModal.close();
+    });
   };
 
   const checkAbsenceOverlap = async (absenceDate, absenceType) => {
-    const existingRecords = await fetchAbsences();
+    const existingRecords = await loadAbsences();
 
     return existingRecords.some(record => {
       if (!record.absenceDate) return false;
@@ -140,12 +198,9 @@ export default async function AbsencePortal(content) {
       const [newStart, newEnd] = absenceDate.split(' - ');
 
       return (
-        isDateRangeOverlapping(
-          newStart || absenceDate,
-          newEnd || newStart || absenceDate,
-          recordStart,
-          recordEnd || recordStart,
-        ) && record.absenceType === absenceType
+        newStart <= recordEnd &&
+        newEnd >= recordStart &&
+        record.absenceType === absenceType
       );
     });
   };
@@ -154,7 +209,7 @@ export default async function AbsencePortal(content) {
     document.getElementById('absence-type').value = '';
     document.getElementById('datepicker').value = '';
     document.getElementById('reason').value = '';
-    selectedFile = null;
+    selectedAbsenceFile = null;
   };
 
   const handleFileUpload = event => {
@@ -164,17 +219,17 @@ export default async function AbsencePortal(content) {
     fileInput.accept = 'image/png, image/jpeg';
 
     fileInput.addEventListener('change', event => {
-      selectedFile = event.target.files[0];
-      if (selectedFile) {
+      selectedAbsenceFile = event.target.files[0];
+      if (selectedAbsenceFile) {
         const validTypes = ['image/png', 'image/jpeg'];
         const maxSize = 5 * 1024 * 1024;
 
         if (
-          !validTypes.includes(selectedFile.type) ||
-          selectedFile.size > maxSize
+          !validTypes.includes(selectedAbsenceFile.type) ||
+          selectedAbsenceFile.size > maxSize
         ) {
           alert('PNG 또는 JPG, 5MB 이하 파일만 첨부 가능합니다.');
-          selectedFile = null;
+          selectedAbsenceFile = null;
         }
       }
     });
@@ -198,10 +253,10 @@ export default async function AbsencePortal(content) {
       return;
     }
 
-    const fileUrl = selectedFile
+    const fileUrl = selectedAbsenceFile
       ? await uploadFileToStorage(
-          `absence-files/${Date.now()}_${selectedFile.name}`,
-          selectedFile,
+          `absence-files/${Date.now()}_${selectedAbsenceFile.name}`,
+          selectedAbsenceFile,
         )
       : null;
 
@@ -269,20 +324,11 @@ export default async function AbsencePortal(content) {
     const filteredRecords =
       filter === 'all'
         ? absences
-        : absences.filter(absence => {
-            const ABSENCE_TYPE_LABELS = {
-              'am-half': '오전반차',
-              'pm-half': '오후반차',
-              annual: '연차',
-              official: '공가',
-              sick: '병가',
-              alternative: '대체휴가',
-            };
-            return (
-              ABSENCE_TYPE_LABELS[absence.absenceType] ===
-              ABSENCE_TYPE_LABELS[filter]
-            );
-          });
+        : absences.filter(
+            absence =>
+              ABSENCE_TYPES_LABELS[absence.absenceType] ===
+              ABSENCE_TYPES_LABELS[filter],
+          );
 
     renderTable(filteredRecords, currentPage, itemsPerPage);
     document.querySelector('.pagination').innerHTML = createPagination(
@@ -326,7 +372,7 @@ export default async function AbsencePortal(content) {
   const currentPage = 1;
 
   try {
-    const absences = await fetchAbsences();
+    const absences = await loadAbsences();
     const container = document.createElement('div');
     container.className = 'container absence-portal';
     container.innerHTML = `

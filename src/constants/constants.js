@@ -26,4 +26,13 @@ export const NAV = {
   ],
 };
 
+export const ABSENCE_TYPES_LABELS = {
+  'am-half': '오전반차',
+  'pm-half': '오후반차',
+  annual: '연차',
+  official: '공가',
+  sick: '병가',
+  alternative: '대체휴가',
+};
+
 export const NO_HEADER_PAGE = ['/join', '/join/login', '/join/signup'];
