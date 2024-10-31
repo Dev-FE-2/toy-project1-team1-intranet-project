@@ -106,10 +106,10 @@ const route = async () => {
       Main(content);
       loadStylesheet(['./src/pages/front/main.css']);
       break;
-    case '/Announcement':
-      Announcement();
-      loadStylesheet(['./src/pages/front/announcement/announcement.css']);
-      break;
+      case '/Announcement':
+        Announcement();
+        loadStylesheet(['./src/pages/front/announcement/announcement.css']);
+        break;
     case '/AbsencePortal':
       AbsencePortal(content);
       loadStylesheet(['./src/pages/front/AbsencePortal/absencePortal.css']);
@@ -124,7 +124,8 @@ const route = async () => {
       loadStylesheet(['./src/pages/admin/employeeList/employeeList.css']);
       break;
     case '/temp':
-      announcementAdmin();
+      content.innerHTML = ''
+      content.appendChild(await announcementAdmin())
       loadStylesheet([
         './src/pages/front/announcement/announcement.css',
         './src/pages/admin/announcementAdmin/announcementAdmin.css',
