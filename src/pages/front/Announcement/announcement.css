@@ -243,6 +243,6 @@ announcement .announcement__search-box {
   }
 
   .notice-info-wrapper .button-box {
-    flex-direction: column;
+    margin-top: 2rem;
   }
 }
