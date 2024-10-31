@@ -1,13 +1,18 @@
-.announcement .announcement__search-box {
+.announcement__search-box {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
   margin: 0 auto;
 }
+
 .container__flex {
   display: flex;
   padding-bottom: 0rem;
+}
+
+.container__title {
+  display: flex;
 }
 /* Postcard */
 .postcard-container {
