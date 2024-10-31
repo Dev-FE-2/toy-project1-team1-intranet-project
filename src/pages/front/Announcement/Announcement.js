@@ -170,7 +170,7 @@ export default async function Announcement() {
       const end = start + limit;
       const currentPosts = posts.slice(start, end); // 현재 페이지에 해당하는 공지사항만 잘라서 가져옴
 
-      function cuttingString(text, limit) {
+      function cuttingString(text = '', limit) {
         if (text.length > limit) {
           return text.slice(0, limit) + '...';
         }
