@@ -1,4 +1,4 @@
-announcement .announcement__search-box {
+.announcement__search-box {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -7,9 +7,14 @@ announcement .announcement__search-box {
   margin: 0 auto;
   padding-bottom: 3rem;
 }
+
 .container__flex {
   display: flex;
   padding-bottom: 0rem;
+}
+
+.container__title {
+  display: flex;
 }
 /* Postcard */
 .postcard-container {
