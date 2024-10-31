@@ -35,4 +35,4 @@ export const ABSENCE_TYPES_LABELS = {
   alternative: '대체휴가',
 };
 
-export const NO_HEADER_PAGE = ['/join', '/join/login', '/join/signup'];
+export const NO_HEADER_PAGE = ['/join'];

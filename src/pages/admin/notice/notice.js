@@ -4,7 +4,7 @@ import Announcement from '../../front/Announcement/Announcement';
 import { DB } from '../../../../firebaseConfig';
 import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 
-const announcementAdmin = async () => {
+const notice = async () => {
   const URL_PARAMS = new URLSearchParams(window.location.search);
   const CURRENT_USER = await fetchCurrentUserData();
   let currentContainer = null; // 현재 컨테이너 참조 저장
@@ -361,7 +361,7 @@ const announcementAdmin = async () => {
     const NOTICE_ID = URL_PARAMS.get('noticeinfo');
 
     if (NOTICE_ID) {
-      modifyExistingNotice(NOTICE_ID)
+      modifyExistingNotice(NOTICE_ID);
     } else {
       setupAdminFeatures(currentContainer);
     }
@@ -421,4 +421,4 @@ const announcementAdmin = async () => {
   await renderNewContainer();
 };
 
-export default announcementAdmin;
+export default notice;

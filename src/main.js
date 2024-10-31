@@ -3,16 +3,13 @@ import Main from './pages/front/Main';
 import Announcement from './pages/front/Announcement/Announcement';
 import AbsencePortal from './pages/front/AbsencePortal/AbsencePortal';
 import initJoinPage from './pages/front/join/join';
-import employeeList from './pages/admin/employeeList/employeeList';
+import employee from './pages/admin/employee/employee';
+import notice from './pages/admin/notice/notice';
 import { NO_HEADER_PAGE } from './constants/constants';
 import { AUTH } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import pageNotFound from './pages/front/pageNotFound/pageNotFound';
-import announcementAdmin from './pages/admin/announcementAdmin/announcementAdmin';
 import { fetchCurrentUserData } from '@utils/fetchCurrentUserData';
-
-const URL_PARAMS = new URLSearchParams(window.location.search);
-const ADMIN_PAGE_TYPE_VALUE = URL_PARAMS.get('pagetype') || 'employeelist';
 
 const loadStylesheet = hrefs => {
   document.querySelectorAll('link[data-href]').forEach(link => {
@@ -121,7 +118,9 @@ const route = async () => {
     }
   };
 
-  const handleAdminRoute = async (content, defaultPage) => {
+  const handleAdminRoute = async content => {
+    const URL_PARAMS = new URLSearchParams(window.location.search);
+    const ADMIN_PAGE_TYPE_VALUE = URL_PARAMS.get('pagetype') || 'employee';
     const isAdmin = await checkAdmin();
 
     if (!isAdmin) {
@@ -131,15 +130,15 @@ const route = async () => {
     switch (ADMIN_PAGE_TYPE_VALUE) {
       case 'employee':
         content.innerHTML = '';
-        content.appendChild(await employeeList());
-        loadStylesheet(['./src/pages/admin/employeeList/employeeList.css']);
+        content.appendChild(await employee());
+        loadStylesheet(['./src/pages/admin/employee/employee.css']);
         break;
       case 'notice':
         content.innerHTML = '';
-        content.append(await announcementAdmin());
+        content.append(await notice());
         loadStylesheet([
           './src/pages/front/announcement/announcement.css',
-          './src/pages/admin/announcementAdmin/announcementAdmin.css',
+          './src/pages/admin/notice/notice.css',
         ]);
         break;
       default:
