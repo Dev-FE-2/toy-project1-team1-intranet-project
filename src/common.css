@@ -177,6 +177,19 @@
 .btn-box .btn + .btn {
   margin-left: 0.8rem;
 }
+.btn.is-disabled {
+  background-color: var(--gray3);
+  border: 1px solid var(--gray3);
+  color: var(--gray2);
+  cursor: default;
+}
+
+.btn.is-disabled:hover {
+  background-color: var(--gray3);
+  border: 1px solid var(--gray3);
+  color: var(--gray2);
+  cursor: default;
+}
 
 /* input search 공지사항 페이지에 아이콘(link참고)과 함께 적용  */
 .search-box {

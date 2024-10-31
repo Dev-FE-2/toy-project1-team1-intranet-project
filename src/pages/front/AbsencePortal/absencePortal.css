@@ -41,6 +41,11 @@
   max-width: 20rem;
 }
 
+#absenceApplyModal .helper-text {
+  display: block;
+  text-align: left;
+}
+
 @media screen and (max-width: 768px) {
   .absence-portal .table-body .head li,
   .absence-portal .table-body .cell li {
