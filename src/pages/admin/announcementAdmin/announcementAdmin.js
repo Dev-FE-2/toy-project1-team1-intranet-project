@@ -5,6 +5,7 @@ import { DB } from '../../../../firebaseConfig';
 import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 
 const announcementAdmin = async () => {
+  const URL_PARAMS = new URLSearchParams(window.location.search);
   const CURRENT_USER = await fetchCurrentUserData();
   let currentContainer = null; // 현재 컨테이너 참조 저장
   let isAdminView = true;
@@ -55,7 +56,7 @@ const announcementAdmin = async () => {
             writedAt: NOW,
           });
 
-          window.location.reload()
+          window.location.reload();
         } else if (workType === 'modify') {
           console.log(noticeId);
           await setDoc(doc(DB, 'notices', noticeId), {
@@ -87,7 +88,7 @@ const announcementAdmin = async () => {
         } else {
           await deleteDoc(doc(DB, 'notices', noticeId));
           // await renderNewContainer(); // 삭제 시 전체 화면 리로드
-          window.history.back()
+          window.history.back();
         }
         alert(confirmMessage);
       } else {
@@ -356,7 +357,14 @@ const announcementAdmin = async () => {
 
     currentContainer = await Announcement();
     APP_CONTAINER.appendChild(currentContainer);
-    setupAdminFeatures(currentContainer);
+
+    const NOTICE_ID = URL_PARAMS.get('noticeinfo');
+
+    if (NOTICE_ID) {
+      modifyExistingNotice(NOTICE_ID)
+    } else {
+      setupAdminFeatures(currentContainer);
+    }
   };
 
   // Admin 기능 설정
