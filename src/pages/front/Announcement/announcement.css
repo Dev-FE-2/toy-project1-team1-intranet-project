@@ -86,10 +86,10 @@
   right: 2%;
 }
 
-.add-notice-wrapper {
+.notice-info-wrapper {
   background-color: #fff;
   width: calc(100% - 32rem);
-  height: 100dvh;
+  height: 100%;
   margin-left: auto;
   margin-right: auto;
   justify-content: center;
@@ -97,7 +97,7 @@
   padding: 2% 3%;
 }
 
-.add-notice-wrapper .add-notice-content {
+.notice-info-wrapper .notice-info {
   padding: 3% 10rem;
   border-radius: 2rem;
   width: 100%;
@@ -109,16 +109,16 @@
   overflow-y: auto;
 }
 
-.add-notice-content div {
+.notice-info div {
   width: 100%;
   display: flex;
   justify-content: center;
 }
 
-.add-notice-content .content-img {
+.notice-info .content-img {
   margin: 1rem 0 1em 0;
   width: 70%;
-  height: 30%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -126,69 +126,77 @@
   gap: 0.5rem;
 }
 
-.add-notice-content .content-img > img {
+.notice-info .content-img > img {
   border-radius: 10px;
-  width: 30%;
+  width: 100%;
 }
 
-.add-notice-content .content-img .btn {
+.notice-info .content-img .btn {
   width: 17rem;
 }
 
-.add-notice-content .content-contents {
+.notice-info .content-contents {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.add-notice-content .content-content {
+.notice-info .content-content {
   align-self: flex-start;
+  width: 100%;
+  height: 70dvh;
+  font-size: 1.7rem;
+  padding: 1rem;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, .3);
+  line-height: 1.5;
 }
 
-.add-notice-content .content-contents input,
-.add-notice-content .content-contents textarea {
+.notice-info .content-contents input,
+.notice-info .content-contents textarea {
   width: 100%;
   border: none;
   border-radius: 0;
-  padding: 1rem 0;
+  padding: 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.3);
   font-size: 1.7rem;
   outline: none;
 }
 
-.add-notice-content .content-title {
+.notice-info .content-title {
   width: 100%;
   font-size: 1rem;
 }
-.add-notice-content .content-title .title-secondary {
+.notice-info .content-title .title-secondary {
   display: flex;
   flex-direction: row;
 }
 
-.add-notice-content .content-title .title-secondary .secondary-component {
+.notice-info .content-title .title-secondary .secondary-component {
   font-size: 1.2rem;
   align-self: flex-end;
 }
 
-.add-notice-content
+.notice-info
   .content-title
   .title-secondary
   .secondary-component:first-child {
   text-align: center;
 }
 
-.add-notice-content .content-contents p {
+.notice-info .content-contents p {
   outline: none;
   height: 70%;
 }
 
-.add-notice-wrapper .button-box {
+.notice-info-wrapper .button-box {
   display: flex;
   gap: 1rem;
   justify-content: center;
 }
 
-.add-notice-wrapper .button-box .btn {
+.notice-info-wrapper .button-box .btn {
   align-self: center;
 }
 

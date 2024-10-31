@@ -273,9 +273,9 @@ export default async function Announcement() {
     const specificNotice = noticeData.find(post => post.id === postId);
     if (!specificNotice) return;
     const detailContainer = document.createElement('div');
-    detailContainer.classList.add('add-notice-wrapper');
+    detailContainer.classList.add('notice-info-wrapper');
     detailContainer.innerHTML = `
-    <div class="add-notice-content">
+    <div class="notice-info">
       <h2>공지사항 상세 조회</h2>
       <div class="content-img">
         <img class="img-preview" src="${specificNotice.image}" alt="기본공지사항이미지" />
@@ -285,11 +285,11 @@ export default async function Announcement() {
           <input type="text" value="${specificNotice.title}" readonly />
           <span class="title-secondary">
             <input class="secondary-component" type="text" value="${specificNotice.author}" readonly />
-            <input class="secondary-component" type="text" value="${specificNotice.writedAt}" readonly />
+            <input class="secondary-component" type="text" value="${specificNotice.updateAt ? specificNotice.updateAt : specificNotice.writedAt}" readonly />
           </span>
         </div>
       </div>
-      <p class="content-content" name="" id="" readonly>${specificNotice.contents}</p>
+      <textarea class="content-content" name="" id="" readonly>${specificNotice.contents}</textarea>
     </div>
     <div class="button-box">
       <button class="btn btn-outline close--btn">닫기</button>

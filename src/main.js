@@ -126,7 +126,7 @@ const route = async () => {
       break;
     case '/temp':
       content.innerHTML = ''
-      content.appendChild(await announcementAdmin())
+      content.append(await announcementAdmin())
       loadStylesheet([
         './src/pages/front/announcement/announcement.css',
         './src/pages/admin/announcementAdmin/announcementAdmin.css',
