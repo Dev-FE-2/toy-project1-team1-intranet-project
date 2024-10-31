@@ -7,16 +7,9 @@ import {
   addPaginationListeners,
 } from '@components/Pagination/Pagination';
 import createModal from '@components/Modal/Modal';
+import { ABSENCE_TYPES_LABELS } from '/src/constants/constants';
 
-const ABSENCE_TYPES_LABELS = {
-  'am-half': '오전반차',
-  'pm-half': '오후반차',
-  annual: '연차',
-  official: '공가',
-  sick: '병가',
-  alternative: '대체휴가',
-};
-
+// comp 전환 필요
 const TABLE_HEADER_TEMPLATE = `
   <li class="col">
     <ul class="head" role="list-head">
