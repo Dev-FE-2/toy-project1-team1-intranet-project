@@ -186,7 +186,7 @@ export default async function Announcement() {
             <p class="contents__content">${cuttingString(post.contents, 40)}</p>
             <div class="contents__information">
               <span class="information-author">${cuttingString(post.author, 10)}</span>
-              <span class="information-date">${cuttingString(post.writedAt, 15)}</span>
+              <span class="information-date">${cuttingString(post.updateAt ? cuttingString(post.updateAt, 15) : cuttingString(post.writedAt, 15))}</span>
             </div>
           </div>
         </div>
