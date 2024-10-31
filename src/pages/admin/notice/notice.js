@@ -4,7 +4,7 @@ import Announcement from '../../front/Announcement/Announcement';
 import { DB } from '../../../../firebaseConfig';
 import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 
-const announcementAdmin = async () => {
+const notice = async () => {
   const URL_PARAMS = new URLSearchParams(window.location.search);
   const CURRENT_USER = await fetchCurrentUserData();
   let currentContainer = null; // 현재 컨테이너 참조 저장
@@ -71,19 +71,20 @@ const announcementAdmin = async () => {
           const container = document.querySelector('.container');
           if (container) {
             const imgPreview = container.querySelector('.content-img img');
-            const inputTitle = container.querySelector(
-              '.content-title input:nth-child(1)',
+            const TEXTAREA_TITLE = container.querySelector(
+              '.content-title textarea',
             );
-            const inputContents = container.querySelector(
+            const TEXTAREA_CONTENTS = container.querySelector(
               '.notice-info textarea',
             );
 
             imgPreview.src = imageURL;
-            inputTitle.value = titleValue;
-            inputContents.value = contentsValue;
+            TEXTAREA_TITLE.value = TEXTAREA_CONTENTS;
+            TEXTAREA_CONTENTS.value = TEXTAREA_CONTENTS;
 
             // 현재 상태 유지
-            modifyExistingNotice(noticeId);
+            // modifyExistingNotice(noticeId);
+            window.history.back()
           }
         } else {
           await deleteDoc(doc(DB, 'notices', noticeId));
@@ -211,10 +212,40 @@ const announcementAdmin = async () => {
     }
 
     const IMG_PREVIEW = CONTAINER.querySelector('.content-img img');
-    const INPUT_TITLE = CONTAINER.querySelector(
-      '.content-title input:nth-child(1)',
+    // const INPUT_TITLE = CONTAINER.querySelector(
+    //   '.content-title input:nth-child(1)',
+    // );
+    // const INPUT_CONTENTS = CONTAINER.querySelector('.notice-info textarea');
+
+    const DIV_TITLE = CONTAINER.querySelector('.title-primary');
+    const DIV_CONTENTS = CONTAINER.querySelector('.content-content');
+
+    const TEXTAREA_TITLE = document.createElement('textarea');
+    const TEXTAREA_CONTENTS = document.createElement('textarea');
+
+    // <div>의 텍스트를 <textarea>로 복사
+    TEXTAREA_TITLE.value = DIV_TITLE.textContent;
+    TEXTAREA_CONTENTS.value = DIV_CONTENTS.textContent;
+
+    // 높이 자동 조절 함수
+    const autoResize = textarea => {
+      textarea.style.height = 'auto'; // 높이를 초기화하여 재계산
+      textarea.style.height = `${textarea.scrollHeight}px`; // scrollHeight에 맞게 높이 설정
+    };
+
+    // 높이 자동 조절 적용
+    TEXTAREA_TITLE.addEventListener('input', () => autoResize(TEXTAREA_TITLE));
+    TEXTAREA_CONTENTS.addEventListener('input', () =>
+      autoResize(TEXTAREA_CONTENTS),
     );
-    const INPUT_CONTENTS = CONTAINER.querySelector('.notice-info textarea');
+
+    // <div>를 <textarea>로 교체
+    DIV_TITLE.replaceWith(TEXTAREA_TITLE);
+    DIV_CONTENTS.replaceWith(TEXTAREA_CONTENTS);
+
+    // 초기 높이 설정
+    autoResize(TEXTAREA_TITLE);
+    autoResize(TEXTAREA_CONTENTS);
 
     CONTAINER.querySelector('.notice-info .content-img').insertAdjacentHTML(
       'beforeend',
@@ -231,8 +262,8 @@ const announcementAdmin = async () => {
       '<span></span>',
     );
 
-    INPUT_TITLE.removeAttribute('readonly');
-    INPUT_CONTENTS.removeAttribute('readonly');
+    // INPUT_TITLE.removeAttribute('readonly');
+    // INPUT_CONTENTS.removeAttribute('readonly');
 
     const UPLOAD_IMG_BTN = CONTAINER.querySelector('.upload-img-btn');
     const MODIFY_NOTICE_BTN = CONTAINER.querySelector('.modify-notice-btn');
@@ -294,8 +325,8 @@ const announcementAdmin = async () => {
         CONFIRM_MESSAGE,
         CANCEL_MESSAGE,
         selectedImageFile,
-        INPUT_TITLE.value,
-        INPUT_CONTENTS.value,
+        TEXTAREA_TITLE.value,
+        TEXTAREA_CONTENTS.value,
         ERROR_SPAN,
         ERROR_SPAN_MESSAGE,
         IMG_PREVIEW.src,
@@ -361,7 +392,7 @@ const announcementAdmin = async () => {
     const NOTICE_ID = URL_PARAMS.get('noticeinfo');
 
     if (NOTICE_ID) {
-      modifyExistingNotice(NOTICE_ID)
+      modifyExistingNotice(NOTICE_ID);
     } else {
       setupAdminFeatures(currentContainer);
     }
@@ -421,4 +452,4 @@ const announcementAdmin = async () => {
   await renderNewContainer();
 };
 
-export default announcementAdmin;
+export default notice;

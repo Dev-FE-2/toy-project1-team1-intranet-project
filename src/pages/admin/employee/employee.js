@@ -4,7 +4,7 @@ import { doc, updateDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 ut
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { DB, AUTH } from '../../../../firebaseConfig'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
 
-const employeeList = async () => {
+const employee = async () => {
   const URL_PARAMS = new URLSearchParams(window.location.search);
   const INIT_SEARCH_VALUE = URL_PARAMS.get('search')?.trim().toLowerCase();
   const INIT_USER_INFO_VALUE = URL_PARAMS.get('userinfo');
@@ -159,9 +159,9 @@ const employeeList = async () => {
     };
 
     if (INIT_USER_INFO_VALUE) {
-      renderSpecificUserInfo(INIT_USER_INFO_VALUE, ALL_USERS)
+      renderSpecificUserInfo(INIT_USER_INFO_VALUE, ALL_USERS);
     } else {
-      renderEmployeeList(ALL_USERS)
+      renderEmployeeList(ALL_USERS);
     }
 
     const getSearchedUsers = searchValue => {
@@ -652,4 +652,4 @@ const employeeList = async () => {
   return CONTAINER;
 };
 
-export default employeeList;
+export default employee;

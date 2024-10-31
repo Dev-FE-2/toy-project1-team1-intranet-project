@@ -3,12 +3,13 @@ import Main from './pages/front/Main';
 import Announcement from './pages/front/Announcement/Announcement';
 import AbsencePortal from './pages/front/AbsencePortal/AbsencePortal';
 import initJoinPage from './pages/front/join/join';
-import employeeList from './pages/admin/employeeList/employeeList';
+import employee from './pages/admin/employee/employee';
+import notice from './pages/admin/notice/notice';
 import { NO_HEADER_PAGE } from './constants/constants';
 import { AUTH } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import pageNotFound from './pages/front/pageNotFound/pageNotFound';
-import announcementAdmin from './pages/admin/announcementAdmin/announcementAdmin';
+import { fetchCurrentUserData } from '@utils/fetchCurrentUserData';
 
 const loadStylesheet = hrefs => {
   document.querySelectorAll('link[data-href]').forEach(link => {
@@ -101,6 +102,51 @@ const route = async () => {
 
   await renderHeader();
 
+  const checkAdmin = async () => {
+    try {
+      const CURRENT_USER = await fetchCurrentUserData();
+
+      if (!CURRENT_USER.isAdmin) {
+        goToPage('/');
+        throw new Error('관리자만 접근 가능한 페이지입니다.');
+      }
+
+      return true;
+    } catch (error) {
+      console.error(error.message);
+      return false;
+    }
+  };
+
+  const handleAdminRoute = async content => {
+    const URL_PARAMS = new URLSearchParams(window.location.search);
+    const ADMIN_PAGE_TYPE_VALUE = URL_PARAMS.get('pagetype') || 'employee';
+    const isAdmin = await checkAdmin();
+
+    if (!isAdmin) {
+      return;
+    }
+
+    switch (ADMIN_PAGE_TYPE_VALUE) {
+      case 'employee':
+        content.innerHTML = '';
+        content.appendChild(await employee());
+        loadStylesheet(['./src/pages/admin/employee/employee.css']);
+        break;
+      case 'notice':
+        content.innerHTML = '';
+        content.append(await notice());
+        loadStylesheet([
+          './src/pages/front/announcement/announcement.css',
+          './src/pages/admin/notice/notice.css',
+        ]);
+        break;
+      default:
+        pageNotFound();
+        break;
+    }
+  };
+
   switch (path) {
     case '/':
       Main(content);
@@ -120,17 +166,7 @@ const route = async () => {
       initJoinPage(content, 'login');
       break;
     case '/admin':
-      content.innerHTML = '';
-      content.appendChild(await employeeList());
-      loadStylesheet(['./src/pages/admin/employeeList/employeeList.css']);
-      break;
-    case '/temp':
-      content.innerHTML = ''
-      content.append(await announcementAdmin())
-      loadStylesheet([
-        './src/pages/front/announcement/announcement.css',
-        './src/pages/admin/announcementAdmin/announcementAdmin.css',
-      ]);
+      handleAdminRoute(content, 'defaultPage');
       break;
     default:
       pageNotFound();

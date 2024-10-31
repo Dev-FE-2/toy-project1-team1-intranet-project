@@ -17,11 +17,11 @@ export const NAV = {
   admin: [
     {
       name: '직원 정보 관리',
-      path: '/admin',
+      path: '/admin?pagetype=employee',
     },
     {
       name: '공지사항 관리',
-      path: '#none',
+      path: '/admin?pagetype=notice',
     },
   ],
 };
@@ -35,4 +35,4 @@ export const ABSENCE_TYPES_LABELS = {
   alternative: '대체휴가',
 };
 
-export const NO_HEADER_PAGE = ['/join', '/join/login', '/join/signup'];
+export const NO_HEADER_PAGE = ['/join'];
