@@ -285,7 +285,7 @@ export default async function Announcement() {
           <input type="text" value="${specificNotice.title}" readonly />
           <span class="title-secondary">
             <input class="secondary-component" type="text" value="${specificNotice.author}" readonly />
-            <input class="secondary-component" type="text" value="${specificNotice.updateAt ? specificNotice.updateAt : specificNotice.writedAt}" readonly />
+            <input class="secondary-component" type="text" value="${specificNotice.writedAt}" readonly />
           </span>
         </div>
       </div>
