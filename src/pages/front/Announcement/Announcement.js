@@ -1,11 +1,26 @@
 import 'material-symbols';
 import { fetchCollectionData } from '../../../utils/fetchCollectionData';
-let isAnnouncementSectionCreated = false;
 export default async function Announcement() {
   const noticeData = await fetchCollectionData('notices');
-
+  const urlParams = new URLSearchParams(window.location.search); // URL의 쿼리스트링 파라미터 가져오기
+  const INIT_NOTICE_INFO_VALUE = urlParams.get('noticeinfo');
+  //메모리상에 모든 것을 다 만들어 놓을 변수
+  const container = document.createElement('div');
+  container.classList.add('container', 'announcement');
+  container.innerHTML = `
+    <div class="container__title title">
+      <h1 class="title">공지사항</h1>
+      <div class="announcement__search-box">
+        <input type="search" id="search" placeholder="검색어를 입력하세요" />
+        <span class="material-symbols-outlined">search</span>
+      </div>
+    </div>
+    <div class="postcard-container"></div>
+    <div class="pagination">
+      <ul class="paging-list" role="list"></ul>
+    </div>
+  `;
   function pagination() {
-    // 전체 공지사항 수 (몇 개의 공지사항이n 있는지)
     const totalCount = noticeData.length;
     const limit = 8;
     // 페이지와 데이터 바인딩의 핵심 flag
@@ -15,37 +30,8 @@ export default async function Announcement() {
     let pageGroup = Math.ceil(currentPage / pageCount);
     let lastPage = pageGroup * pageCount;
     let firstPage = lastPage - (pageCount - 1);
-
-    function createAnnouncementSection() {
-      if (isAnnouncementSectionCreated) return;
-      const container = document.createElement('div');
-      container.classList.add('container', 'announcement');
-
-      container.innerHTML = `
-      <div class="container__title title">
-        <h1 class="title">공지사항</h1>
-        <div class="announcement__search-box">
-          <input type="search" id="search" placeholder="검색어를 입력하세요" />
-          <span class="material-symbols-outlined">search</span>
-        </div>
-      </div>
-      <div class="postcard-container"></div>
-      <div class="pagination">
-        <ul class="paging-list" role="list"></ul>
-      </div>
-    `;
-
-      // 생성한 공지사항 UI를 body에 추가
-      document.body.append(container);
-      isAnnouncementSectionCreated = true;
-    }
-    createAnnouncementSection();
-
-    // 검색기능을 위한 변수
-    const searchInput = document.querySelector('input[type="search"]');
-    const searchButton = document.querySelector('.material-symbols-outlined');
-
-    const urlParams = new URLSearchParams(window.location.search); // URL의 쿼리스트링 파라미터 가져오기
+    const searchInput = container.querySelector('input[type="search"]');
+    const searchButton = container.querySelector('.material-symbols-outlined');
     const initialPage = urlParams.get('page')
       ? Number(urlParams.get('page'))
       : 1; // 페이지 파라미터 값 가져오기
@@ -84,9 +70,7 @@ export default async function Announcement() {
         document.querySelector('.helper-text')?.remove(); // helper-text 제거
       }
     });
-
-    const page = document.querySelector('.paging-list');
-
+    const page = container.querySelector('.paging-list');
     function pageRendering() {
       page.innerHTML = '';
 
@@ -103,7 +87,6 @@ export default async function Announcement() {
          </li>`,
         );
       }
-      // 전체 페이지 수만큼 페이지 번호를 그려줌
       for (let i = firstPage; i <= lastPage; i += 1) {
         const activeClass = i === currentPage ? 'is-active' : '';
         page.insertAdjacentHTML(
@@ -111,8 +94,6 @@ export default async function Announcement() {
           `<li class="paging-item ${activeClass}"><a href="javascript:void(0);">${i}</a></li>`,
         );
       }
-
-      // 다음 버튼 추가 (다음 버튼도 항상 표시됨)
       if (currentPage < totalPage) {
         page.insertAdjacentHTML(
           'beforeend',
@@ -126,12 +107,8 @@ export default async function Announcement() {
          </li>`,
         );
       }
-
-      // 페이지 버튼에 이벤트를 연결하는 함수 실행
       attachEvent();
     }
-
-    // 페이지 버튼과 이전/다음 버튼 클릭 이벤트를 처리하는 함수
     function attachEvent() {
       // 이전 버튼을 클릭했을 때, 현재 페이지를 1 감소시키고 페이지를 업데이트
       const prevBtn = document.querySelector('.paging-item.prev button');
@@ -145,6 +122,7 @@ export default async function Announcement() {
           updatePagination(searchTerm, true);
         }
       });
+
       const nextBtn = container.querySelector('.paging-item.next button');
       nextBtn?.addEventListener('click', () => {
         if (currentPage < totalPage) {
@@ -156,6 +134,7 @@ export default async function Announcement() {
           updatePagination(searchTerm, true);
         }
       });
+
       const pageItems = container.querySelectorAll('.paging-item a');
       pageItems.forEach(cur => {
         cur.addEventListener('click', event => {
@@ -170,10 +149,7 @@ export default async function Announcement() {
         });
       });
     }
-
-    // 공지사항 카드를 렌더링할 위치를 찾음
-    const postContainer = document.querySelector('.postcard-container');
-    // 공지사항 카드를 화면에 렌더링하는 함수
+    const postContainer = container.querySelector('.postcard-container');
     function renderPosts(posts = noticeData) {
       postContainer.innerHTML = ''; // 기존 공지사항을 초기화
 
@@ -184,19 +160,16 @@ export default async function Announcement() {
       } else {
         postContainer.classList.remove('no-result');
       }
-
-      // 현재 페이지에 맞는 공지사항을 계산
       const start = (currentPage - 1) * limit;
       const end = start + limit;
       const currentPosts = posts.slice(start, end); // 현재 페이지에 해당하는 공지사항만 잘라서 가져옴
+
       function cuttingString(text, limit) {
         if (text.length > limit) {
           return text.slice(0, limit) + '...';
         }
         return text;
       }
-
-      // 각 공지사항을 카드 형식으로 렌더링
       currentPosts.forEach(post => {
         const postHTML = `
         <div class="postcard" data-id="${post.id}">
@@ -211,15 +184,33 @@ export default async function Announcement() {
           </div>
         </div>
       `;
-        postContainer.insertAdjacentHTML('beforeend', postHTML); // 새로운 공지사항을 추가
+        postContainer.insertAdjacentHTML('beforeend', postHTML);
+      });
+      const postcards = postContainer.querySelectorAll('.postcard');
+      postcards.forEach(card => {
+        card.addEventListener('click', () => {
+          const postId = card.dataset.id;
+          urlParams.set('noticeinfo', postId);
+          history.pushState(
+            null,
+            null,
+            `/Announcement?${urlParams.toString()}`,
+          );
+          renderNoticeDetail(postId);
+        });
       });
     }
-
     searchInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') handleSearch();
     });
     searchButton.addEventListener('click', handleSearch);
-
+    function getFilteredData(searchTerm) {
+      return searchTerm
+        ? noticeData.filter(post =>
+            post.title.toLowerCase().includes(searchTerm),
+          )
+        : noticeData;
+    }
     function handleSearch() {
       const searchTerm = searchInput.value.trim().toLowerCase(); // 검색어 가져오기
       currentPage = 1;
@@ -254,11 +245,17 @@ export default async function Announcement() {
         updateHistory(currentPage, searchTerm);
       }
     }
-
+    if (INIT_NOTICE_INFO_VALUE) {
+      renderNoticeDetail(INIT_NOTICE_INFO_VALUE);
+    } else {
+      renderPosts(noticeData);
+    }
+    //초기 렌더링
     pageRendering(); // 처음에 페이지 버튼들을 그림
     updatePagination(initialSearch, false); // 초기 렌더링 시 필터링과 히스토리 업데이트 방지
   }
   pagination();
+
   async function renderNoticeDetail(postId) {
     container.innerHTML = '';
     const specificNotice = noticeData.find(post => post.id === postId);
@@ -271,26 +268,30 @@ export default async function Announcement() {
       <div class="content-img">
         <img class="img-preview" src="${specificNotice.image}" alt="기본공지사항이미지" />
       </div>
-      <div class="content-contents">
+      <main class="content-contents">
         <div class="content-title">
           <input type="text" value="${specificNotice.title}" readonly />
           <span class="title-secondary">
-            <input type="text" value="${specificNotice.author}" readonly />
-            <input type="text" value="${specificNotice.writedAt}" readonly />
+            <input class="secondary-component" type="text" value="${specificNotice.author}" readonly />
+            <input class="secondary-component" type="text" value="${specificNotice.writedAt}" readonly />
           </span>
         </div>
-      </div>
-      <textarea name="" id="" readonly>${specificNotice.contents}</textarea>
+      </main>
+      <p class="content-content id="" readonly>${specificNotice.contents}</p>
     </div>
     <div class="button-box">
       <button class="btn btn-outline close--btn">닫기</button>
     </div>
   `;
+
     const closeButton = detailContainer.querySelector('.close--btn');
+
     closeButton.addEventListener('click', () => {
       detailContainer.remove();
+      window.history.back();
     });
-    container.appendChild(detailContainer);
+
+    container.prepend(detailContainer);
   }
   return container;
 }
