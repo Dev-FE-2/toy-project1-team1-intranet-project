@@ -138,29 +138,35 @@ export default async function Announcement() {
       prevBtn?.addEventListener('click', () => {
         if (currentPage > 1) {
           currentPage -= 1;
-          updateHistory(currentPage);
-          updatePagination();
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
+          currentPage -= 1;
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
         }
       });
-
-      // 다음 버튼을 클릭했을 때, 현재 페이지를 1 증가시키고 페이지를 업데이트
-      const nextBtn = document.querySelector('.paging-item.next button');
+      const nextBtn = container.querySelector('.paging-item.next button');
       nextBtn?.addEventListener('click', () => {
         if (currentPage < totalPage) {
           currentPage += 1;
-          updateHistory(currentPage);
-          updatePagination();
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
+          currentPage += 1;
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
         }
       });
-
-      // 각 페이지 번호를 클릭했을 때 해당 페이지로 이동
-      const pageItems = document.querySelectorAll('.paging-item a');
+      const pageItems = container.querySelectorAll('.paging-item a');
       pageItems.forEach(cur => {
         cur.addEventListener('click', event => {
           const selectedPage = Number(event.target.textContent);
           currentPage = selectedPage;
-          updateHistory(currentPage);
-          updatePagination();
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
+          const selectedPage = Number(event.target.textContent);
+          currentPage = selectedPage;
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          updatePagination(searchTerm, true);
         });
       });
     }
