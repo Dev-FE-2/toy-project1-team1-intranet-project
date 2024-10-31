@@ -1,11 +1,9 @@
-announcement .announcement__search-box {
+.announcement .announcement__search-box {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
-  /* width: 80%; */
   margin: 0 auto;
-  padding-bottom: 3rem;
 }
 .container__flex {
   display: flex;
@@ -243,6 +241,6 @@ announcement .announcement__search-box {
   }
 
   .notice-info-wrapper .button-box {
-    flex-direction: column;
+    margin-top: 2rem;
   }
 }
