@@ -27,7 +27,14 @@ export default async function AbsencePortal(content) {
 
   const loadAbsences = async () => {
     try {
-      return await fetchCollectionData('absences', 'createdAt', 'desc');
+      const absences = await fetchCollectionData(
+        'absences',
+        'createdAt',
+        'desc',
+      );
+      return absences.sort(
+        (a, b) => b.createdAt.toDate() - a.createdAt.toDate(),
+      );
     } catch (error) {
       console.error('Error fetching absence data:', error);
       return [];
