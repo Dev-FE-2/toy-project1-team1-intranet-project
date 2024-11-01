@@ -1,7 +1,6 @@
 import { fetchCurrentUserData } from '@utils/fetchCurrentUserData';
 import { fetchCollectionData } from '@utils/fetchCollectionData';
 import { saveDataToDB, uploadFileToStorage } from '../../../utils/saveDataToDB';
-import Announcement from '../../front/Announcement/Announcement';
 import { DB } from '../../../../firebaseConfig';
 import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 
@@ -9,7 +8,6 @@ const notice = async () => {
   const URL_PARAMS = new URL(window.location.href);
   const URL_SEARCH_PARAMS = new URLSearchParams(window.location.search);
   const INIT_ADD_NOTICE = URL_SEARCH_PARAMS.get('addnotice');
-  console.log(INIT_ADD_NOTICE);
   const INIT_NOTICE_INFO = URL_SEARCH_PARAMS.get('noticeinfo');
 
   const CURRENT_USER = await fetchCurrentUserData();
@@ -17,7 +15,7 @@ const notice = async () => {
   const APP = document.querySelector('#app');
   const CONTAINER = document.createElement('div');
   CONTAINER.className = 'container';
-  APP.appendChild(CONTAINER);
+  APP.append(CONTAINER);
 
   const SEARCH_DATA = URL_SEARCH_PARAMS.get('search') || '';
 
@@ -52,11 +50,11 @@ const notice = async () => {
         <div class="postcard" data-id=${data.id}>
           <img class="postcard-img" src="${data.image}" alt="공지사항 이미지" />
           <div class="contents">
-            <h2 class="contents__title">${data.title}</h2>
-            <p class="contents__content">${data.contents}</p>
+            <h2 class="contents__title">${cuttingString(data.title, 20)}</h2>
+            <p class="contents__content">${cuttingString(data.contents, 40)}</p>
             <div class="contents__information">
-              <span class="information-author">${data.author}</span>
-              <span class="information-date">${data.writedAt}</span>
+              <span class="information-author">${cuttingString(data.author, 10)}</span>
+              <span class="information-date">${data.updateAt ? cuttingString(data.updateAt, 15) : cuttingString(data.writedAt, 15)}</span>
             </div>
           </div>
         </div>`,
@@ -100,6 +98,13 @@ const notice = async () => {
 
     setupSearchListeners();
     setupPaginationListeners();
+
+    function cuttingString(text = '', limit) {
+      if (text.length > limit) {
+        return text.slice(0, limit) + '...';
+      }
+      return text;
+    }
 
     const REGISTER_NOTICE_BTN = CONTAINER.querySelector('.register-notice-btn');
     REGISTER_NOTICE_BTN.addEventListener('click', () => {
@@ -185,7 +190,6 @@ const notice = async () => {
     });
   };
 
-
   // DB 저장 로직
   const saveNoticeDataToDB = async (
     workType,
@@ -212,7 +216,7 @@ const notice = async () => {
       if (confirm(askMessage)) {
         let imageURL =
           workType === 'add'
-            ? 'https://firebasestorage.googleapis.com/v0/b/devcamp-toyproject1.appspot.com/o/notice-images%2Fmegaphone-with-empty-sign-copy-space-symbol-background-3d-illustration.jpg?alt=media&token=958f0d7c-f847-49ef-bbbb-2e394d3bf825'
+            ? 'https://firebasestorage.googleapis.com/v0/b/devcamp-toyproject1.appspot.com/o/notice-images%2FdefaultNoticeImage.jpg?alt=media&token=5c523316-9d63-405f-be64-3828a7356922'
             : existingImg;
 
         if (selectedImageFile) {
@@ -274,8 +278,8 @@ const notice = async () => {
         </div>
         <input type="file" accept="Image/*" style="display: none">
         <div class="content-main">
-          <textarea class="content-title" type="text" placeholder="공지사항 제목을 입력해 주세요.">${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.title}</textarea>
-          <textarea class="content-contents" placeholder="공지사항 내용을 입력해 주세요">${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.contents}</textarea>
+          <input class="content-title" type="text" placeholder="공지사항 제목을 입력해 주세요." value="${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.title}"/>
+          <textarea class="content-contents" placeholder="공지사항 내용을 입력해 주세요">${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.contents}</textarea>     
         </div>
         <span></span>
         <div class="button-box">
@@ -301,8 +305,6 @@ const notice = async () => {
       '.content-main .content-contents',
     );
 
-    console.log(INPUT_TITLE);
-    console.log(INPUT_CONTENTS);
     const ERROR_SPAN = CONTAINER.querySelector('span');
 
     const autoResize = textarea => {
@@ -312,6 +314,11 @@ const notice = async () => {
 
     INPUT_TITLE.addEventListener('input', () => autoResize(INPUT_TITLE));
     INPUT_CONTENTS.addEventListener('input', () => autoResize(INPUT_CONTENTS));
+    INPUT_TITLE.addEventListener('keydown', e => {
+      if ((e.key = 'Enter')) {
+        e.preventDefault();
+      }
+    });
 
     autoResize(INPUT_TITLE);
     autoResize(INPUT_CONTENTS);
