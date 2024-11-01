@@ -9,7 +9,8 @@ const employee = async () => {
   const INIT_SEARCH_VALUE = URL_PARAMS.get('search')?.trim().toLowerCase();
   const INIT_USER_INFO_VALUE = URL_PARAMS.get('userinfo');
   const ALL_USERS = await fetchCollectionData('users');
-  const ONLINE_USERS = ALL_USERS.filter(user => user.isWorking === true)
+  const ONLINE_USERS = ALL_USERS.filter(user => user.isWorking === true);
+  const NOT_APPROVED_USERS = ALL_USERS.filter(user => user.isApproved === false)
 
   const CONTAINER = document.createElement('div');
   CONTAINER.className = 'container employee-list';
@@ -25,6 +26,8 @@ const employee = async () => {
         <div>총 <span>${ALL_USERS.length} </span>명</div>
         <div>/</div>
         <div><span>${ONLINE_USERS.length}</span> 명의 직원 근무 중</div>
+        <div>/</div>
+        <div><span>${NOT_APPROVED_USERS.length}</span> 명 승인 대기중</div>
     </div>
 		<div class="table-body">
 			<ul class="table" role="list" aria-label="직원 목록" id='employee-data-ul'>
@@ -73,10 +76,19 @@ const employee = async () => {
 
   try {
     ALL_USERS.sort((a, b) => {
-      if ((a.isDeleted ?? false) === (b.isDeleted ?? false)) {
-        return a.name.localeCompare(b.name, 'ko');
+      if ((a.isApproved ?? true) !== (b.isApproved ?? true)) {
+        return (a.isApproved ?? true) - (b.isApproved ?? true);
       }
-      return (a.isDeleted ?? false) - (b.isDeleted ?? false);
+  
+      if ((a.isDeleted ?? false) !== (b.isDeleted ?? false)) {
+        return (a.isDeleted ?? false) - (b.isDeleted ?? false);
+      }
+      
+      if ((a.isWorking ?? false) !== (b.isWorking ?? false)) {
+        return (b.isWorking ?? false) - (a.isWorking ?? false);
+      }
+      
+      return a.name.localeCompare(b.name, 'ko');
     });
 
     const MEDIA_QUERY_1230 = window.matchMedia('(max-width: 1230px)');
@@ -138,7 +150,8 @@ const employee = async () => {
                 .map(
                   user =>
                     `
-              <li class="col ${user.isDeleted ? 'deleted-user-col' : ''}">
+              <li class="col ${user.isDeleted ? 'deleted-user-col' : ''}
+              ${!user.isApproved ? 'notApproved-user-col' : ''}">
                 <ul class="cell" role="list" data-id='${user.id}'>
 					  	    <li class="number">${user.employeeNumber}</li>
 						      <li class="profile-img">
