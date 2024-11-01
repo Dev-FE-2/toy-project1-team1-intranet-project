@@ -209,9 +209,14 @@ const notice = async () => {
     const REGISTER_NOTICE_BTN = CONTAINER.querySelector('.register-notice-btn');
     const MODIFY_NOTICE_BTN = CONTAINER.querySelector('.modify-notice-btn');
     const DELETE_NOTICE_BTN = CONTAINER.querySelector('.delete-notice-btn');
-    console.log(REGISTER_NOTICE_BTN)
 
     try {
+      if (workType === 'add') {
+        REGISTER_NOTICE_BTN.disabled = true
+      } else {
+        MODIFY_NOTICE_BTN.disabled = true
+        DELETE_NOTICE_BTN.disabled = true
+      }
       if (titleValue === '' || contentsValue === '') {
         errorSpan.textContent = errorSpanMessage;
         return;
@@ -224,7 +229,6 @@ const notice = async () => {
             : existingImg;
 
         if (selectedImageFile) {
-          console.log(selectedImageFile);
           imageURL = await uploadFileToStorage(
             `notice-images/${Date.now()}_${selectedImageFile.name}`,
             selectedImageFile,
@@ -257,6 +261,10 @@ const notice = async () => {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      REGISTER_NOTICE_BTN.disabled = false
+      MODIFY_NOTICE_BTN.disabled = false
+      DELETE_NOTICE_BTN.disabled = false
     }
   };
 
@@ -425,7 +433,6 @@ const notice = async () => {
       });
 
       DELETE_NOTICE_BTN.addEventListener('click', async () => {
-        console.log('호출됨!!');
         const ASK_MESSAGE =
           '공지사항을 삭제하시겠습니까?\n삭제 진행 시 복원할 수 없습니다.';
         const CONFIRM_MESSAGE = '공지사항이 성공적으로 삭제되었습니다.';
