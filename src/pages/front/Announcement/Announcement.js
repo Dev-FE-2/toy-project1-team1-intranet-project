@@ -81,7 +81,7 @@ export default async function Announcement() {
 
     function pageRendering() {
       page.innerHTML = '';
-      if (currentPage > 1) {
+      if (currentPage) {
         page.insertAdjacentHTML(
           'beforeend',
           `<li class="paging-item prev">
@@ -103,7 +103,7 @@ export default async function Announcement() {
         );
       }
 
-      if (currentPage < totalPage) {
+      if (currentPage) {
         page.insertAdjacentHTML(
           'beforeend',
           `<li class="paging-item next">

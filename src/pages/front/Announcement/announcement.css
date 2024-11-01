@@ -1,18 +1,13 @@
-.announcement__search-box {
+.announcement .announcement__search-box {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
   margin: 0 auto;
 }
-
 .container__flex {
   display: flex;
   padding-bottom: 0rem;
-}
-
-.container__title {
-  display: flex;
 }
 /* Postcard */
 .postcard-container {
@@ -78,6 +73,10 @@
   background-color: var(--gray3);
   border-radius: 0.5rem;
   grid-column: 1 / -1;
+}
+
+.pagination .paging-item {
+  cursor: pointer;
 }
 
 .pagination .paging-item .btn {
