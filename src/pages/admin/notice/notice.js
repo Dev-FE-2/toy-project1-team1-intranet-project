@@ -60,7 +60,7 @@ const notice = async () => {
         </div>`,
       ).join('')}
       </div>
-      <button class='btn btn-solid register-notice-btn'>공지사항 등록</button>
+      <button class='btn btn-solid add-notice-btn'>공지사항 등록</button>
       ${
         TOTAL_ITEMS > 0
           ? `
@@ -106,8 +106,8 @@ const notice = async () => {
       return text;
     }
 
-    const REGISTER_NOTICE_BTN = CONTAINER.querySelector('.register-notice-btn');
-    REGISTER_NOTICE_BTN.addEventListener('click', () => {
+    const ADD_NOTICE_BTN = CONTAINER.querySelector('.add-notice-btn');
+    ADD_NOTICE_BTN.addEventListener('click', () => {
       URL_SEARCH_PARAMS.set('addnotice', true);
       history.pushState(null, null, `?${URL_SEARCH_PARAMS.toString()}`);
       renderNoticeEditor('add', '');
@@ -206,6 +206,10 @@ const notice = async () => {
   ) => {
     const NEW_DATE = new Date();
     const NOW = `${NEW_DATE.getFullYear()}년 ${NEW_DATE.getMonth() + 1}월 ${NEW_DATE.getDate()}일`;
+    const REGISTER_NOTICE_BTN = CONTAINER.querySelector('.register-notice-btn');
+    const MODIFY_NOTICE_BTN = CONTAINER.querySelector('.modify-notice-btn');
+    const DELETE_NOTICE_BTN = CONTAINER.querySelector('.delete-notice-btn');
+    console.log(REGISTER_NOTICE_BTN)
 
     try {
       if (titleValue === '' || contentsValue === '') {
@@ -279,7 +283,9 @@ const notice = async () => {
         <input type="file" accept="Image/*" style="display: none">
         <div class="content-main">
           <input class="content-title" type="text" placeholder="공지사항 제목을 입력해 주세요." value="${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.title}"/>
-          <textarea class="content-contents" placeholder="공지사항 내용을 입력해 주세요">${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.contents}</textarea>     
+          <div class="main-contents">
+            <textarea class="content-contents" placeholder="공지사항 내용을 입력해 주세요">${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.contents}</textarea> 
+          </div>
         </div>
         <span></span>
         <div class="button-box">
@@ -304,6 +310,13 @@ const notice = async () => {
     const INPUT_CONTENTS = CONTAINER.querySelector(
       '.content-main .content-contents',
     );
+    const MAIN_CONTENTS = CONTAINER.querySelector('.content-main .main-contents')
+
+    MAIN_CONTENTS.addEventListener('click', e => {
+      if (e.target !== INPUT_CONTENTS) {
+        INPUT_CONTENTS.focus()
+      }
+    })
 
     const ERROR_SPAN = CONTAINER.querySelector('span');
 

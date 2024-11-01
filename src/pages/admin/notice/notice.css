@@ -1,7 +1,5 @@
 @media screen and (max-width: 768px) {
-  .register-notice-btn {
-    padding: 1rem 1.2rem;
-  }
+
 }
 
 .container__title {
@@ -91,6 +89,10 @@
   margin-top: 3%;
 }
 
+.add-notice-content .content-main .main-contents{
+  width: 100%;
+}
+
 .add-notice-content .content-main {
   height: 100%;
 }
@@ -131,8 +133,13 @@
   width: 100%;
 }
 
-.register-notice-btn {
+.add-notice-btn {
   position: absolute;
   right: 7.1%;
   margin-top: 1%;
+}
+
+.main-contents {
+  width: 100%;
+  height: 100%;
 }
