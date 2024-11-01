@@ -9,6 +9,7 @@ const employee = async () => {
   const INIT_SEARCH_VALUE = URL_PARAMS.get('search')?.trim().toLowerCase();
   const INIT_USER_INFO_VALUE = URL_PARAMS.get('userinfo');
   const ALL_USERS = await fetchCollectionData('users');
+  const ONLINE_USERS = ALL_USERS.filter(user => user.isWorking === true)
 
   const CONTAINER = document.createElement('div');
   CONTAINER.className = 'container employee-list';
@@ -16,10 +17,15 @@ const employee = async () => {
     <div class="container-header">
 			<h1 class="title">직원 목록</h1>
 			<div class="search-box">
-				<input class="employeeList-search-input"  placeholder="어쩌구를 검색하세요.">
+				<input class="employeeList-search-input"  placeholder="직원 정보를 검색해 주세요.">
 				<span class="material-symbols-outlined"> search </span>
 			</div>
 		</div>
+    <div class='employee-number-box'>
+        <div>총 <span>${ALL_USERS.length} </span>명</div>
+        <div>/</div>
+        <div><span>${ONLINE_USERS.length}</span> 명의 직원 근무 중</div>
+    </div>
 		<div class="table-body">
 			<ul class="table" role="list" aria-label="직원 목록" id='employee-data-ul'>
 
@@ -33,7 +39,7 @@ const employee = async () => {
 
     if (SPECIFIC_USER_INFO) {
       CONTAINER.innerHTML = `
-        <h2>${SPECIFIC_USER_INFO.name}님의 상세 페이지</h2>
+        <h2 class='title'>${SPECIFIC_USER_INFO.name}님의 상세 페이지</h2>
         <div class='user-profile'>
           <div class='profile-sub-info'>
             <img src="${SPECIFIC_USER_INFO.profileImg}" alt="기본유저이미지">
