@@ -1,4 +1,4 @@
-import './modal.css';
+// import './modal.css';
 
 /**
  * 모달 생성기

@@ -19,7 +19,7 @@ const Header = async (path) => {
     userName = userData.name;
     userImgSrc = userData.profileImg;
   } catch (err) {
-    console.log('err', err.isUser)
+    console.error('err', err)
   }
 
   // 내비게이션 목록 데이터

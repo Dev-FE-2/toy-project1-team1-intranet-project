@@ -107,6 +107,7 @@ const route = async () => {
       const CURRENT_USER = await fetchCurrentUserData();
 
       if (!CURRENT_USER.isAdmin) {
+        document.querySelector('.header').remove();
         goToPage('/');
         throw new Error('관리자만 접근 가능한 페이지입니다.');
       }
