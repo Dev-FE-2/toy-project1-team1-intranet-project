@@ -150,7 +150,7 @@ toy-project1-team1-intranet-project
 - [회의록](https://www.notion.so/1213259dc0c2818eadb0e053ca0031d4?v=46e226797ec24187941d21537d1e280a)
 - [회고](https://www.notion.so/24-11-01-3e7ea06f465941ffa8774b1d42ee3e0b)
 
-## 페이지 별 기능
+## 🌐 페이지 별 기능
 
 ### 로그인&회원가입(승건)
 
