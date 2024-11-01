@@ -55,7 +55,9 @@ const notice = async () => {
         </div>
       </div>
       <div class="postcard-container">
-      ${PAGE_NOTICE_DATA.map(
+      ${PAGE_NOTICE_DATA.length === 0
+        ? `<div class='no-result-searched'>검색 결과가 없습니다</div>`
+        : PAGE_NOTICE_DATA.map(
         data => `
         <div class="postcard" data-id=${data.id}>
           <img class="postcard-img" src="${data.image}" alt="공지사항 이미지" />
