@@ -19,13 +19,14 @@ export default function createCard({
   content,
   thumb,
   writer,
-  createat
+  createat,
+  href = '#none'
 }){
   
   // 카드 마크업
   const render = () => `
     <div id="${id}" class="postcard ${classList ? classList.join(' ') : ''}">
-      <a href="#none">
+      <a href="${href}">
         ${thumb ? `<img class="postcard-img" src="${thumb}" alt="Post Image" />` : ''}
         <div class="contents">
           <h2 class="contents__title">${title}</h2>

@@ -226,7 +226,9 @@ export default async function Main(container) {
     
       const recentNoticeDataArr = [];
       querySnapshot.forEach(doc => {
-        recentNoticeDataArr.push(doc.data());
+        const docData = doc.data();
+        docData.id = doc.id;
+        recentNoticeDataArr.push(docData);
       });
 
       return recentNoticeDataArr;
@@ -238,6 +240,8 @@ export default async function Main(container) {
         postCont.innerHTML = '';
         recentNoticeDataArr.map(data => {
           const postcard = createCard({
+            id: data.id,
+            href: `/Announcement?noticeinfo=${data.id}`,
             classList: ['swiper-slide'],
             title: cuttingString(data.title, 20),
             content: cuttingString(data.contents, 30),
