@@ -21,6 +21,7 @@
 ## 💡 컨벤션
 
 원활한 협업을 위해 코드의 일관성과 가독성을 높여 프로젝트 관리를 효율적으로 수행합니다.
+
 (단, 작업에 지장이 없는 선에서 유연한 적용을 허용)
 
 ### 네이밍
@@ -68,6 +69,7 @@ ESLint, Prettier를 활용해 공통 포맷팅 규칙을 사용합니다.
 ### 1️⃣ 기획: 2024.10.16 - 2024.10.17
 
 요구사항을 분석하고 와이어프레임을 통해 가시화 합니다.
+
 과정에서 담당 롤을 배정하고 공통 스타일 가이드를 확립했습니다.
 
 ### 2️⃣ 마크업: 2024.10.18 - 2024.10.23
@@ -77,6 +79,7 @@ HTML, CSS를 이용해 구조를 잡는 작업에 착수했습니다.
 ### 3️⃣ 기능 개발 part.1: 2024.10.24 - 2024.10.30
 
 1차 작업 범위를 선정하고 담당 페이지 단위 기능 개발을 진행했습니다.
+
 중간점검 및 멘토링 일정이 있었으며, **24.10.29** 통합 후 main 현행화를 통해 사이드이펙트 점검 및 진척도를 공유했습니다.
 
 ### 4️⃣ 기능 개발 part.2: 2024.10.30 - 2024.11.01
@@ -115,15 +118,11 @@ npm start
 
 ### Back
 
-<img src="https://img.shields.io/badge/node.js-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white">
-<img src="https://img.shields.io/badge/express-000000?style=for-the-badge&logo=nodedotjs&logoColor=white">
-<img src="https://img.shields.io/badge/firebase-DD2C00?style=for-the-badge&logo=nodedotjs&logoColor=white">
+<img src="https://img.shields.io/badge/node.js-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white"><img src="https://img.shields.io/badge/express-000000?style=for-the-badge&logo=nodedotjs&logoColor=white" style="max-width: 100%;"><img src="https://img.shields.io/badge/firebase-DD2C00?style=for-the-badge&logo=nodedotjs&logoColor=white" style="max-width: 100%;">
 
 ### Comm.
 
-<img src="https://camo.githubusercontent.com/236fcd63f5c7932c0928a86fb7ebdbb5e8876cc4c03779cd1fc8aa9c0196aab2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6769746875622d3138313731373f7374796c653d666f722d7468652d6261646765266c6f676f3d676974687562266c6f676f436f6c6f723d7768697465" data-canonical-src="https://img.shields.io/badge/github-181717?style=for-the-badge&amp;logo=github&amp;logoColor=white" style="max-width: 100%;">
-<img src="https://camo.githubusercontent.com/fbe73eb0c50a7d491503c4e14d0a949a96f862997da5110f7ff0b9d28ef49a37/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f736c61636b2d3441313534423f7374796c653d666f722d7468652d6261646765266c6f676f3d736c61636b266c6f676f436f6c6f723d7768697465" data-canonical-src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&amp;logo=slack&amp;logoColor=white" style="max-width: 100%;">
-<img src="https://camo.githubusercontent.com/cfd00850da7d61d06eedd66f38d007989ed62131e6b920e99016ed95de13c9a5/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6e6f74696f6e2d3030303030303f7374796c653d666f722d7468652d6261646765266c6f676f3d6e6f74696f6e266c6f676f436f6c6f723d7768697465" data-canonical-src="https://img.shields.io/badge/notion-000000?style=for-the-badge&amp;logo=notion&amp;logoColor=white" style="max-width: 100%;">
+<img src="https://camo.githubusercontent.com/236fcd63f5c7932c0928a86fb7ebdbb5e8876cc4c03779cd1fc8aa9c0196aab2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6769746875622d3138313731373f7374796c653d666f722d7468652d6261646765266c6f676f3d676974687562266c6f676f436f6c6f723d7768697465" data-canonical-src="https://img.shields.io/badge/github-181717?style=for-the-badge&amp;logo=github&amp;logoColor=white" style="max-width: 100%;"><img src="https://camo.githubusercontent.com/fbe73eb0c50a7d491503c4e14d0a949a96f862997da5110f7ff0b9d28ef49a37/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f736c61636b2d3441313534423f7374796c653d666f722d7468652d6261646765266c6f676f3d736c61636b266c6f676f436f6c6f723d7768697465" data-canonical-src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&amp;logo=slack&amp;logoColor=white" style="max-width: 100%;"><img src="https://camo.githubusercontent.com/cfd00850da7d61d06eedd66f38d007989ed62131e6b920e99016ed95de13c9a5/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6e6f74696f6e2d3030303030303f7374796c653d666f722d7468652d6261646765266c6f676f3d6e6f74696f6e266c6f676f436f6c6f723d7768697465" data-canonical-src="https://img.shields.io/badge/notion-000000?style=for-the-badge&amp;logo=notion&amp;logoColor=white" style="max-width: 100%;">
 
 ## 🔨 프로젝트 구조
 
@@ -131,8 +130,6 @@ npm start
 toy-project1-team1-intranet-project
 ├─ public
 ├─ server
-│  ├─ data
-│  └─ index.js
 ├─ src
 │  ├─ common.css
 │  ├─ reset.css
@@ -143,6 +140,7 @@ toy-project1-team1-intranet-project
 │  ├─ constants
 │  ├─ main.js
 │  └─ utils
+...
 ```
 
 ## 📑 프로젝트 자료
@@ -154,21 +152,21 @@ toy-project1-team1-intranet-project
 
 ## 페이지 별 기능
 
-### 로그인&회원가입
+### 로그인&회원가입(승건)
 
 - 기능 설명
 
-### 메인
+### 메인(샘이)
 
 - 기능설명
 - 기능 설명2
 
-### 부재 내역 및 신청
+### 부재 내역 및 신청(주리)
 
 - 기능설명
 
-### 공지사항
+### 공지사항(영훈)
 
-### 직원 관리
+### 직원 관리(승건)
 
-### 공지사항 관리
+### 공지사항 관리(승건)
