@@ -8,6 +8,11 @@
     padding: 1.5rem !important;
   }
 }
+@media screen and (max-width: 1000px) {
+  .edit-profile-modal-wrapper .edit-profile-modal {
+    margin-left: 30rem;
+  }
+}
 @media screen and (max-width: 900px) {
   .table-body .head .profile-img,
   .table-body .cell .profile-img {
@@ -26,6 +31,10 @@
     padding: 0.8rem 1rem !important;
     white-space: nowrap;
     /* text-overflow: clip; */
+  }
+
+  .edit-profile-modal-wrapper .edit-profile-modal {
+    margin-left: 0;
   }
 }
 @media screen and (max-width: 600px) {
@@ -97,7 +106,7 @@
 }
 
 .table .col li {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .table-body .cell .user-status .badge {
@@ -346,6 +355,45 @@ select {
   width: 100%;
   padding: 1rem 0;
   margin: 0.5rem 0 1rem 0;
+}
+
+.name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 1%;
+  font-size: 1.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email {
+  font-size: 1.3rem;
+}
+
+.employee-number-box {
+  width: 20rem;
+  margin: 0 0 1rem 12%;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  font-weight: 700;
+}
+
+.employee-number-box div:nth-child(1) span {
+  color: #bbb;
+}
+
+.employee-number-box div:nth-child(3) span {
+  color: #23b25c;
+}
+
+.table .col:last-child {
+  border-radius: 0 0 1rem 1rem;
+}
+
+.table-body {
+  margin-bottom: 10rem;
 }
 
 /* 직원 정보 수정 모달 스크롤 바 삭제 */

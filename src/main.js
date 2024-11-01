@@ -135,7 +135,7 @@ const route = async () => {
         break;
       case 'notice':
         content.innerHTML = '';
-        content.append(await notice());
+        await notice()
         loadStylesheet([
           './src/pages/front/announcement/announcement.css',
           './src/pages/admin/notice/notice.css',

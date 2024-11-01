@@ -99,7 +99,7 @@ export default async function Announcement() {
         const activeClass = i === currentPage ? 'is-active' : '';
         page.insertAdjacentHTML(
           'beforeend',
-          `<li class="paging-item ${activeClass}"><a href="javascript:void(0);">${i}</a></li>`,
+          `<li class="paging-item ${activeClass}"><div>${i}</div></li>`,
         );
       }
 
@@ -141,7 +141,7 @@ export default async function Announcement() {
         }
       });
 
-      const pageItems = container.querySelectorAll('.paging-item a');
+      const pageItems = container.querySelectorAll('.paging-item div');
 
       pageItems.forEach(cur => {
         cur.addEventListener('click', event => {
@@ -223,13 +223,30 @@ export default async function Announcement() {
       const searchTerm = searchInput.value.trim().toLowerCase(); // 검색어 가져오기
       currentPage = 1;
       const filteredData = getFilteredData(searchTerm);
-      container.querySelector('.helper-text')?.remove();
-      let textStyle = '';
-      textStyle = filteredData.length === 0 ? 'text-error' : 'text-success';
+
+      // 기존 helper-text 요소가 있으면 제거
+      const existingHelperText = container.querySelector('.helper-text');
+      if (existingHelperText) {
+        existingHelperText.remove();
+      }
+
+      // postContainer가 존재하지 않는 경우 새로 생성
+      let postContainer = container.querySelector('.postcard-container');
+      if (!postContainer) {
+        postContainer = document.createElement('div');
+        postContainer.classList.add('postcard-container');
+        container.insertAdjacentElement('beforeend', postContainer);
+      }
+
+      // 검색 결과에 따른 텍스트 스타일 설정
+      let textStyle = filteredData.length === 0 ? 'text-error' : 'text-success';
+
+      // 새로운 helper-text 요소 추가
       postContainer.insertAdjacentHTML(
         'beforebegin',
         `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
       );
+
       updatePagination(searchTerm, true);
     }
 

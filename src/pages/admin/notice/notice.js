@@ -1,14 +1,194 @@
 import { fetchCurrentUserData } from '@utils/fetchCurrentUserData';
+import { fetchCollectionData } from '@utils/fetchCollectionData';
 import { saveDataToDB, uploadFileToStorage } from '../../../utils/saveDataToDB';
-import Announcement from '../../front/Announcement/Announcement';
 import { DB } from '../../../../firebaseConfig';
 import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 
 const notice = async () => {
-  const URL_PARAMS = new URLSearchParams(window.location.search);
+  const URL_PARAMS = new URL(window.location.href);
+  const URL_SEARCH_PARAMS = new URLSearchParams(window.location.search);
+  const INIT_ADD_NOTICE = URL_SEARCH_PARAMS.get('addnotice');
+  const INIT_NOTICE_INFO = URL_SEARCH_PARAMS.get('noticeinfo');
+
   const CURRENT_USER = await fetchCurrentUserData();
-  let currentContainer = null; // 현재 컨테이너 참조 저장
-  let isAdminView = true;
+  const ALL_NOTICE_DATA = await fetchCollectionData('notices');
+  const APP = document.querySelector('#app');
+  const CONTAINER = document.createElement('div');
+  CONTAINER.className = 'container';
+  APP.append(CONTAINER);
+
+  const SEARCH_DATA = URL_SEARCH_PARAMS.get('search') || '';
+
+  const FILTERED_NOTICE_DATA = ALL_NOTICE_DATA.filter(
+    notice =>
+      notice?.title.includes(SEARCH_DATA) ||
+      notice?.contents.includes(SEARCH_DATA) ||
+      notice?.author.includes(SEARCH_DATA),
+  );
+
+  const ITEMS_PER_PAGE = 8;
+  const TOTAL_ITEMS = FILTERED_NOTICE_DATA.length;
+  const TOTAL_PAGES = Math.ceil(TOTAL_ITEMS / ITEMS_PER_PAGE);
+  const CURRENT_PAGE = parseInt(URL_SEARCH_PARAMS.get('pagination') || '1', 10);
+
+  const renderNoticeList = () => {
+    const START_INDEX = (CURRENT_PAGE - 1) * ITEMS_PER_PAGE;
+    const END_INDEX = START_INDEX + ITEMS_PER_PAGE;
+    const PAGE_NOTICE_DATA = FILTERED_NOTICE_DATA.slice(START_INDEX, END_INDEX);
+
+    CONTAINER.innerHTML = `
+      <h1 class="title">공지사항</h1>
+      <div class="container__title title">
+        <div class="announcement__search-box">
+          <input type="search" id="search" placeholder="검색어를 입력하세요" />
+          <span class="material-symbols-outlined search-icon">search</span>
+        </div>
+      </div>
+      <div class="postcard-container">
+      ${PAGE_NOTICE_DATA.map(
+        data => `
+        <div class="postcard" data-id=${data.id}>
+          <img class="postcard-img" src="${data.image}" alt="공지사항 이미지" />
+          <div class="contents">
+            <h2 class="contents__title">${cuttingString(data.title, 20)}</h2>
+            <p class="contents__content">${cuttingString(data.contents, 40)}</p>
+            <div class="contents__information">
+              <span class="information-author">${cuttingString(data.author, 10)}</span>
+              <span class="information-date">${data.updateAt ? cuttingString(data.updateAt, 15) : cuttingString(data.writedAt, 15)}</span>
+            </div>
+          </div>
+        </div>`,
+      ).join('')}
+      </div>
+      <button class='btn btn-solid add-notice-btn'>공지사항 등록</button>
+      ${
+        TOTAL_ITEMS > 0
+          ? `
+        <div class="pagination">
+          <ul class="paging-list" role="list">
+            <li class="paging-item prev">
+              <button class="btn" type="button" aria-label="이전 페이지" ${CURRENT_PAGE === 1 ? 'disabled' : ''}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
+                  <line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                  <line x1="12" y1="17" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                </svg>
+              </button>
+            </li>
+            ${Array.from(
+              { length: TOTAL_PAGES },
+              (_, i) => `
+              <li class="paging-item ${CURRENT_PAGE === i + 1 ? 'is-active' : ''}" ${CURRENT_PAGE === i + 1 ? 'aria-current="page"' : ''}>
+                <a href="javascript:void(0);" data-page="${i + 1}">${i + 1}</a>
+              </li>
+            `,
+            ).join('')}
+            <li class="paging-item next">
+              <button class="btn" type="button" aria-label="다음 페이지" ${CURRENT_PAGE === TOTAL_PAGES ? 'disabled' : ''}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
+                  <line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                  <line x1="22" y1="17" x2="14" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                </svg>
+              </button>
+            </li>
+          </ul>
+        </div>`
+          : ''
+      }
+    `;
+
+    setupSearchListeners();
+    setupPaginationListeners();
+
+    function cuttingString(text = '', limit) {
+      if (text.length > limit) {
+        return text.slice(0, limit) + '...';
+      }
+      return text;
+    }
+
+    const ADD_NOTICE_BTN = CONTAINER.querySelector('.add-notice-btn');
+    ADD_NOTICE_BTN.addEventListener('click', () => {
+      URL_SEARCH_PARAMS.set('addnotice', true);
+      history.pushState(null, null, `?${URL_SEARCH_PARAMS.toString()}`);
+      renderNoticeEditor('add', '');
+    });
+
+    const POSTCARDS = CONTAINER.querySelectorAll('.postcard');
+    POSTCARDS.forEach(card => {
+      const NOTICE_ID = card.getAttribute('data-id');
+
+      card.addEventListener('click', () => {
+        URL_SEARCH_PARAMS.set('noticeinfo', NOTICE_ID);
+        history.pushState(null, null, `?${URL_SEARCH_PARAMS.toString()}`);
+        renderNoticeEditor('modify', NOTICE_ID);
+      });
+    });
+  };
+
+  const setupSearchListeners = () => {
+    const SEARCH_INPUT = document.getElementById('search');
+    const SEARCH_ICON = document.querySelector('.search-icon');
+
+    const performSearch = () => {
+      const SEARCH_INPUT_VALUE = SEARCH_INPUT.value.trim();
+      const NEW_URL = new URL(window.location.href);
+
+      if (SEARCH_INPUT_VALUE) {
+        NEW_URL.searchParams.set('search', SEARCH_INPUT_VALUE);
+        NEW_URL.searchParams.set('pagination', '1');
+      } else {
+        NEW_URL.searchParams.delete('search');
+        NEW_URL.searchParams.delete('pagination');
+      }
+
+      window.location.href = NEW_URL.toString();
+    };
+
+    SEARCH_INPUT.addEventListener('keyup', e => {
+      if (e.key === 'Enter') performSearch();
+    });
+
+    SEARCH_ICON.addEventListener('click', performSearch);
+  };
+  const setupPaginationListeners = () => {
+    const PREV_BTN = document.querySelector('.paging-item.prev .btn');
+    const NEXT_BTN = document.querySelector('.paging-item.next .btn');
+    const PAGE_LINKS = document.querySelectorAll(
+      '.paging-item:not(.prev):not(.next) a',
+    );
+
+    const navigateToPage = page => {
+      const NEW_URL = new URL(window.location.href);
+
+      NEW_URL.searchParams.set('pagination', page);
+
+      window.location.href = NEW_URL.toString();
+    };
+
+    if (PREV_BTN) {
+      PREV_BTN.addEventListener('click', () => {
+        if (CURRENT_PAGE > 1) {
+          navigateToPage(CURRENT_PAGE - 1);
+        }
+      });
+    }
+
+    if (NEXT_BTN) {
+      NEXT_BTN.addEventListener('click', () => {
+        if (CURRENT_PAGE < TOTAL_PAGES) {
+          navigateToPage(CURRENT_PAGE + 1);
+        }
+      });
+    }
+
+    PAGE_LINKS.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const PAGE = link.textContent;
+        navigateToPage(PAGE);
+      });
+    });
+  };
 
   // DB 저장 로직
   const saveNoticeDataToDB = async (
@@ -26,6 +206,10 @@ const notice = async () => {
   ) => {
     const NEW_DATE = new Date();
     const NOW = `${NEW_DATE.getFullYear()}년 ${NEW_DATE.getMonth() + 1}월 ${NEW_DATE.getDate()}일`;
+    const REGISTER_NOTICE_BTN = CONTAINER.querySelector('.register-notice-btn');
+    const MODIFY_NOTICE_BTN = CONTAINER.querySelector('.modify-notice-btn');
+    const DELETE_NOTICE_BTN = CONTAINER.querySelector('.delete-notice-btn');
+    console.log(REGISTER_NOTICE_BTN)
 
     try {
       if (titleValue === '' || contentsValue === '') {
@@ -36,7 +220,7 @@ const notice = async () => {
       if (confirm(askMessage)) {
         let imageURL =
           workType === 'add'
-            ? 'https://firebasestorage.googleapis.com/v0/b/devcamp-toyproject1.appspot.com/o/notice-images%2Fmegaphone-with-empty-sign-copy-space-symbol-background-3d-illustration.jpg?alt=media&token=958f0d7c-f847-49ef-bbbb-2e394d3bf825'
+            ? 'https://firebasestorage.googleapis.com/v0/b/devcamp-toyproject1.appspot.com/o/notice-images%2FdefaultNoticeImage.jpg?alt=media&token=5c523316-9d63-405f-be64-3828a7356922'
             : existingImg;
 
         if (selectedImageFile) {
@@ -55,10 +239,7 @@ const notice = async () => {
             author: CURRENT_USER.name,
             writedAt: NOW,
           });
-
-          window.location.reload();
         } else if (workType === 'modify') {
-          console.log(noticeId);
           await setDoc(doc(DB, 'notices', noticeId), {
             title: titleValue,
             contents: contentsValue,
@@ -66,31 +247,10 @@ const notice = async () => {
             author: CURRENT_USER.name,
             updateAt: NOW,
           });
-
-          // 수정 시 현재 페이지의 내용만 업데이트
-          const container = document.querySelector('.container');
-          if (container) {
-            const imgPreview = container.querySelector('.content-img img');
-            const TEXTAREA_TITLE = container.querySelector(
-              '.content-title textarea',
-            );
-            const TEXTAREA_CONTENTS = container.querySelector(
-              '.notice-info textarea',
-            );
-
-            imgPreview.src = imageURL;
-            TEXTAREA_TITLE.value = TEXTAREA_CONTENTS;
-            TEXTAREA_CONTENTS.value = TEXTAREA_CONTENTS;
-
-            // 현재 상태 유지
-            // modifyExistingNotice(noticeId);
-            window.history.back()
-          }
         } else {
           await deleteDoc(doc(DB, 'notices', noticeId));
-          // await renderNewContainer(); // 삭제 시 전체 화면 리로드
-          window.history.back();
         }
+        window.history.back();
         alert(confirmMessage);
       } else {
         alert(cancelMessage);
@@ -100,27 +260,41 @@ const notice = async () => {
     }
   };
 
-  const renderNoticeEditor = () => {
-    const CONTAINER = document.querySelector('.container');
+  const renderNoticeEditor = (workType, noticeId) => {
+    const SPECIFIC_NOTICE_INFO = ALL_NOTICE_DATA.find(
+      data => data.id === noticeId,
+    );
 
     CONTAINER.innerHTML = `
       <div class="add-notice-wrapper">
         <div class="add-notice-content">
-        <h2>공지사항 등록</h2>
+        <h2 class='title'>${workType === 'add' ? '공지사항 등록' : '공지사항 수정/삭제'}</h2>
         <div class="content-img">
-          <img class="img-preview" src='https://firebasestorage.googleapis.com/v0/b/devcamp-toyproject1.appspot.com/o/notice-images%2Fmegaphone-with-empty-sign-copy-space-symbol-background-3d-illustration.jpg?alt=media&token=958f0d7c-f847-49ef-bbbb-2e394d3bf825' alt="기본공지사항이미지">
+          <img class="img-preview"
+          src="${
+            workType === 'add'
+              ? 'https://firebasestorage.googleapis.com/v0/b/devcamp-toyproject1.appspot.com/o/notice-images%2FdefaultNoticeImage.jpg?alt=media&token=5c523316-9d63-405f-be64-3828a7356922'
+              : SPECIFIC_NOTICE_INFO.image
+          }"alt="공지사항이미지">
           <div class="button-box">
             <button class="btn btn-solid upload-img-btn">이미지 등록하기</button>
           </div>
         </div>
         <input type="file" accept="Image/*" style="display: none">
-        <div class="content-contents">
-          <input type="text" placeholder="공지사항 제목을 입력해 주세요.">
-          <textarea placeholder="공지사항 내용을 입력해 주세요"></textarea>
+        <div class="content-main">
+          <input class="content-title" type="text" placeholder="공지사항 제목을 입력해 주세요." value="${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.title}"/>
+          <div class="main-contents">
+            <textarea class="content-contents" placeholder="공지사항 내용을 입력해 주세요">${workType === 'add' ? '' : SPECIFIC_NOTICE_INFO.contents}</textarea> 
+          </div>
         </div>
         <span></span>
         <div class="button-box">
-          <button class="btn btn-solid register-notice-btn">등록</button>
+        ${
+          workType === 'add'
+            ? '<button class="btn btn-solid register-notice-btn">등록</button>'
+            : `<button class="btn btn-solid delete-notice-btn">삭제</button>
+          <button class="btn btn-solid modify-notice-btn">수정</button>`
+        }  
           <button class="btn btn-outline close-btn">닫기</button>
         </div>
       </div>
@@ -129,12 +303,38 @@ const notice = async () => {
     const UPLOAD_IMG_BTN = CONTAINER.querySelector('.upload-img-btn');
     const IMG_PREVIEW = CONTAINER.querySelector('.img-preview');
     const REGISTER_NOTICE_BTN = CONTAINER.querySelector('.register-notice-btn');
+    const MODIFY_NOTICE_BTN = CONTAINER.querySelector('.modify-notice-btn');
+    const DELETE_NOTICE_BTN = CONTAINER.querySelector('.delete-notice-btn');
     const CLOSE_BTN = CONTAINER.querySelector('.close-btn');
-    const INPUT_TITLE = CONTAINER.querySelector('.content-contents input');
+    const INPUT_TITLE = CONTAINER.querySelector('.content-main .content-title');
     const INPUT_CONTENTS = CONTAINER.querySelector(
-      '.content-contents textarea',
+      '.content-main .content-contents',
     );
+    const MAIN_CONTENTS = CONTAINER.querySelector('.content-main .main-contents')
+
+    MAIN_CONTENTS.addEventListener('click', e => {
+      if (e.target !== INPUT_CONTENTS) {
+        INPUT_CONTENTS.focus()
+      }
+    })
+
     const ERROR_SPAN = CONTAINER.querySelector('span');
+
+    const autoResize = textarea => {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    };
+
+    INPUT_TITLE.addEventListener('input', () => autoResize(INPUT_TITLE));
+    INPUT_CONTENTS.addEventListener('input', () => autoResize(INPUT_CONTENTS));
+    INPUT_TITLE.addEventListener('keydown', e => {
+      if ((e.key = 'Enter')) {
+        e.preventDefault();
+      }
+    });
+
+    autoResize(INPUT_TITLE);
+    autoResize(INPUT_CONTENTS);
 
     let selectedImageFile = null;
 
@@ -182,274 +382,72 @@ const notice = async () => {
       window.history.back();
     });
 
-    REGISTER_NOTICE_BTN.addEventListener('click', async () => {
-      const ASK_MESSAGE = '공지사항을 등록하시겠습니까?';
-      const CONFIRM_MESSAGE = '공지사항이 성공적으로 등록되었습니다.';
-      const CANCEL_MESSAGE = '공지사항 등록이 취소되었습니다.';
-      const ERROR_SPAN_MESSAGE =
-        '제목과 내용을 모두 입력해야만 공지사항 등록이 가능합니다';
-      await saveNoticeDataToDB(
-        'add',
-        '',
-        ASK_MESSAGE,
-        CONFIRM_MESSAGE,
-        CANCEL_MESSAGE,
-        selectedImageFile,
-        INPUT_TITLE.value,
-        INPUT_CONTENTS.value,
-        ERROR_SPAN,
-        ERROR_SPAN_MESSAGE,
-      );
-    });
-  };
-
-  const modifyExistingNotice = noticeId => {
-    const CONTAINER = document.querySelector('.container');
-
-    // 이미 수정 페이지인 경우 버튼 중복 추가 방지
-    if (CONTAINER.querySelector('.upload-img-btn')) {
-      return;
-    }
-
-    const IMG_PREVIEW = CONTAINER.querySelector('.content-img img');
-    // const INPUT_TITLE = CONTAINER.querySelector(
-    //   '.content-title input:nth-child(1)',
-    // );
-    // const INPUT_CONTENTS = CONTAINER.querySelector('.notice-info textarea');
-
-    const DIV_TITLE = CONTAINER.querySelector('.title-primary');
-    const DIV_CONTENTS = CONTAINER.querySelector('.content-content');
-
-    const TEXTAREA_TITLE = document.createElement('textarea');
-    const TEXTAREA_CONTENTS = document.createElement('textarea');
-
-    // <div>의 텍스트를 <textarea>로 복사
-    TEXTAREA_TITLE.value = DIV_TITLE.textContent;
-    TEXTAREA_CONTENTS.value = DIV_CONTENTS.textContent;
-
-    // 높이 자동 조절 함수
-    const autoResize = textarea => {
-      textarea.style.height = 'auto'; // 높이를 초기화하여 재계산
-      textarea.style.height = `${textarea.scrollHeight}px`; // scrollHeight에 맞게 높이 설정
-    };
-
-    // 높이 자동 조절 적용
-    TEXTAREA_TITLE.addEventListener('input', () => autoResize(TEXTAREA_TITLE));
-    TEXTAREA_CONTENTS.addEventListener('input', () =>
-      autoResize(TEXTAREA_CONTENTS),
-    );
-
-    // <div>를 <textarea>로 교체
-    DIV_TITLE.replaceWith(TEXTAREA_TITLE);
-    DIV_CONTENTS.replaceWith(TEXTAREA_CONTENTS);
-
-    // 초기 높이 설정
-    autoResize(TEXTAREA_TITLE);
-    autoResize(TEXTAREA_CONTENTS);
-
-    CONTAINER.querySelector('.notice-info .content-img').insertAdjacentHTML(
-      'beforeend',
-      '<button class="btn btn-solid upload-img-btn">이미지 등록하기</button>',
-    );
-    CONTAINER.querySelector(
-      '.notice-info-wrapper .button-box',
-    ).insertAdjacentHTML(
-      'beforeend',
-      '<button class="btn btn-solid modify-notice-btn">수정</button><button class="btn btn-solid delete-notice-btn">삭제</button>',
-    );
-    CONTAINER.querySelector('.notice-info').insertAdjacentHTML(
-      'afterbegin',
-      '<span></span>',
-    );
-
-    // INPUT_TITLE.removeAttribute('readonly');
-    // INPUT_CONTENTS.removeAttribute('readonly');
-
-    const UPLOAD_IMG_BTN = CONTAINER.querySelector('.upload-img-btn');
-    const MODIFY_NOTICE_BTN = CONTAINER.querySelector('.modify-notice-btn');
-    const DELETE_NOTICE_BTN = CONTAINER.querySelector('.delete-notice-btn');
-    const ERROR_SPAN = CONTAINER.querySelector('.add-notice-wrapper span');
-
-    let selectedImageFile = null;
-
-    // 이미지 미리보기 처리
-    const handleImagePreview = file => {
-      const FILE_READER = new FileReader();
-      FILE_READER.onload = e => {
-        IMG_PREVIEW.src = e.target.result;
-      };
-      FILE_READER.readAsDataURL(file);
-    };
-
-    const uploadImageTemporarily = () => {
-      const INPUT_TYPE_FILE = document.createElement('input');
-      INPUT_TYPE_FILE.type = 'file';
-      INPUT_TYPE_FILE.accept = 'image/*';
-
-      INPUT_TYPE_FILE.addEventListener('change', e => {
-        const FILE = e.target.files[0];
-        if (!FILE) return;
-
-        // 파일 크기 체크 (5MB 제한)
-        const MAX_FILE_SIZE = 5 * 1024 * 1024;
-        if (FILE.size > MAX_FILE_SIZE) {
-          alert('파일 크기는 5MB 이하여야 합니다.');
-          return;
-        }
-
-        // 이미지 파일 타입 체크
-        if (!FILE.type.startsWith('image/')) {
-          alert('이미지 파일만 업로드 가능합니다.');
-          return;
-        }
-
-        selectedImageFile = FILE;
-        handleImagePreview(FILE);
+    if (workType === 'add') {
+      REGISTER_NOTICE_BTN.addEventListener('click', async () => {
+        const ASK_MESSAGE = '공지사항을 등록하시겠습니까?';
+        const CONFIRM_MESSAGE = '공지사항이 성공적으로 등록되었습니다.';
+        const CANCEL_MESSAGE = '공지사항 등록이 취소되었습니다.';
+        const ERROR_SPAN_MESSAGE =
+          '제목과 내용을 모두 입력해야만 공지사항 등록이 가능합니다';
+        await saveNoticeDataToDB(
+          'add',
+          '',
+          ASK_MESSAGE,
+          CONFIRM_MESSAGE,
+          CANCEL_MESSAGE,
+          selectedImageFile,
+          INPUT_TITLE.value,
+          INPUT_CONTENTS.value,
+          ERROR_SPAN,
+          ERROR_SPAN_MESSAGE,
+        );
+      });
+    } else if (workType === 'modify') {
+      MODIFY_NOTICE_BTN.addEventListener('click', async () => {
+        const ASK_MESSAGE = '공지사항을 수정하시겠습니까?';
+        const CONFIRM_MESSAGE = '공지사항이 성공적으로 수정되었습니다.';
+        const CANCEL_MESSAGE = '공지사항 수정이 취소되었습니다.';
+        const ERROR_SPAN_MESSAGE =
+          '제목과 내용을 모두 입력해야만 공지사항 수정이 가능합니다';
+        await saveNoticeDataToDB(
+          'modify',
+          noticeId,
+          ASK_MESSAGE,
+          CONFIRM_MESSAGE,
+          CANCEL_MESSAGE,
+          selectedImageFile,
+          INPUT_TITLE.value,
+          INPUT_CONTENTS.value,
+          ERROR_SPAN,
+          ERROR_SPAN_MESSAGE,
+          IMG_PREVIEW.src,
+        );
       });
 
-      INPUT_TYPE_FILE.click();
-    };
-
-    UPLOAD_IMG_BTN.addEventListener('click', uploadImageTemporarily);
-
-    MODIFY_NOTICE_BTN.addEventListener('click', async () => {
-      const ASK_MESSAGE = '공지사항을 수정하시겠습니까?';
-      const CONFIRM_MESSAGE = '공지사항이 성공적으로 수정되었습니다.';
-      const CANCEL_MESSAGE = '공지사항 수정이 취소되었습니다.';
-      const ERROR_SPAN_MESSAGE =
-        '제목과 내용을 모두 입력해야만 공지사항 수정이 가능합니다';
-      await saveNoticeDataToDB(
-        'modify',
-        noticeId,
-        ASK_MESSAGE,
-        CONFIRM_MESSAGE,
-        CANCEL_MESSAGE,
-        selectedImageFile,
-        TEXTAREA_TITLE.value,
-        TEXTAREA_CONTENTS.value,
-        ERROR_SPAN,
-        ERROR_SPAN_MESSAGE,
-        IMG_PREVIEW.src,
-      );
-    });
-
-    DELETE_NOTICE_BTN.addEventListener('click', async () => {
-      const ASK_MESSAGE =
-        '공지사항을 삭제하시겠습니까?\n삭제 진행 시 복원할 수 없습니다.';
-      const CONFIRM_MESSAGE = '공지사항이 성공적으로 삭제되었습니다.';
-      const CANCEL_MESSAGE = '공지사항 삭제가 취소되었습니다.';
-      await saveNoticeDataToDB(
-        'delete',
-        noticeId,
-        ASK_MESSAGE,
-        CONFIRM_MESSAGE,
-        CANCEL_MESSAGE,
-      );
-    });
-  };
-
-  // 컨테이너 정리 함수
-  const cleanupContainer = () => {
-    if (currentContainer) {
-      // 이벤트 리스너 제거
-      const POSTCARDS = currentContainer.querySelectorAll(
-        '.postcard-container .postcard',
-      );
-      POSTCARDS.forEach(card => {
-        card.removeEventListener('click', () => {});
+      DELETE_NOTICE_BTN.addEventListener('click', async () => {
+        console.log('호출됨!!');
+        const ASK_MESSAGE =
+          '공지사항을 삭제하시겠습니까?\n삭제 진행 시 복원할 수 없습니다.';
+        const CONFIRM_MESSAGE = '공지사항이 성공적으로 삭제되었습니다.';
+        const CANCEL_MESSAGE = '공지사항 삭제가 취소되었습니다.';
+        await saveNoticeDataToDB(
+          'delete',
+          noticeId,
+          ASK_MESSAGE,
+          CONFIRM_MESSAGE,
+          CANCEL_MESSAGE,
+        );
       });
-
-      const ADD_NOTICE_BTN = currentContainer.querySelector(
-        '.add-announcement-btn',
-      );
-      if (ADD_NOTICE_BTN) {
-        ADD_NOTICE_BTN.removeEventListener('click', () => {});
-      }
-
-      // DOM에서 제거
-      if (currentContainer.parentNode) {
-        currentContainer.parentNode.removeChild(currentContainer);
-      }
-      currentContainer = null;
     }
   };
 
-  // 새로운 컨테이너 렌더링 함수
-  const renderNewContainer = async () => {
-    if (!isAdminView) return; // 관리자 뷰가 아니면 렌더링하지 않음
-
-    cleanupContainer();
-
-    // 기존 #app 내부의 컨테이너 제거
-    const APP_CONTAINER = document.querySelector('#app');
-    if (APP_CONTAINER) {
-      APP_CONTAINER.innerHTML = '';
-    }
-
-    currentContainer = await Announcement();
-    APP_CONTAINER.appendChild(currentContainer);
-
-    const NOTICE_ID = URL_PARAMS.get('noticeinfo');
-
-    if (NOTICE_ID) {
-      modifyExistingNotice(NOTICE_ID);
-    } else {
-      setupAdminFeatures(currentContainer);
-    }
-  };
-
-  // Admin 기능 설정
-  function setupAdminFeatures(container) {
-    if (!CURRENT_USER.isAdmin) return;
-
-    try {
-      const POSTCARDS = container.querySelectorAll(
-        '.postcard-container .postcard',
-      );
-      POSTCARDS.forEach(card => {
-        const clickHandler = () => {
-          const NOTICE_ID = card.getAttribute('data-id');
-          modifyExistingNotice(NOTICE_ID);
-        };
-        card.removeEventListener('click', clickHandler); // 기존 이벤트 리스너 제거
-        card.addEventListener('click', clickHandler);
-      });
-
-      // 기존 버튼 제거
-      const EXISTING_BTN = container.querySelector('.add-announcement-btn');
-      if (EXISTING_BTN) {
-        EXISTING_BTN.remove();
-      }
-
-      const ADD_NOTICE_BTN = document.createElement('button');
-      ADD_NOTICE_BTN.className = 'btn btn-solid add-announcement-btn';
-      ADD_NOTICE_BTN.textContent = '공지사항 등록';
-      container.appendChild(ADD_NOTICE_BTN);
-
-      const addNoticeHandler = () => renderNoticeEditor();
-      ADD_NOTICE_BTN.removeEventListener('click', addNoticeHandler); // 기존 이벤트 리스너 제거
-      ADD_NOTICE_BTN.addEventListener('click', addNoticeHandler);
-    } catch (error) {
-      console.error(error);
-    }
+  if (INIT_NOTICE_INFO) {
+    renderNoticeEditor('modify', INIT_NOTICE_INFO);
+  } else if (INIT_ADD_NOTICE === 'true') {
+    renderNoticeEditor('add', '');
+  } else {
+    renderNoticeList();
   }
-
-  // popstate 이벤트 핸들러
-  const handlePopState = async event => {
-    // URL을 확인하여 관리자 뷰인지 판단
-    const IS_ADMIN_URL = window.location.pathname.includes(
-      '/admin/announcement',
-    );
-    isAdminView = IS_ADMIN_URL;
-
-    if (isAdminView) {
-      await renderNewContainer();
-    }
-  };
-
-  // popstate 이벤트 리스너 등록
-  window.addEventListener('popstate', handlePopState);
-  await renderNewContainer();
 };
 
 export default notice;
