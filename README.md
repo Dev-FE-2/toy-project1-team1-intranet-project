@@ -104,10 +104,13 @@ git clone https://github.com/Dev-FE-2/toy-project1-team1-intranet-project.git
 npm install
 ```
 
-### 클라이언트, 서버 통시 실행
+### 로컬 실행
 
 ```bash
-npm start
+npm run dev
+
+# 혹은 npm start (클라이언트, 서버 동시 실행)
+
 ```
 
 ## 🔧 활용 스택
