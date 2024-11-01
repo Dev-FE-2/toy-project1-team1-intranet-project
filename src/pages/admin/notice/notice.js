@@ -11,7 +11,17 @@ const notice = async () => {
   const INIT_NOTICE_INFO = URL_SEARCH_PARAMS.get('noticeinfo');
 
   const CURRENT_USER = await fetchCurrentUserData();
-  const ALL_NOTICE_DATA = await fetchCollectionData('notices');
+  const ALL_NOTICE_DATA = (await fetchCollectionData('notices')).sort(
+    (a, b) => {
+      const dateA = new Date(
+        (a.updateAt || a.writedAt).replace(/년|월|일/g, ''),
+      );
+      const dateB = new Date(
+        (b.updateAt || b.writedAt).replace(/년|월|일/g, ''),
+      );
+      return dateB - dateA;
+    },
+  );
   const APP = document.querySelector('#app');
   const CONTAINER = document.createElement('div');
   CONTAINER.className = 'container';
@@ -212,10 +222,10 @@ const notice = async () => {
 
     try {
       if (workType === 'add') {
-        REGISTER_NOTICE_BTN.disabled = true
+        REGISTER_NOTICE_BTN.disabled = true;
       } else {
-        MODIFY_NOTICE_BTN.disabled = true
-        DELETE_NOTICE_BTN.disabled = true
+        MODIFY_NOTICE_BTN.disabled = true;
+        DELETE_NOTICE_BTN.disabled = true;
       }
       if (titleValue === '' || contentsValue === '') {
         errorSpan.textContent = errorSpanMessage;
@@ -262,9 +272,9 @@ const notice = async () => {
     } catch (error) {
       console.error(error);
     } finally {
-      REGISTER_NOTICE_BTN.disabled = false
-      MODIFY_NOTICE_BTN.disabled = false
-      DELETE_NOTICE_BTN.disabled = false
+      REGISTER_NOTICE_BTN.disabled = false;
+      MODIFY_NOTICE_BTN.disabled = false;
+      DELETE_NOTICE_BTN.disabled = false;
     }
   };
 
@@ -318,13 +328,15 @@ const notice = async () => {
     const INPUT_CONTENTS = CONTAINER.querySelector(
       '.content-main .content-contents',
     );
-    const MAIN_CONTENTS = CONTAINER.querySelector('.content-main .main-contents')
+    const MAIN_CONTENTS = CONTAINER.querySelector(
+      '.content-main .main-contents',
+    );
 
     MAIN_CONTENTS.addEventListener('click', e => {
       if (e.target !== INPUT_CONTENTS) {
-        INPUT_CONTENTS.focus()
+        INPUT_CONTENTS.focus();
       }
-    })
+    });
 
     const ERROR_SPAN = CONTAINER.querySelector('span');
 
