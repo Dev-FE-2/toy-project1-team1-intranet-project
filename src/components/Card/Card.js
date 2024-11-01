@@ -1,4 +1,4 @@
-import './card.css';
+// import './card.css';
 
 /**
  * 갤러리 게시판 카드
@@ -12,7 +12,7 @@ import './card.css';
  * @param {string} options.createat - 작성날짜
  */
 
-export default function createButton({
+export default function createCard({
   classList = [],
   id,
   title,
