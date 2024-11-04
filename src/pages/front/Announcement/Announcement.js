@@ -141,6 +141,15 @@ export default async function Announcement() {
       });
     }
 
+    const postcards = postContainer.querySelectorAll('.postcard');
+
+    postcards.forEach(card => {
+      card.addEventListener('click', () => {
+        const postId = card.dataset.id;
+        renderNoticeDetail(postId);
+      });
+    });
+
     const searchInput = container.querySelector('input[type="search"]');
     const searchButton = container.querySelector('.material-symbols-outlined');
 
@@ -191,6 +200,39 @@ export default async function Announcement() {
     renderPosts();
   }
   pagination();
+
+  async function renderNoticeDetail(postId) {
+    container.innerHTML = '';
+    const specificNotice = noticeData.find(post => post.id === postId);
+    if (!specificNotice) return;
+    const detailContainer = document.createElement('div');
+    detailContainer.classList.add('notice-info-wrapper');
+    detailContainer.innerHTML = `
+    <div class="notice-info">
+      <h2>공지사항 상세 조회</h2>
+      <div class="content-img">
+        <img class="img-preview" src="${specificNotice.image}" alt="기본공지사항이미지" />
+      </div>
+      <div class="content-contents">
+        <div class="content-title">
+          <div class="title-primary">${specificNotice.title}</div>
+          <div class="title-secondary">
+              <div class="secondary-component">${specificNotice.author}</div>
+              <div class="secondary-component">${specificNotice.updateAt ? specificNotice.updateAt : specificNotice.writedAt}</div>
+          </div>
+        </div>
+      </div>
+      <div class="content-content" name="" id="">${specificNotice.contents}</div>
+    </div>
+    <div class="button-box">
+      <button class="btn btn-outline close--btn">닫기</button>
+    </div>
+  `;
+
+    const closeButton = detailContainer.querySelector('.close--btn');
+
+    container.prepend(detailContainer);
+  }
 
   return container;
 }
