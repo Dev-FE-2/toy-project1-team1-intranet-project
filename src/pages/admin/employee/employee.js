@@ -27,9 +27,9 @@ const employee = async () => {
 		</div>
     <div class='employee-number-box'>
         <div>총 <span>${ALL_USERS.length} </span>명</div>
-        <div>/</div>
+        <div>|</div>
         <div><span>${ONLINE_USERS.length}</span> 명의 직원 근무 중</div>
-        <div>/</div>
+        <div>|</div>
         <div><span>${NOT_APPROVED_USERS.length}</span> 명 승인 대기중</div>
     </div>
 		<div class="table-body">
@@ -307,7 +307,7 @@ const employee = async () => {
             <span class="modal-email-error"></span>
           </div>
           <div>비밀번호</div>
-          <button class="btn btn-outline reset-password-btn">비밀번호 재설정 메일 발송</button>
+          <button class="btn btn-solid reset-password-btn">비밀번호 재설정 메일 발송</button>
           <div>주소</div>
           <div class="address-button-box">
             <button class="btn btn-solid search-address">주소찾기</button>
@@ -325,7 +325,7 @@ const employee = async () => {
             <button class="btn btn-outline cancel-edit-btn">취소</button>
           </div>
           <div class="modal-button-box2">
-            <button class="btn assign-user-btn" ${userInfo.isApproved ? 'style="display: none"' : ''}>가입 승인하기</button>
+            <button class="btn btn-solid approve-user-btn" ${userInfo.isApproved ? 'style="display: none"' : ''}>가입 승인하기</button>
             ${userInfo.isDeleted ? '<button class="btn restore-user-btn">계정 복원하기</button>' : '<button class="btn delete-user-btn">계정 삭제하기</button>'}
           </div>
         </div>
@@ -366,9 +366,9 @@ const employee = async () => {
       }
     });
 
-    const ASSIGN_USER_BTN = editModal.querySelector('.assign-user-btn');
+    const APPROVE_USER_BTN = editModal.querySelector('.approve-user-btn');
 
-    ASSIGN_USER_BTN.addEventListener('click', async () => {
+    APPROVE_USER_BTN.addEventListener('click', async () => {
       if (userInfo.isApproved) {
         return;
       }
