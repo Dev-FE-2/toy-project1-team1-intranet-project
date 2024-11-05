@@ -116,23 +116,23 @@ export default async function Announcement() {
       const end = start + limit;
       const currentPosts = posts.slice(start, end);
 
-      function cuttingString(text, limit) {
-        if (text && text.length > limit) {
+      function cuttingString(text = '', limit) {
+        if (text.length > limit) {
           return text.slice(0, limit) + '...';
         }
-        return text || ''; // text가 undefined일 때 빈 문자열로 반환
+        return text; // text가 undefined일 때 빈 문자열로 반환
       }
 
       currentPosts.forEach(post => {
         const postHTML = `
-      <div class="postcard">
-        <img class="postcard-img" src="${post.image || 'default.jpg'}" alt="Post Image"/>
+      <div class="postcard" data-id="${post.id}">
+        <img class="postcard-img" src="${post.image}" alt="Post Image"/>
         <div class="contents">
-          <h2 class="contents__title">${cuttingString(post.title || 'Untitled', 20)}</h2>
-          <p class="contents__content">${cuttingString(post.contents || '내용 없음', 30)}</p>
+          <h2 class="contents__title">${cuttingString(post.title, 20)}</h2>
+          <p class="contents__content">${cuttingString(post.contents, 40)}</p>
           <div class="contents__information">
-            <span class="information-author">${cuttingString(post.author || 'Unknown', 10)}</span>
-            <span class="information-date">${cuttingString(post.writedAt || '날짜 없음', 15)}</span>
+            <span class="information-author">${cuttingString(post.author, 10)}</span>
+            <span class="information-date">${cuttingString(post.writedAt, 15)}</span>
           </div>
         </div>
       </div>
@@ -145,6 +145,7 @@ export default async function Announcement() {
       postcards.forEach(card => {
         card.addEventListener('click', () => {
           const postId = card.dataset.id;
+
           renderNoticeDetail(postId);
         });
       });
@@ -229,7 +230,7 @@ export default async function Announcement() {
     </div>
   `;
 
-    const closeButton = detailContainer.querySelector('.close--btn');
+    // const closeButton = detailContainer.querySelector('.close--btn');
 
     container.prepend(detailContainer);
   }
