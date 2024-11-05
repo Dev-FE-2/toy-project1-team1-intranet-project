@@ -4,10 +4,13 @@ import { doc, updateDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 ut
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { DB, AUTH } from '../../../../firebaseConfig'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
 
-const employeeList = async userUID => {
+const employee = async () => {
   const URL_PARAMS = new URLSearchParams(window.location.search);
   const INIT_SEARCH_VALUE = URL_PARAMS.get('search')?.trim().toLowerCase();
+  const INIT_USER_INFO_VALUE = URL_PARAMS.get('userinfo');
   const ALL_USERS = await fetchCollectionData('users');
+  const ONLINE_USERS = ALL_USERS.filter(user => user.isWorking === true);
+  const NOT_APPROVED_USERS = ALL_USERS.filter(user => user.isApproved === false)
 
   const CONTAINER = document.createElement('div');
   CONTAINER.className = 'container employee-list';
@@ -15,55 +18,77 @@ const employeeList = async userUID => {
     <div class="container-header">
 			<h1 class="title">직원 목록</h1>
 			<div class="search-box">
-				<input class="employeeList-search-input"  placeholder="어쩌구를 검색하세요.">
+				<input class="employeeList-search-input"  placeholder="직원 정보를 검색해 주세요.">
 				<span class="material-symbols-outlined"> search </span>
 			</div>
 		</div>
+    <div class='employee-number-box'>
+        <div>총 <span>${ALL_USERS.length} </span>명</div>
+        <div>/</div>
+        <div><span>${ONLINE_USERS.length}</span> 명의 직원 근무 중</div>
+        <div>/</div>
+        <div><span>${NOT_APPROVED_USERS.length}</span> 명 승인 대기중</div>
+    </div>
 		<div class="table-body">
 			<ul class="table" role="list" aria-label="직원 목록" id='employee-data-ul'>
 
 			</ul>
-		</div>    <!-- 📌 페이지네이션은 추후 삭제 예정 => 컴포넌트로 바꾸지 않을까? 싶음 -->
-		<div class="pagination">
-			<ul class="paging-list" role="list">
-				<li class="paging-item prev">
-					<button class="btn" type="button" aria-label="이전 페이지">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 34 34">
-							<line x1="20" y1="6" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-							<line x1="12" y1="17" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-							</line>
-						</svg>
-					</button>
-				</li>
-				<!-- [D] 활성화된 li.is-active 클래스 추가 -->
-				<li class="paging-item is-active" aria-current="page">
-					<a href="javascript:void(0);">1</a>
-				</li>
-				<li class="paging-item"><a href="javascript:void(0);">2</a></li>
-				<li class="paging-item"><a href="javascript:void(0);">3</a></li>
-				<li class="paging-item"><a href="javascript:void(0);">4</a></li>
-				<li class="paging-item"><a href="javascript:void(0);">5</a></li>
-				<li class="paging-item next">
-					<button class="btn" type="button" aria-label="다음 페이지">
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 34 34">
-							<line x1="14" y1="6" x2="22" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-							<line x1="22" y1="17" x2="14" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-							</line>
-						</svg>
-					</button>
-				</li>
-			</ul>
 		</div>
   `;
+
+  // 직원 상세 페이지 렌더링
+  const renderSpecificUserInfo = (userId, users) => {
+    const SPECIFIC_USER_INFO = users.find(user => user.id === userId);
+
+    if (SPECIFIC_USER_INFO) {
+      CONTAINER.innerHTML = `
+        <h2 class='title'>${SPECIFIC_USER_INFO.name}님의 상세 페이지</h2>
+        <div class='user-profile'>
+          <div class='profile-sub-info'>
+            <img src="${SPECIFIC_USER_INFO.profileImg}" alt="기본유저이미지">
+            <button class="btn btn-solid open-modal-btn">정보 수정</button>
+          </div>
+          <div class='profile-main-info'>
+            <div>사번: ${SPECIFIC_USER_INFO.employeeNumber}</div>
+            <div>이름: ${SPECIFIC_USER_INFO.name}</div>
+            <div>소속: ${SPECIFIC_USER_INFO.team}</div>
+            <div>직급: ${SPECIFIC_USER_INFO.role}</div>
+            <div>연락처: ${SPECIFIC_USER_INFO.phone}</div>
+            <div>이메일: ${SPECIFIC_USER_INFO.email}</div>
+            <div>주소: ${SPECIFIC_USER_INFO.address}</div>
+            <div class='badge ${SPECIFIC_USER_INFO.isWorking ? 'badge-success' : 'badge-error'}'>${SPECIFIC_USER_INFO.isWorking ? '근무 중' : '근무 중 아님'}
+            </div>
+          </div>
+        </div>
+        <div class="edit-profile-modal-wrapper">
+        </div>
+      `;
+    }
+    const OPEN_MODAL_BTN = CONTAINER.querySelector('.open-modal-btn');
+    const EDIT_MODAL = CONTAINER.querySelector('.edit-profile-modal-wrapper');
+    OPEN_MODAL_BTN.addEventListener('click', () =>
+      renderEditModal(SPECIFIC_USER_INFO, EDIT_MODAL),
+    );
+  };
+
   const EMPLOYEE_DATA = CONTAINER.querySelector('#employee-data-ul');
   const SEARCH_INPUT = CONTAINER.querySelector('.employeeList-search-input');
 
   try {
     ALL_USERS.sort((a, b) => {
-      if ((a.isDeleted ?? false) === (b.isDeleted ?? false)) {
-        return a.name.localeCompare(b.name, 'ko');
+      if ((a.isApproved ?? true) !== (b.isApproved ?? true)) {
+        return (a.isApproved ?? true) - (b.isApproved ?? true);
       }
-      return (a.isDeleted ?? false) - (b.isDeleted ?? false);
+  
+      if ((a.isDeleted ?? false) !== (b.isDeleted ?? false)) {
+        return (a.isDeleted ?? false) - (b.isDeleted ?? false);
+      }
+      
+      if ((a.isWorking ?? false) !== (b.isWorking ?? false)) {
+        return (b.isWorking ?? false) - (a.isWorking ?? false);
+      }
+      
+      return a.name.localeCompare(b.name, 'ko');
     });
 
     const MEDIA_QUERY_1230 = window.matchMedia('(max-width: 1230px)');
@@ -86,17 +111,20 @@ const employeeList = async userUID => {
         USER_STATUS.forEach(el => {
           el.textContent = '';
         });
-      } else if (MEDIA_QUERY_768.matches) {
-        USER_STATUS.forEach((el, index) => {
-          el.textContent = USER_STATUS_OG_VALUE[index];
-        });
-      } else if (MEDIA_QUERY_480.matches) {
-        USER_STATUS.forEach(el => {
-          el.textContent = '';
-        });
       } else {
         USER_STATUS.forEach((el, index) => {
           el.textContent = USER_STATUS_OG_VALUE[index];
+        });
+      }
+
+      if (MEDIA_QUERY_768.matches) {
+        USER_STATUS.forEach((el, index) => {
+          el.textContent = USER_STATUS_OG_VALUE[index];
+        });
+      }
+      if (MEDIA_QUERY_480.matches) {
+        USER_STATUS.forEach(el => {
+          el.textContent = '';
         });
       }
     };
@@ -109,7 +137,7 @@ const employeeList = async userUID => {
 				  <ul class="head" role="list-head">
 					  <li class="number">사번</li>
 			  		<li class="profile-img">사진</li>
-			  		<li class="name">이름</li>
+			  		<li class="name">이름 / E-mail</li>
 			  		<li class="team">소속팀</li>
 			  		<li class="role">직급</li>
 			  		<li class="status">근무 상태</li>
@@ -122,7 +150,8 @@ const employeeList = async userUID => {
                 .map(
                   user =>
                     `
-              <li class="col ${user.isDeleted ? 'deleted-user-col' : ''}">
+              <li class="col ${user.isDeleted ? 'deleted-user-col' : ''}
+              ${!user.isApproved ? 'notApproved-user-col' : ''}">
                 <ul class="cell" role="list" data-id='${user.id}'>
 					  	    <li class="number">${user.employeeNumber}</li>
 						      <li class="profile-img">
@@ -130,7 +159,7 @@ const employeeList = async userUID => {
 								    <img src=${user.profileImg} alt="프로필 이미지 미리보기">
 							      </div>
 						      </li>
-						      <li class="name">${user.name}</li>
+						      <li class="name"><div>${user.name}</div><div class='email'>${user.email}</div></li>
 						      <li class="team">${user.team}</li>
 					  	    <li class="role">${user.role}</li>
 					  	    <li class="user-status">
@@ -148,6 +177,12 @@ const employeeList = async userUID => {
       }
     };
 
+    if (INIT_USER_INFO_VALUE) {
+      renderSpecificUserInfo(INIT_USER_INFO_VALUE, ALL_USERS);
+    } else {
+      renderEmployeeList(ALL_USERS);
+    }
+
     const getSearchedUsers = searchValue => {
       return ALL_USERS.filter(
         users =>
@@ -163,6 +198,7 @@ const employeeList = async userUID => {
     if (INIT_SEARCH_VALUE) {
       const SEARCHED_USERS = getSearchedUsers(INIT_SEARCH_VALUE);
       renderEmployeeList(SEARCHED_USERS);
+      SEARCH_INPUT.value = INIT_SEARCH_VALUE;
     } else {
       renderEmployeeList(ALL_USERS);
     }
@@ -170,7 +206,8 @@ const employeeList = async userUID => {
     SEARCH_INPUT.addEventListener('keypress', event => {
       if (event.key === 'Enter') {
         const SEARCH_INPUT_VALUE = event.target.value.trim().toLowerCase();
-        history.pushState(null, null, `/admin?search=${SEARCH_INPUT_VALUE}`);
+        URL_PARAMS.set('search', SEARCH_INPUT_VALUE);
+        history.pushState(null, null, `/admin?${URL_PARAMS.toString()}`);
 
         const SEARCHED_USERS = getSearchedUsers(SEARCH_INPUT_VALUE);
 
@@ -185,6 +222,9 @@ const employeeList = async userUID => {
       USER_CELLS.forEach(userCell => {
         userCell.addEventListener('click', e => {
           const USER_ID = e.currentTarget.getAttribute('data-id');
+
+          URL_PARAMS.set('userinfo', USER_ID);
+          history.pushState(null, null, `/admin?${URL_PARAMS.toString()}`);
           renderSpecificUserInfo(USER_ID, ALL_USERS);
         });
       });
@@ -196,49 +236,12 @@ const employeeList = async userUID => {
     MEDIA_QUERY_768.addEventListener('change', updateUserStatus);
     MEDIA_QUERY_480.addEventListener('change', updateUserStatus);
   } catch (error) {
-    console.log('데이터 로드 실패:', error);
+    console.error('Fail to load Data:', error);
     const employeeData = CONTAINER.querySelector('#employee-data');
     if (employeeData) {
       employeeData.innerHTML = `<p>데이터를 불러오는데 실패했습니다.</p>`;
     }
   }
-
-  // 직원 상세 페이지 렌더링
-  const renderSpecificUserInfo = (userId, users) => {
-    const SPECIFIC_USER_INFO = users.find(user => user.id === userId);
-
-    if (SPECIFIC_USER_INFO) {
-      history.pushState(null, null, `/admin/${userId}`);
-
-      CONTAINER.innerHTML = `
-			<h2>${SPECIFIC_USER_INFO.name}님의 상세 페이지</h2>
-			<div class='user-profile'>
-				<div class='profile-sub-info'>
-					<img src="${SPECIFIC_USER_INFO.profileImg}" alt="기본유저이미지">
-					<button class="btn btn-solid open-modal-btn">정보 수정</button>
-				</div>
-				<div class='profile-main-info'>
-					<div>사번: ${SPECIFIC_USER_INFO.employeeNumber}</div>
-					<div>이름: ${SPECIFIC_USER_INFO.name}</div>
-					<div>소속: ${SPECIFIC_USER_INFO.team}</div>
-					<div>직급: ${SPECIFIC_USER_INFO.role}</div>
-					<div>연락처: ${SPECIFIC_USER_INFO.phone}</div>
-					<div>이메일: ${SPECIFIC_USER_INFO.email}</div>
-          <div>주소: ${SPECIFIC_USER_INFO.address}</div>
-					<div class='badge ${SPECIFIC_USER_INFO.isWorking ? 'badge-success' : 'badge-error'}'>${SPECIFIC_USER_INFO.isWorking ? '근무 중' : '근무 중 아님'}
-          </div>
-				</div>
-			</div>
-      <div class="edit-profile-modal-wrapper">
-      </div>
-		`;
-    }
-    const OPEN_MODAL_BTN = CONTAINER.querySelector('.open-modal-btn');
-    const EDIT_MODAL = CONTAINER.querySelector('.edit-profile-modal-wrapper');
-    OPEN_MODAL_BTN.addEventListener('click', () =>
-      renderEditModal(SPECIFIC_USER_INFO, EDIT_MODAL),
-    );
-  };
 
   // 특정 직원 정보 수정
   const renderEditModal = (userInfo, editModal) => {
@@ -279,12 +282,16 @@ const employeeList = async userUID => {
           <div>직급</div>
           <select name="role">
             <option disabled>선택</option>
-            <option value="사원" selected>사원</option>
+            <option value="사원">사원</option>
             <option value="주임">주임</option>
-            <option value="선임">선임</option>
-            <option value="책임">책임</option>
-            <option value="수석">수석</option>
-            <option value="실장">실장</option>
+            <option value="대리">대리</option>
+            <option value="과장">과장</option>
+            <option value="차장">차장</option>
+            <option value="부장">부장</option>
+            <option value="이사">이사</option>
+            <option value="상무">상무</option>
+            <option value="전무">전무</option>
+            <option value="대표">대표</option>
           </select>
           <div>연락처</div>
           <input class="modal-user-phone" type="text" maxlength="11" value="${userInfo.phone}" placeholder="연락처를 입력해주세요."/>
@@ -375,8 +382,11 @@ const employeeList = async userUID => {
             role: ROLE_SELECT.value,
             isApproved: true,
           });
+          alert('정상적으로 승인되었습니다');
+        } else {
+          alert('가입 승인이 취소되었습니다.');
         }
-        alert('정상적으로 승인되었습니다');
+
         window.location.reload();
       } catch (error) {
         console.error('Error updating user info:', error);
@@ -394,15 +404,16 @@ const employeeList = async userUID => {
               isDeleted: true,
               deletedAt: new Date(),
             });
-
             alert('정상적으로 삭제되었습니다.');
-            window.location.reload();
+          } else {
+            alert('계정 삭제가 취소되었습니다.');
           }
+
+          window.location.reload();
         } catch (error) {
           console.error('Error deleting user:', error);
           alert('삭제 중 오류가 발생했습니다.');
         }
-        ㅁ;
       });
     } else {
       const RESTORE_USER_BTN = editModal.querySelector('.restore-user-btn');
@@ -414,10 +425,12 @@ const employeeList = async userUID => {
               isDeleted: false,
               restoredAt: new Date(),
             });
-
             alert('정상적으로 복원되었습니다.');
-            window.location.reload();
+          } else {
+            alert('계정 복원이 취소되었습니다.');
           }
+
+          window.location.reload();
         } catch (error) {
           console.error('Error restoring user:', error);
           alert('복원 중 오류가 발생했습니다.');
@@ -658,4 +671,4 @@ const employeeList = async userUID => {
   return CONTAINER;
 };
 
-export default employeeList;
+export default employee;

@@ -44,21 +44,13 @@
   font-weight: 700;
 }
 
-.header .user-info .logout {
-  padding: 0.6rem 0.8rem;
+.header .user-info .btn {
+  padding: 0.8rem 1rem;
   margin-top: 1rem;
   font-size: 1.4rem;
   font-weight: 500;
-  color: var(--main1);
-  background: var(--white1);
-  border: 1px solid var(--main1);
-  border-radius: 6px;
-  transition: 0.3s;
 }
 
-.header .user-info .logout:hover {
-  background: var(--main3);
-}
 
 .header nav {
   padding-top: 2rem;

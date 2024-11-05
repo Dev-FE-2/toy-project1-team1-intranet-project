@@ -81,12 +81,6 @@
   padding: 1rem 0; /* overflow hidden으로 애니메이션 효과 가려져서 추가 */
 }
 
-/* [data-page="main"] .work-info .btn-work-state.on {
-  background-color: var(--main4);
-  color: var(--main1);
-  border-color: var(--main1);
-} */
-
 @media screen and (max-width: 768px) {
   [data-page='main'] .work-info {
     width: auto;

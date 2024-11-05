@@ -1,38 +1,45 @@
-/* container 임시 클래스 적용 */
-/* table 레이아웃 항목 정리 필요 -> 사번 이름 주소 (활성상태-근무중/..) 이름> 이메일 추가
-*/
-
 @media screen and (max-width: 1230px) {
-
   .table-body .col {
     padding: 1.7rem 1.5rem;
   }
 
   .table-body .cell .user-status .badge {
-    width: .1rem !important;
+    width: 0.1rem !important;
     padding: 1.5rem !important;
   }
-
-  /* .layer-popup {
-    min-width: 50rem;
-  } */
 }
-@media screen and (max-width:900px) {
-  .table-body .head .profile-img, .table-body .cell .profile-img {
+@media screen and (max-width: 1000px) {
+  .edit-profile-modal-wrapper .edit-profile-modal {
+    margin-left: 30rem;
+  }
+}
+@media screen and (max-width: 900px) {
+  .table-body .head .profile-img,
+  .table-body .cell .profile-img {
     display: none;
   }
 }
 @media screen and (max-width: 768px) {
-  .table-body .head .profile-img, .table-body .cell .profile-img {
+  .table-body .head .profile-img,
+  .table-body .cell .profile-img {
     display: block;
   }
 
-  /* .layer-popup {
-    width: 75%;
-  } */
+  .table-body .cell .user-status .badge {
+    width: 10rem !important;
+    font-size: 1.3rem;
+    padding: 0.8rem 1rem !important;
+    white-space: nowrap;
+    /* text-overflow: clip; */
+  }
+
+  .edit-profile-modal-wrapper .edit-profile-modal {
+    margin-left: 0;
+  }
 }
 @media screen and (max-width: 600px) {
-  .table-body .head .profile-img, .table-body .cell .profile-img {
+  .table-body .head .profile-img,
+  .table-body .cell .profile-img {
     display: none;
   }
 
@@ -41,8 +48,8 @@
   }
 }
 @media screen and (max-width: 480px) {
-
-  .table-body .head .profile-img, .table-body .cell .profile-img {
+  .table-body .head .profile-img,
+  .table-body .cell .profile-img {
     display: none;
   }
 
@@ -50,6 +57,10 @@
     width: 37rem;
   }
 
+  .table-body .cell .user-status .badge {
+    width: 0.1rem !important;
+    padding: 1.5rem !important;
+  }
 }
 @media (max-height: 900px) {
   .container .edit-profile-modal-wrapper .edit-profile-modal {
@@ -57,10 +68,10 @@
   }
 }
 
-.col .head li , .col .cell li {
+.col .head li,
+.col .cell li {
   display: flex;
   justify-content: center;
-
 }
 
 .container .container-header {
@@ -73,7 +84,7 @@
 .container-header .search-box {
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 .img-box {
@@ -95,17 +106,18 @@
 }
 
 .table .col li {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .table-body .cell .user-status .badge {
   width: 9rem;
   font-size: 1.3rem;
-  padding: .8rem 1rem;
+  padding: 0.8rem 1rem;
+  white-space: nowrap;
 }
 
 .table-body .cell .btn {
-  padding: .7rem 1.5rem;
+  padding: 0.7rem 1.5rem;
   font-size: 1.3rem;
   font-weight: 500;
   width: 8.1rem;
@@ -172,7 +184,7 @@
 .profile-main-info .badge {
   width: 10rem;
   font-size: 1.3rem;
-  padding: .8rem 1rem;
+  padding: 0.8rem 1rem;
 }
 
 .col .cell {
@@ -186,7 +198,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, .4);
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -231,16 +243,18 @@
   font-size: 1.5rem;
 }
 
-.edit-profile-modal div, input, select {
+.edit-profile-modal div,
+input,
+select {
   width: 100%;
 }
 
 .edit-profile-modal select {
-  margin: .3rem 0 1.3rem 0;
+  margin: 0.3rem 0 1.3rem 0;
 }
 
 .edit-profile-modal input {
-  margin: .3rem 0 1.3rem 0;
+  margin: 0.3rem 0 1.3rem 0;
 }
 
 .edit-profile-modal button {
@@ -251,11 +265,11 @@
 .edit-profile-modal .address-button-box {
   width: 100%;
   padding: 0;
-  margin-top: .3rem;
+  margin-top: 0.3rem;
 }
 
 .edit-profile-modal .modal-user-address {
-  margin-bottom: .3rem;
+  margin-bottom: 0.3rem;
 }
 
 .edit-profile-modal .modal-button-box1 {
@@ -340,7 +354,55 @@
 .edit-profile-modal .reset-password-btn {
   width: 100%;
   padding: 1rem 0;
-  margin: .5rem 0 1rem 0;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 1%;
+  font-size: 1.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email {
+  font-size: 1.3rem;
+}
+
+.employee-number-box {
+  width: 35rem;
+  margin: 0 0 1rem 12%;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  font-weight: 700;
+
+}
+
+.employee-number-box div:nth-child(1) span {
+  color: #bbb;
+}
+
+.employee-number-box div:nth-child(3) span {
+  color: #23b25c;
+}
+
+.employee-number-box div:nth-child(5) span {
+  color: var(--color-error);
+}
+
+.table .col:last-child {
+  border-radius: 0 0 1rem 1rem;
+}
+
+.table-body {
+  margin-bottom: 10rem;
+}
+
+.notApproved-user-col {
+  background-color: var(--bg-success);
 }
 
 /* 직원 정보 수정 모달 스크롤 바 삭제 */
@@ -351,4 +413,4 @@
 .edit-profile-modal-wrapper .edit-profile-modalasd {
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none; /* 파이어폭스 */
-} 
+}

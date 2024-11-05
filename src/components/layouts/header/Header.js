@@ -1,25 +1,33 @@
 import { NAV } from '/src/constants/constants';
-import './header.css';
-import { getFirestore, collection, getDoc } from 'firebase/firestore';
-import { DB, AUTH } from '../../../../firebaseConfig';
+import { AUTH } from '../../../../firebaseConfig';
 import { fetchCurrentUserData } from '@utils/fetchCurrentUserData';
+import './header.css';
+import createButton from '@components/Button/Button';
+import { goToPage } from '/src/main';
 
 
-const Header = async () => {
-  
-  // 로그인&로그아웃, 유저 사진&이름 관련 만들어야함
-  console.log(fetchCurrentUserData())
+const Header = async (path) => {
 
-  // 유저 데이터(사진, 이름)
-  const userImgSrc = 'https://cdn.pixabay.com/photo/2021/12/16/09/26/pomeranian-6874257_1280.jpg';
-  const userName = '홍길동';
+  let userData;
+  let userName;
+  let userImgSrc;
+
+  try {
+    userData = await fetchCurrentUserData();
+
+    // 유저 데이터(이름, 사진)
+    userName = userData.name;
+    userImgSrc = userData.profileImg;
+  } catch (err) {
+    console.error('err', err)
+  }
 
   // 내비게이션 목록 데이터
   const frontNav = NAV.front;
   const adminNav = NAV.admin;
 
   // 어드민인지 유저페이지인지 판별 필요
-  const isAdmin = true;
+  const isAdmin = path.startsWith('/admin');
 
   // 내비게이션 항목 생성기
   const createNavItems = (navItems) => {
@@ -32,7 +40,18 @@ const Header = async () => {
     `).join('');
   };
 
-  return `
+  // 로그아웃 버튼
+  const logoutButton = createButton({
+    classList: ['btn', 'btn-outline'],
+    id: 'header-logout-button',
+    text: '로그아웃',
+    onClick: async () => {
+      await AUTH.signOut();
+      goToPage('/join');
+    }
+  });
+
+  const headerHtml = `
     <header class="header">
       <div class="user-info-wrapper">
         <div class="user-img-box">
@@ -44,16 +63,18 @@ const Header = async () => {
         <div class="user-info">
           <!-- 프로필 페이지 링크 넣기 -->
           <a href="#none" class="user-name">${userName}</a>
-          <button type="button" class="logout">로그아웃</button>
+          ${logoutButton.render()}
         </div>
       </div>
       <nav>
         <ul>
-          ${isAdmin ? createNavItems(frontNav) : createNavItems(adminNav)}
+          ${isAdmin ? createNavItems(adminNav) : createNavItems(frontNav)}
         </ul>
       </nav>
     </header>
   `;
+
+  return {headerHtml, logoutButton}
 }
 
 export default Header;

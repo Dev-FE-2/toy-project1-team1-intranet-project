@@ -1,4 +1,4 @@
-import './card.css';
+// import './card.css';
 
 /**
  * 갤러리 게시판 카드
@@ -12,20 +12,21 @@ import './card.css';
  * @param {string} options.createat - 작성날짜
  */
 
-export default function createButton({
+export default function createCard({
   classList = [],
   id,
   title,
   content,
   thumb,
   writer,
-  createat
+  createat,
+  href = '#none'
 }){
   
   // 카드 마크업
   const render = () => `
     <div id="${id}" class="postcard ${classList ? classList.join(' ') : ''}">
-      <a href="#none">
+      <a href="${href}">
         ${thumb ? `<img class="postcard-img" src="${thumb}" alt="Post Image" />` : ''}
         <div class="contents">
           <h2 class="contents__title">${title}</h2>
