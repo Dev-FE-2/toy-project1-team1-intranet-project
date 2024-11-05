@@ -105,16 +105,13 @@ const handleLogin = async () => {
       const USER_DATA = USER_DOC.data();
 
       if (!USER_DATA.isApproved) {
-        // 관리자 승인 되었는지 확인
-        ERROR_MESSAGE.textContent = '로그인 실패: 관리자 승인 대기 중입니다.';
         await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
-        return;
+        throw new Error('승인대기중');
       }
 
       if (USER_DATA.isDeleted) {
-        ERROR_MESSAGE.textContent = '로그인 실패: 삭제된 계정입니다.';
         await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
-        return;
+        throw new Error('삭제된계정');
       }
 
       ERROR_MESSAGE.textContent = '로그인 성공!';
@@ -137,6 +134,16 @@ const handleLogin = async () => {
       case 'auth/invalid-credential':
         ERROR_MESSAGE.textContent =
           '잘못된 이메일 혹은 비밀번호입니다. 확인 후 다시 입력해주세요.';
+        break;
+      default:
+        ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
+    }
+    switch (error.message) {
+      case '승인대기중':
+        ERROR_MESSAGE.textContent = '로그인 실패: 관리자 승인 대기중입니다.';
+        break;
+      case '삭제된계정':
+        ERROR_MESSAGE.textContent = '로그인 실패: 삭제된 계정입니다.';
         break;
       default:
         ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
@@ -231,7 +238,7 @@ const renderSignupForm = () => {
 
   const SIGNUP_INPUT = getSignupInput();
 
-  const SIGNUP_EMAIL = SIGNUP_INPUT.email;
+  const SIGNUP_EMAIL = SIGNUP_INPUT.email
   const SIGNUP_PASSWORD = SIGNUP_INPUT.password;
   const SIGNUP_PASSWORDCHECK = SIGNUP_INPUT.passwordCheck;
   const SIGNUP_NAME = SIGNUP_INPUT.name;
@@ -368,8 +375,7 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
   const ERROR_MESSAGE = document.querySelector('.error-message');
 
   if (!Object.values(IS_VALID).every(Boolean)) {
-    ERROR_MESSAGE.textContent = '모든 입력값을 올바르게 입력해 주세요.';
-    return;
+    throw new Error('유효성검사실패');
   }
 
   const USERS_DOC = await getDocs(collection(DB, 'users'));
@@ -378,11 +384,7 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
   );
 
   if (IS_EMPLOYEE_NUMBER_DUPLICATE) {
-    console.log('ghcnf')
-    EMPLOYEE_NUMBER_ERROR.textContent =
-      '현재 사용중인 사번입니다. 입력을 확인해주세요.';
-    SIGNUP_BUTTON.disabled = false;
-    return;
+    throw new Error('사용중인사번');
   }
 
   try {
@@ -420,9 +422,19 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
       case 'auth/email-already-in-use':
         ERROR_MESSAGE.textContent = '이미 존재하는 이메일입니다.';
         break;
-      // default:
-      //   ERROR_MESSAGE.textContent =
-      //     '회원가입에 실패했습니다. 다시 시도해 주세요.';
+      default:
+        ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
+    }
+    switch (error.message) {
+      case '유효성검사실패':
+        ERROR_MESSAGE.textContent = '모든 입력값을 올바르게 입력해 주세요.';
+        break;
+      case '사용중인사번':
+        EMPLOYEE_NUMBER_ERROR.textContent =
+          '현재 사용중인 사번입니다. 입력을 확인해주세요.';
+        break;
+      default:
+        ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
     }
   } finally {
     SIGNUP_BUTTON.disabled = false;
