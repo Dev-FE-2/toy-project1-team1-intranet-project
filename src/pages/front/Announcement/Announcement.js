@@ -35,7 +35,7 @@ export default async function Announcement() {
     function pageRendering() {
       page.innerHTML = '';
 
-      if (pageGroup > 1) {
+      if (currentPage) {
         page.insertAdjacentHTML(
           'beforeend',
           `<li class="paging-item prev">
@@ -57,7 +57,7 @@ export default async function Announcement() {
         );
       }
 
-      if (currentPage < totalPage) {
+      if (currentPage) {
         page.insertAdjacentHTML(
           'beforeend',
           `<li class="paging-item next">
@@ -139,16 +139,16 @@ export default async function Announcement() {
     `;
         postContainer.insertAdjacentHTML('beforeend', postHTML);
       });
-    }
 
-    const postcards = postContainer.querySelectorAll('.postcard');
+      const postcards = postContainer.querySelectorAll('.postcard');
 
-    postcards.forEach(card => {
-      card.addEventListener('click', () => {
-        const postId = card.dataset.id;
-        renderNoticeDetail(postId);
+      postcards.forEach(card => {
+        card.addEventListener('click', () => {
+          const postId = card.dataset.id;
+          renderNoticeDetail(postId);
+        });
       });
-    });
+    }
 
     const searchInput = container.querySelector('input[type="search"]');
     const searchButton = container.querySelector('.material-symbols-outlined');
