@@ -3,6 +3,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { DB, AUTH } from '../../../../firebaseConfig'; // 📌 추후 DB 저장 util로 변경 시 삭제 필요!
+import { uploadFileToStorage } from '@utils/saveDataToDB';
 
 const employee = async () => {
   const URL_PARAMS = new URLSearchParams(window.location.search);
@@ -10,7 +11,9 @@ const employee = async () => {
   const INIT_USER_INFO_VALUE = URL_PARAMS.get('userinfo');
   const ALL_USERS = await fetchCollectionData('users');
   const ONLINE_USERS = ALL_USERS.filter(user => user.isWorking === true);
-  const NOT_APPROVED_USERS = ALL_USERS.filter(user => user.isApproved === false)
+  const NOT_APPROVED_USERS = ALL_USERS.filter(
+    user => user.isApproved === false,
+  );
 
   const CONTAINER = document.createElement('div');
   CONTAINER.className = 'container employee-list';
@@ -79,15 +82,15 @@ const employee = async () => {
       if ((a.isApproved ?? true) !== (b.isApproved ?? true)) {
         return (a.isApproved ?? true) - (b.isApproved ?? true);
       }
-  
+
       if ((a.isDeleted ?? false) !== (b.isDeleted ?? false)) {
         return (a.isDeleted ?? false) - (b.isDeleted ?? false);
       }
-      
+
       if ((a.isWorking ?? false) !== (b.isWorking ?? false)) {
         return (b.isWorking ?? false) - (a.isWorking ?? false);
       }
-      
+
       return a.name.localeCompare(b.name, 'ko');
     });
 
@@ -497,24 +500,6 @@ const employee = async () => {
       });
     };
 
-    // Firebase Storage에 이미지 업로드
-    const uploadImageToStorage = async FILE => {
-      const STORAGE = getStorage();
-      const STORAGE_REF = ref(
-        STORAGE,
-        `profile-images/${Date.now()}_${FILE.name}`,
-      );
-
-      try {
-        const UPLOAD_SNAPSHOT = await uploadBytes(STORAGE_REF, FILE);
-        const DOWNLOAD_URL = await getDownloadURL(UPLOAD_SNAPSHOT.ref);
-        return DOWNLOAD_URL;
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        throw new Error('이미지 업로드에 실패했습니다.');
-      }
-    };
-
     // 입력값 유효성 검사
     const validateInput = (value, type) => {
       switch (type) {
@@ -639,7 +624,10 @@ const employee = async () => {
         // 이미지가 선택된 경우에만 Storage에 업로드
         let imageURL = userInfo.profileImg; // 기본값은 현재 이미지 URL
         if (selectedImageFile) {
-          imageURL = await uploadImageToStorage(selectedImageFile);
+          imageURL = await uploadFileToStorage(
+            `profile-images/${Date.now()}_${selectedImageFile.name}`,
+            selectedImageFile,
+          );
         }
 
         // Firestore 업데이트 - 이미지 URL과 함께 모든 정보 저장
