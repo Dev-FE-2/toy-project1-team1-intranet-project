@@ -27,14 +27,25 @@ const renderPage = pageType => {
   }
 };
 
-const navigateToSignup = () => {
-  updateURL(PAGE_TYPES.signup);
-  renderSignupForm();
+const navigateTo = pageType => {
+  updateURL(pageType);
+  renderPage(pageType);
 };
 
-const navigateToLogin = () => {
-  updateURL(PAGE_TYPES.login);
-  renderLoginForm();
+const addNavigationHandler = (selector, pageType) => {
+  document
+    .querySelector(selector)
+    .addEventListener('click', () => navigateTo(pageType));
+};
+
+const addEnterKeyHandler = (selectors, actionFunction) => {
+  document.querySelectorAll(selectors).forEach(selector =>
+    selector.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        actionFunction();
+      }
+    }),
+  );
 };
 
 // ========================== 로그인 ==========================
@@ -63,21 +74,8 @@ const renderLoginForm = () => {
     .querySelector('.login-button')
     .addEventListener('click', handleLogin);
 
-  document
-    .querySelector('.go-to-signup')
-    .addEventListener('click', navigateToSignup);
-
-  const LOGIN_FORM_INPUTS = document.querySelectorAll('.login-form input');
-
-  const handleKeyDown = e => {
-    if (e.key === 'Enter') {
-      handleLogin();
-    }
-  };
-
-  LOGIN_FORM_INPUTS.forEach(input => {
-    input.addEventListener('keydown', handleKeyDown);
-  });
+  addNavigationHandler('.go-to-signup', PAGE_TYPES.signup);
+  addEnterKeyHandler('.login-form input', handleLogin);
 };
 
 // 로그인 핸들러
@@ -89,6 +87,7 @@ const handleLogin = async () => {
 
   try {
     LOGIN_BUTTON.disabled = true;
+    ERROR_MESSAGE.textContent = '';
 
     // Firebase Authentication 로그인
     const USER_CREDENTIAL = await signInWithEmailAndPassword(
@@ -104,50 +103,17 @@ const handleLogin = async () => {
     if (USER_DOC.exists()) {
       const USER_DATA = USER_DOC.data();
 
-      if (!USER_DATA.isApproved) {
-        await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
-        throw new Error('승인대기중');
-      }
-
-      if (USER_DATA.isDeleted) {
-        await AUTH.signOut(); // 로그인 실패시 로그아웃 처리
-        throw new Error('삭제된계정');
-      }
-
-      ERROR_MESSAGE.textContent = '로그인 성공!';
-
-      // isAdmin 값에 따라 리다이렉션
-      if (USER_DATA.isAdmin) {
-        window.location.href = '/admin';
+      if (!USER_DATA.isApproved || USER_DATA.isDeleted) {
+        AUTH.signOut(); // 로그인 실패시 로그아웃 처리
+        throw new Error(
+          USER_DATA.isDeleted ? 'deleted account' : 'waiting for approval',
+        );
       } else {
-        window.location.href = '/';
+        window.location.href = USER_DATA.isAdmin ? '/admin' : '/';
       }
     }
   } catch (error) {
-    switch (error.code) {
-      case 'auth/invalid-email':
-        ERROR_MESSAGE.textContent = '이메일 형식에 맞게 입력해 주세요.';
-        break;
-      case 'auth/missing-password':
-        ERROR_MESSAGE.textContent = '비밀번호를 입력해 주세요.';
-        break;
-      case 'auth/invalid-credential':
-        ERROR_MESSAGE.textContent =
-          '잘못된 이메일 혹은 비밀번호입니다. 확인 후 다시 입력해주세요.';
-        break;
-      default:
-        ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
-    }
-    switch (error.message) {
-      case '승인대기중':
-        ERROR_MESSAGE.textContent = '로그인 실패: 관리자 승인 대기중입니다.';
-        break;
-      case '삭제된계정':
-        ERROR_MESSAGE.textContent = '로그인 실패: 삭제된 계정입니다.';
-        break;
-      default:
-        ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
-    }
+    handleErrorMessage(error, ERROR_MESSAGE);
   } finally {
     LOGIN_BUTTON.disabled = false;
   }
@@ -218,9 +184,7 @@ const renderSignupForm = () => {
   </div>
   `;
 
-  document
-    .querySelector('.go-to-login')
-    .addEventListener('click', navigateToLogin);
+  addNavigationHandler('.go-to-login', PAGE_TYPES.login);
 
   const handleAddressSearch = () => {
     const ADDRESS = document.querySelector('.signup-address');
@@ -238,19 +202,10 @@ const renderSignupForm = () => {
 
   const SIGNUP_INPUT = getSignupInput();
 
-  const SIGNUP_EMAIL = SIGNUP_INPUT.email
-  const SIGNUP_PASSWORD = SIGNUP_INPUT.password;
-  const SIGNUP_PASSWORDCHECK = SIGNUP_INPUT.passwordCheck;
-  const SIGNUP_NAME = SIGNUP_INPUT.name;
-  const SIGNUP_EMPLOYEENUMBER = SIGNUP_INPUT.employeeNumber;
-  const SIGNUP_PHONE = SIGNUP_INPUT.phone;
-  const SIGNUP_ADDRESS = SIGNUP_INPUT.address;
-  const SIGNUP_ADDRESSDETAIL = SIGNUP_INPUT.addressDetail;
-
   // 유효성 검사 폼 함수에 전달
   const validateEmail = () =>
     validateInput(
-      SIGNUP_EMAIL,
+      SIGNUP_INPUT.email,
       input =>
         /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/.test(input.value),
       '.email-error',
@@ -258,49 +213,49 @@ const renderSignupForm = () => {
     );
   const validatePassword = () =>
     validateInput(
-      SIGNUP_PASSWORD,
+      SIGNUP_INPUT.password,
       input => /^(?=.*[a-z])(?=.*\d)[a-z0-9]{6,15}$/.test(input.value),
       '.password-error',
       '6~15자의 영문 소문자, 숫자만을 사용해 주세요.',
     );
   const validatePasswordCheck = () =>
     validateInput(
-      SIGNUP_PASSWORDCHECK,
-      input => input.value === SIGNUP_PASSWORD.value,
+      SIGNUP_INPUT.passwordCheck,
+      input => input.value === SIGNUP_INPUT.password.value,
       '.password-check-error',
       '비밀번호가 일치하지 않습니다',
     );
   const validateName = () =>
     validateInput(
-      SIGNUP_NAME,
+      SIGNUP_INPUT.name,
       input => /^[가-힣a-zA-Z\s]+$/.test(input.value),
       '.name-error',
       '한글, 영어 대/소문자, 공백만을 사용해 주세요.',
     );
   const validateEmployeeNumber = () =>
     validateInput(
-      SIGNUP_EMPLOYEENUMBER,
+      SIGNUP_INPUT.employeeNumber,
       input => /^[0-9]{6,6}$/.test(input.value),
       '.employee-number-error',
       '6자의 숫자만 입력해 주세요.',
     );
   const validatePhone = () =>
     validateInput(
-      SIGNUP_PHONE,
+      SIGNUP_INPUT.phone,
       input => /^[0-9]{11,11}$/.test(input.value),
       '.phone-error',
       '11자의 숫자만 입력해 주세요.',
     );
   const validateAddress = () =>
     validateInput(
-      SIGNUP_ADDRESS,
+      SIGNUP_INPUT.address,
       input => input.value.trim() !== '',
       '.address-error',
       '주소 검색 버튼을 눌러 주소를 입력해 주세요.',
     );
   const validateAddressDetail = () =>
     validateInput(
-      SIGNUP_ADDRESSDETAIL,
+      SIGNUP_INPUT.addressDetail,
       input => input.value.trim() !== '',
       '.address-detail-error',
       '상세 주소를 입력해 주세요.',
@@ -357,9 +312,6 @@ const renderSignupForm = () => {
 // 회원가입 핸들러
 const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
   const SIGNUP_BUTTON = document.querySelector('.signup-button');
-  const EMPLOYEE_NUMBER_ERROR = document.querySelector(
-    '.employee-number-error',
-  );
 
   const IS_VALID = {
     email: inputValidators.validateEmail(),
@@ -374,21 +326,22 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
 
   const ERROR_MESSAGE = document.querySelector('.error-message');
 
-  if (!Object.values(IS_VALID).every(Boolean)) {
-    throw new Error('유효성검사실패');
-  }
-
   const USERS_DOC = await getDocs(collection(DB, 'users'));
   const IS_EMPLOYEE_NUMBER_DUPLICATE = USERS_DOC.docs.some(
     doc => doc.data().employeeNumber === SIGNUP_INPUT.employeeNumber.value,
   );
 
-  if (IS_EMPLOYEE_NUMBER_DUPLICATE) {
-    throw new Error('사용중인사번');
-  }
-
   try {
     SIGNUP_BUTTON.disabled = true;
+    ERROR_MESSAGE.textContent = '';
+
+    if (!Object.values(IS_VALID).every(Boolean)) {
+      throw new Error('validation failed');
+    }
+
+    if (IS_EMPLOYEE_NUMBER_DUPLICATE) {
+      throw new Error('employee number in use');
+    }
 
     // Firebase Authentication 회원가입
     const USER_CREDENTIAL = await createUserWithEmailAndPassword(
@@ -415,30 +368,35 @@ const handleSignup = async (SIGNUP_INPUT, inputValidators) => {
       createdAt: new Date(),
     });
 
-    navigateToLogin(); // 로그인 페이지 렌더
+    navigateTo(PAGE_TYPES.login); // 로그인 페이지 렌더
     await AUTH.signOut(); // 관리자 승인 전이므로 즉시 로그아웃 처리
   } catch (error) {
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        ERROR_MESSAGE.textContent = '이미 존재하는 이메일입니다.';
-        break;
-      default:
-        ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
-    }
-    switch (error.message) {
-      case '유효성검사실패':
-        ERROR_MESSAGE.textContent = '모든 입력값을 올바르게 입력해 주세요.';
-        break;
-      case '사용중인사번':
-        EMPLOYEE_NUMBER_ERROR.textContent =
-          '현재 사용중인 사번입니다. 입력을 확인해주세요.';
-        break;
-      default:
-        ERROR_MESSAGE.textContent = '잠시 후 다시 시도해 주세요.';
-    }
+    handleErrorMessage(error, ERROR_MESSAGE);
   } finally {
     SIGNUP_BUTTON.disabled = false;
   }
+};
+
+const handleErrorMessage = (error, errorMessageElement) => {
+  const MESSAGES = {
+    // 로그인 에러 메시지
+    'auth/invalid-email': '이메일 형식에 맞게 입력해주세요.',
+    'auth/missing-password': '비밀번호를 입력해 주세요.',
+    'auth/invalid-credential':
+      '잘못된 이메일 혹은 비밀번호입니다. 확인 후 다시 입력해주세요.',
+    'waiting for approval': '로그인 실패: 관리자 승인 대기중입니다.',
+    'deleted account': '로그인 실패: 삭제된 계정입니다.',
+
+    // 회원가입 에러 메시지
+    'auth/email-already-in-use': '이미 존재하는 이메일입니다.',
+    'validation failed': '모든 입력값을 올바르게 입력해 주세요.',
+    'employee number in use':
+      '현재 사용중인 사번입니다. 확인 후 다시 입력해주세요.',
+  };
+  errorMessageElement.textContent =
+    MESSAGES[error.code] ||
+    MESSAGES[error.message] ||
+    '잠시 후 다시 시도해 주세요.';
 };
 
 const initJoinPage = (container, pageType) => {
