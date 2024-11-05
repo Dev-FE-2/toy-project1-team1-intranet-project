@@ -3,6 +3,8 @@ import { fetchCollectionData } from '../../../utils/fetchCollectionData';
 
 export default async function Announcement() {
   const noticeData = await fetchCollectionData('notices');
+  const queryParams = new URLSearchParams(window.location.search);
+  const getPage = parseInt(queryParams.get('page')) || 1;
 
   const container = document.createElement('div');
   container.classList.add('container', 'announcement');
@@ -79,6 +81,8 @@ export default async function Announcement() {
         if (currentPage > 1) {
           currentPage -= 1;
           updatePagination();
+          queryParams.set('page', currentPage);
+          history.pushState(null, null, `?${queryParams.toString()}`);
         }
       });
 
@@ -87,6 +91,8 @@ export default async function Announcement() {
         if (currentPage < totalPage) {
           currentPage += 1;
           updatePagination();
+          queryParams.set('page', currentPage);
+          history.pushState(null, null, `?${queryParams.toString()}`);
         }
       });
 
@@ -96,6 +102,8 @@ export default async function Announcement() {
           const selectedPage = Number(event.target.textContent);
           currentPage = selectedPage;
           updatePagination();
+          queryParams.set('page', currentPage);
+          history.pushState(null, null, `?${queryParams.toString()}`);
         });
       });
     }
