@@ -286,6 +286,7 @@ export default async function AbsencePortal(content) {
       : null;
 
     const newAbsenceRecord = {
+      userUID,
       absenceType,
       absenceDate,
       reason,
