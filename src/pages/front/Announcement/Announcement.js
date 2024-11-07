@@ -3,8 +3,7 @@ import { fetchCollectionData } from '../../../utils/fetchCollectionData';
 
 export default async function Announcement() {
   const noticeData = await fetchCollectionData('notices');
-  const queryParams = new URLSearchParams(window.location.search);
-  const getPage = parseInt(queryParams.get('page')) || 1;
+  let queryParams = new URLSearchParams(window.location.search);
 
   const container = document.createElement('div');
   container.classList.add('container', 'announcement');
@@ -21,11 +20,11 @@ export default async function Announcement() {
           <ul class="paging-list" role="list"></ul>
         </div>
       `;
-
+  let currentPage = parseInt(queryParams.get('page')) || 1;
   function pagination() {
     const totalCount = noticeData.length;
     const limit = 8;
-    let currentPage = 1;
+
     let totalPage = Math.ceil(totalCount / limit);
     const pageCount = totalCount > 40 ? 5 : totalPage;
     let pageGroup = Math.ceil(currentPage / pageCount);
@@ -173,6 +172,8 @@ export default async function Announcement() {
         post.title.toLowerCase().includes(searchTerm),
       );
 
+      const INIT_SEARCH_VALUE = queryParams.get(searchTerm) || '';
+
       let textStyle = '';
       currentPage = 1;
       container.querySelector('.helper-text')?.remove();
@@ -186,6 +187,10 @@ export default async function Announcement() {
         'beforebegin',
         `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
       );
+
+      queryParams.set('search', INIT_SEARCH_VALUE);
+      queryParams.set('page', currentPage);
+      history.pushState(null, null, `?${queryParams.toString()}`);
 
       updatePagination(filteredData);
     }
