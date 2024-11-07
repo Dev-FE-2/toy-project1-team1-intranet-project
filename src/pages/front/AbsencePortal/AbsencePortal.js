@@ -8,20 +8,8 @@ import {
   addPaginationListeners,
 } from '@components/Pagination/Pagination';
 import createModal from '@components/Modal/Modal';
-import { ABSENCE_TYPES_LABELS } from '/src/constants/constants';
-
-// comp 전환 필요
-const TABLE_HEADER_TEMPLATE = `
-  <li class="col">
-    <ul class="head" role="list-head">
-      <li class="type">구분</li>
-      <li class="date">일자</li>
-      <li class="status">처리상태</li>
-      <li class="reason">신청사유</li>
-      <li class="etc">비고</li>
-    </ul>
-  </li>
-`;
+import { ABSENCE_TYPES_LABELS } from '@/constants/constants';
+// import './absencePortal.css'
 
 export default async function AbsencePortal(content) {
   let selectedAbsenceFile = null;
@@ -61,8 +49,17 @@ export default async function AbsencePortal(content) {
       ? paginatedAbsences.map(renderTableRow).join('')
       : `<li class="col"><p>부재 이력이 없습니다.</p></li>`;
 
-    document.querySelector('.table-body ul.table').innerHTML =
-      `${TABLE_HEADER_TEMPLATE} ${rowsHtml}`;
+    document.querySelector('.table-body ul.table').innerHTML = `
+    <li class="col">
+      <ul class="head" role="list-head">
+        <li class="type">구분</li>
+        <li class="date">일자</li>
+        <li class="status">처리상태</li>
+        <li class="reason">신청사유</li>
+        <li class="etc">비고</li>
+      </ul>
+    </li> 
+    ${rowsHtml}`;
 
     document.querySelectorAll('.table-body ul.table .cell').forEach(cell => {
       cell.addEventListener('click', () => {
@@ -317,6 +314,7 @@ export default async function AbsencePortal(content) {
       datepickerInstance = new easepick.create({
         element: datepickerElement,
         css: ['/src/easepick.css'],
+        // css:['https://jurilee0.github.io/github-learn/src/easepick.css']
         lang: 'ko-KR',
         format: 'YYYY-MM-DD',
         calendars: 1,

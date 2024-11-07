@@ -1,46 +1,38 @@
-/* table-header layout */
-.table-header {
+.absence-portal .table-header {
   width: 80%;
   margin: 1rem auto;
   display: flex;
   justify-content: space-between;
 }
-.table-body .col {
+.absence-portal .table-body .col {
   cursor: pointer;
 }
-
 #detail-content {
   text-align: left;
 }
 #detail-content dl {
   padding: 2rem 4rem;
 }
-
 #detail-content dt,
 #detail-content dd {
   display: inline-block;
   margin-bottom: 2rem;
 }
-
 #detail-content dt:last-child,
 #detail-content dd:last-child {
   margin-bottom: 0;
 }
-
 #detail-content dt {
   width: 30%;
   float: left;
   font-weight: 700;
 }
-
 #detail-content dd {
   width: 70%;
 }
-
 #detail-content .file-box {
   max-width: 20rem;
 }
-
 #absenceApplyModal .helper-text {
   display: block;
   text-align: left;
