@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "start": "concurrently \"npm run dev\" \"npm run server\"",
     "lint": "eslint \"src/**/*.js\"",
-    "lint:fix": "eslint --fix \"src/**/*.js\""
+    "lint:fix": "eslint --fix \"src/**/*.js\"",
+    "deploy": "npm run build && git subtree push --prefix dist origin prod"
   },
   "devDependencies": {
     "concurrently": "^9.0.1",
