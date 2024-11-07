@@ -1,4 +1,5 @@
 import { easepick, LockPlugin, RangePlugin } from '@easepick/bundle';
+import { fetchCurrentUserData } from '@utils/fetchCurrentUserData';
 import { fetchCollectionData } from '@utils/fetchCollectionData';
 import { saveDataToDB, uploadFileToStorage } from '@utils/saveDataToDB';
 import createTitle from '@components/Title/Title';
@@ -27,12 +28,14 @@ export default async function AbsencePortal(content) {
 
   const loadAbsences = async () => {
     try {
-      const absences = await fetchCollectionData(
-        'absences',
-        'createdAt',
-        'desc',
+      const userData = await fetchCurrentUserData();
+      const userUID = userData.uid;
+      const allAbsences = await fetchCollectionData('absences');
+
+      const filteredAbsences = allAbsences.filter(
+        absence => absence.userUID === userUID,
       );
-      return absences.sort(
+      return filteredAbsences.sort(
         (a, b) => b.createdAt.toDate() - a.createdAt.toDate(),
       );
     } catch (error) {
@@ -257,6 +260,9 @@ export default async function AbsencePortal(content) {
   };
 
   const handleAbsenceSubmit = async () => {
+    const userData = await fetchCurrentUserData();
+    const userUID = userData.uid;
+
     const absenceType = document.getElementById('absence-type').value;
     const absenceDate = document.getElementById('datepicker').value;
     const reason = document.getElementById('reason').value;
@@ -280,6 +286,7 @@ export default async function AbsencePortal(content) {
       : null;
 
     const newAbsenceRecord = {
+      userUID,
       absenceType,
       absenceDate,
       reason,
