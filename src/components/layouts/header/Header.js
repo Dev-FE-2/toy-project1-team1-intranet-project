@@ -46,8 +46,10 @@ const Header = async (path) => {
     id: 'header-logout-button',
     text: '로그아웃',
     onClick: async () => {
-      await AUTH.signOut();
-      goToPage('/join');
+      if(confirm('로그아웃하시겠습니까?')){
+        await AUTH.signOut();
+        goToPage('/join');
+      };
     }
   });
 
