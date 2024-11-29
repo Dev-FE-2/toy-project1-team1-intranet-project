@@ -18,18 +18,17 @@ export default function createInput({
   placeholder = '',
   value = '',
   onChange,
-  onClick
+  onClick,
 }) {
-
   const inputClickEvent = () => {
-    if(onClick){
+    if (onClick) {
       document.getElementById(id).addEventListener('click', onClick);
     }
-  }
+  };
 
   // 입력 변경 이벤트를 추가하는 함수
   const inputChangeEvent = () => {
-    if (onChange){
+    if (onChange) {
       document.getElementById(id).addEventListener('input', onChange);
     }
   };
@@ -47,6 +46,6 @@ export default function createInput({
   return {
     inputClickEvent,
     inputChangeEvent,
-    render
+    render,
   };
 }

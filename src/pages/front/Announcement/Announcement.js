@@ -166,13 +166,14 @@ export default async function Announcement() {
     });
     searchButton.addEventListener('click', handleSearch);
 
-    function handleSearch() {
-      const searchTerm = searchInput.value.trim().toLowerCase();
+    function handleSearch(queryOnly = false) {
+      const searchInputText = searchInput.value.trim().toLowerCase();
+      const searchTerm = queryOnly
+        ? queryParams.get('search') || ''
+        : searchInputText;
       const filteredData = noticeData.filter(post =>
         post.title.toLowerCase().includes(searchTerm),
       );
-
-      const INIT_SEARCH_VALUE = queryParams.get(searchTerm) || '';
 
       let textStyle = '';
       currentPage = 1;
@@ -188,7 +189,8 @@ export default async function Announcement() {
         `<p class="helper-text">검색결과 <span class="${textStyle}">${filteredData.length}개</span>의 게시물</p>`,
       );
 
-      queryParams.set('search', INIT_SEARCH_VALUE);
+      if (!searchInputText) searchInput.value = searchTerm;
+      queryParams.set('search', searchTerm);
       queryParams.set('page', currentPage);
       history.pushState(null, null, `?${queryParams.toString()}`);
 
@@ -212,6 +214,7 @@ export default async function Announcement() {
 
     pageRendering();
     renderPosts();
+    handleSearch(true);
   }
   pagination();
 
